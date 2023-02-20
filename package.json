@@ -1,0 +1,26 @@
+
+{
+  "name": "live_svelte",
+  "version": "0.1.0",
+  "description": "",
+  "license": "MIT",
+  "module": "./priv/static/live_svelte.mjs",
+  "main": "./priv/static/live_svelte.cjs.js",
+  "unpkg": "./priv/static/live_svelte.min.js",
+  "jsdelivr": "./priv/static/live_svelte.min.js",
+  "exports": {
+    "import": "./priv/static/live_svelte.mjs",
+    "require": "./priv/static/live_svelte.cjs.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/woutdp/live_svelte.git"
+  },
+  "author": "Wout De Puysseleir <contact@wout.space>",
+  "files": [
+    "README.md",
+    "LICENSE.md",
+    "package.json",
+    "assets/js/phoenix/*"
+  ]
+}
