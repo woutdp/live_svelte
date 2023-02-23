@@ -1,6 +1,6 @@
 # LiveSvelte
 
-LiveSvelte renders Svelte directly into your Phoenix LiveView and enables E2E reactivity.
+Render Svelte directly into your Phoenix LiveView with E2E reactivity.
 
 ## Features
 
@@ -10,6 +10,7 @@ LiveSvelte renders Svelte directly into your Phoenix LiveView and enables E2E re
 - Tailwind support
 
 ## Docs
+
 <https://hexdocs.pm/live_svelte>
 
 ## Installation
@@ -36,11 +37,24 @@ Make sure you have Node installed, you can verify this by running `node --versio
 
 Svelte components need to go into the `assets/svelte/components` directory
 
-Svelte components need to be referenced in the `<.live_component>` with the `name` field set to the name of the component.
+- The `id` can be anything, but should be unique
+- Set the `name` of the Svelte component in the `live_component`.
+- Provide the `props` you want to use that should be reactive as a map to the props field
 
-For example, if your component is name `SomeComponent.svelte`, put `SomeComponent` in the name field.
+e.g. If your component is named `assets/svelte/components/Example.svelte`:
 
-The `id` of the component needs to be unique and doesn't have to be the same name as the component.
+```elixir
+def render(assigns) do
+  ~H"""
+  <.live_component
+    module={LiveSvelte}
+    id="Example"
+    name="Example"
+    props={%{number: @number}}
+  />
+  """
+end
+```
 
 If you component is in a directory, for example `assets/svelte/components/some-directory/SomeComponent.svelte` you need to include the directory in your name: `some-directory/SomeComponent`.
 
@@ -48,13 +62,26 @@ If you component is in a directory, for example `assets/svelte/components/some-d
 
 Examples can be found in the example directory.
 
+#### Create a Svelte component
+
 ```svelte
 <script>
+    // The number prop is reactive,
+    // this means if the server assigns the number, it will update in the frontend
     export let number = 1
+    // pushEvent to ... push events to the server.
     export let pushEvent
 
     function increase() {
+        // This pushes the event over the websocket
+        // The last parameter is optional. It's a callback for when the event is finished.
+        // You could for example set a loading state until the event is finished if it takes a longer time.
         pushEvent('set_number', { number: number + 1 }, () => {})
+
+        // Note that we actually never set the number in the frontend!
+        // We ONLY push the event to the server.
+        // This is the E2E reactivity in action!
+        // The number will automatically be updated through the LiveView websocket
     }
 
     function decrease() {
@@ -106,7 +133,7 @@ scope "/", AppWeb do
 end
 ```
 
-### Preporcessor
+### Preprocessor
 
 To use the preprocessor, install the desired preprocessor.
 
