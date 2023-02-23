@@ -67,7 +67,7 @@ defmodule AppWeb.SvelteLive do
   def render(assigns) do
     ~H"""
     <.live_component
-      module={LiveSvelte.LiveComponent}
+      module={LiveSvelte}
       id="Example"
       name="Example"
       props={%{number: @number}}

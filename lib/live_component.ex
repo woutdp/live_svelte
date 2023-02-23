@@ -1,4 +1,4 @@
-defmodule LiveSvelte.LiveComponent do
+defmodule LiveSvelte do
   use Phoenix.LiveComponent
   import Phoenix.HTML
 
