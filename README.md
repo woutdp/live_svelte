@@ -34,9 +34,19 @@ Make sure you have Node installed, you can verify this by running `node --versio
 
 ## Usage
 
-### Basic Example
+Svelte components need to go into the `assets/svelte/components` directory
 
-#### Create a Svelte component
+Svelte components need to be referenced in the `<.live_component>` with the `name` field set to the name of the component.
+
+For example, if your component is name `SomeComponent.svelte`, put `SomeComponent` in the name field.
+
+The `id` of the component needs to be unique and doesn't have to be the same name as the component.
+
+If you component is in a directory, for example `assets/svelte/components/some-directory/SomeComponent.svelte` you need to include the directory in your name: `some-directory/SomeComponent`.
+
+### Examples
+
+Examples can be found in the example directory.
 
 ```svelte
 <script>
@@ -96,7 +106,7 @@ scope "/", AppWeb do
 end
 ```
 
-###
+### Preporcessor
 
 To use the preprocessor, install the desired preprocessor.
 
