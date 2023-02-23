@@ -6,7 +6,7 @@ defmodule Mix.Tasks.LiveSvelte.ConfigureEsbuild do
 
     Mix.Project.deps_paths(depth: 1)
     |> Map.fetch!(:live_svelte)
-    |> Path.join("assets/**/*{.svelte,.js}")
+    |> Path.join("assets/**/*{.js}")
     |> Path.wildcard()
     |> Enum.each(fn file ->
       split = Path.split(file)
@@ -21,5 +21,7 @@ defmodule Mix.Tasks.LiveSvelte.ConfigureEsbuild do
 
       Mix.Generator.copy_file(file, path)
     end)
+
+    Mix.Generator.create_directory("assets/svelte/components")
   end
 end
