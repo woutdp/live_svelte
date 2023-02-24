@@ -2,7 +2,7 @@
 
 # LiveSvelte
 
-Render Svelte directly into your Phoenix LiveView with E2E reactivity.
+Render Svelte directly into Phoenix LiveView with E2E reactivity.
 
 ![logo](https://github.com/woutdp/live_svelte/blob/master/logo.png?raw=true)
 
@@ -18,9 +18,18 @@ Render Svelte directly into your Phoenix LiveView with E2E reactivity.
 - Svelte Preprocessing support with [svelte-preprocess](https://github.com/sveltejs/svelte-preprocess)
 - Tailwind support
 
+## Why LiveSvelte
+
+Phoenix LiveView enables rich, real-time user experiences with server-rendered HTML.
+It works by communicating any state changes through a websocket and updating the DOM in realtime.
+You can get a really good user experience without ever needing to write any client side code.
+
+LiveSvelte builds on top of Phoenix LiveView to allow for easy client side state management while still allowing for communication over the websocket.
+
 ## Docs
 
-<https://hexdocs.pm/live_svelte>
+[HexDocs](https://hexdocs.pm/live_svelte)
+[Phoenix LiveView](https://github.com/phoenixframework/phoenix_live_view)
 
 ## Installation
 
