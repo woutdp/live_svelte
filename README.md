@@ -4,8 +4,9 @@
 
 Render Svelte directly into your Phoenix LiveView with E2E reactivity.
 
+![logo](https://github.com/woutdp/live_svelte/blob/master/logo.png?raw=true)
+
 [Installation](#installation) •
-[Documentation](#docs) •
 [Usage](#usage)
 
 </div>
