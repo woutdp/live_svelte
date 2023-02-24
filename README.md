@@ -1,6 +1,14 @@
+<div align="center">
+
 # LiveSvelte
 
 Render Svelte directly into your Phoenix LiveView with E2E reactivity.
+
+[Installation](#installation) •
+[Documentation](#docs) •
+[Usage](#usage)
+
+</div>
 
 ## Features
 
