@@ -37,7 +37,7 @@ defmodule Mix.Tasks.LiveSvelte.ConfigurePhoenix do
     application_path = find_file("lib/**/#{application_file}", application_file)
 
     nodeSupervisor = ~s"""
-    {NodeJS.Supervisor, [path: "./assets", pool_size: 4]},\
+    {NodeJS.Supervisor, [path: "#{File.cwd!}/assets", pool_size: 4]}, \
     """
 
     File.read!(application_path)
