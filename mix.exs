@@ -45,7 +45,7 @@ defmodule LiveSvelte.MixProject do
       {:ex_doc, "~> 0.19", only: :dev, runtime: false},
       {:jason, "~> 1.2"},
       {:nodejs, "~> 2.0"},
-      {:phoenix, "~> 1.6.16"},
+      {:phoenix, "~> 1.17"},
       {:phoenix_live_view, "~> 0.18.3"}
     ]
   end
