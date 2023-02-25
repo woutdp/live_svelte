@@ -36,8 +36,8 @@ LiveSvelte builds on top of Phoenix LiveView to allow for easy client side state
 
 ## Docs
 
-[HexDocs](https://hexdocs.pm/live_svelte)
-[Phoenix LiveView](https://github.com/phoenixframework/phoenix_live_view)
+- [HexDocs](https://hexdocs.pm/live_svelte)
+- [Phoenix LiveView](https://github.com/phoenixframework/phoenix_live_view)
 
 ## Installation
 
