@@ -46,7 +46,7 @@ Add `live_svelte` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:live_svelte, "~> 0.1.0-rc2"}
+    {:live_svelte, "~> 0.1.0-rc3"}
   ]
 end
 ```
@@ -82,7 +82,7 @@ def render(assigns) do
 end
 ```
 
-If you component is in a directory, for example `assets/svelte/components/some-directory/SomeComponent.svelte` you need to include the directory in your name: `some-directory/SomeComponent`.
+If your component is in a directory, for example `assets/svelte/components/some-directory/SomeComponent.svelte` you need to include the directory in your name: `some-directory/SomeComponent`.
 
 ### Examples
 

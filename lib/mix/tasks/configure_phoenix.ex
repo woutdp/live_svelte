@@ -1,13 +1,14 @@
 defmodule Mix.Tasks.LiveSvelte.ConfigurePhoenix do
+  @moduledoc """
+  Configures any necessary code changes inside Phoenix to make LiveSvelte work.
+  """
+
   import LiveSvelte.Logger
 
   @watcher_regex ~r/watchers:\s\[(?!\s+node:)/
   @esbuild_regex ~r/(?<!# )esbuild: {.*}/
   @nodejs_regex ~r/children\s+=\s+\[(?!\s+\{NodeJS)/
 
-  @doc """
-  Configures any necessary code changes inside Phoenix to make LiveSvelte work.
-  """
   def run(_) do
     log_info("-- Configuring Phoenix...")
 
