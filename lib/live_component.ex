@@ -110,16 +110,16 @@ defmodule LiveSvelte do
   end
 
   def update(assigns, socket) do
-    # Maybe something like this?
-    # socket = if not Map.get(assigns, :rendered, false) do
-    #   send self(), {:rendered, true}
-    # end
+    # Making sure we only render once
+    ssr_code =
+      unless connected?(socket) do
+        ssr_render(assigns.name, assigns[:props])
+      end
 
     socket =
       socket
       |> assign(assigns)
-      # TODO: Only render once
-      |> assign(:ssr_render, ssr_render(assigns.name, assigns[:props]))
+      |> assign(:ssr_render, ssr_code)
 
     {:ok, socket}
   end
