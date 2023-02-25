@@ -38,7 +38,7 @@ Add `live_svelte` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:live_svelte, "~> 0.1.0-rc1"}
+    {:live_svelte, "~> 0.1.0-rc2"}
   ]
 end
 ```
