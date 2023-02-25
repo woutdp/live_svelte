@@ -18,6 +18,14 @@ Render Svelte directly into Phoenix LiveView with E2E reactivity.
 - Svelte Preprocessing support with [svelte-preprocess](https://github.com/sveltejs/svelte-preprocess)
 - Tailwind support
 
+## Demo
+
+You can find the code for this in `/examples/breaking_news`.
+
+News items are synced with the server while the speed is only client side (but could be server side if desired).
+
+https://user-images.githubusercontent.com/3637265/221381302-c9ff31fb-77a0-44f2-8c79-1a1a6b7e5893.mp4
+
 ## Why LiveSvelte
 
 Phoenix LiveView enables rich, real-time user experiences with server-rendered HTML.
@@ -78,7 +86,7 @@ If you component is in a directory, for example `assets/svelte/components/some-d
 
 ### Examples
 
-Examples can be found in the example directory.
+Examples can be found in the `/examples` directory.
 
 #### Create a Svelte component
 
