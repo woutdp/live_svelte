@@ -119,12 +119,12 @@ defmodule LiveSvelte do
       socket
       |> assign(assigns)
       # TODO: Only render once
-      |> assign(:ssr_render, ssr_render(assigns.name, assigns.props))
+      |> assign(:ssr_render, ssr_render(assigns.name, assigns[:props]))
 
     {:ok, socket}
   end
 
-  def ssr_render(name, props) do
+  def ssr_render(name, props \\ %{}) do
     NodeJS.call!({"svelte/render", "render"}, [name, props])
   end
 
