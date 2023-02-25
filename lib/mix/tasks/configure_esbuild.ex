@@ -1,6 +1,9 @@
 defmodule Mix.Tasks.LiveSvelte.ConfigureEsbuild do
   import LiveSvelte.Logger
 
+  @doc """
+  Creates Javascript files to be used by esbuild. Necessary for LiveSvelte to work.
+  """
   def run(_) do
     log_info("-- Configuring esbuild...")
 

@@ -5,6 +5,9 @@ defmodule Mix.Tasks.LiveSvelte.ConfigurePhoenix do
   @esbuild_regex ~r/(?<!# )esbuild: {.*}/
   @nodejs_regex ~r/children\s+=\s+\[(?!\s+\{NodeJS)/
 
+  @doc """
+  Configures any necessary code changes inside Phoenix to make LiveSvelte work.
+  """
   def run(_) do
     log_info("-- Configuring Phoenix...")
 
@@ -37,7 +40,7 @@ defmodule Mix.Tasks.LiveSvelte.ConfigurePhoenix do
     application_path = find_file("lib/**/#{application_file}", application_file)
 
     nodeSupervisor = ~s"""
-    {NodeJS.Supervisor, [path: "#{File.cwd!}/assets", pool_size: 4]}, \
+    {NodeJS.Supervisor, [path: "#{File.cwd!()}/assets", pool_size: 4]}, \
     """
 
     File.read!(application_path)

@@ -1,6 +1,9 @@
 defmodule Mix.Tasks.LiveSvelte.InstallNpmDeps do
   import LiveSvelte.Logger
 
+  @doc """
+  Installs npm dependencies for LiveSvelte.
+  """
   def run(_) do
     log_info("-- Installing npm dependencies...")
 

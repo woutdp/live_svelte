@@ -1,6 +1,9 @@
 defmodule Mix.Tasks.LiveSvelte.Setup do
   import LiveSvelte.Logger
 
+  @doc """
+  Runs all setup tasks for LiveSvelte.
+  """
   def run(_) do
     [
       "install_npm_deps",

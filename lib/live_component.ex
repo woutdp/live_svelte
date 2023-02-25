@@ -3,7 +3,7 @@ defmodule LiveSvelte do
 
   ## Examples
 
-  ### LiveView
+  LiveView
 
       defmodule App.SvelteLive do
         use App, :live_view
@@ -38,7 +38,7 @@ defmodule LiveSvelte do
         end
       end
 
-  ### Svelte Component
+  Svelte Component
 
       <script>
           import {slide, fly} from 'svelte/transition'
