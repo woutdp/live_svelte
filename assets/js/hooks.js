@@ -13,6 +13,13 @@ function parsedProps(el) {
     return props ? JSON.parse(props) : {}
 }
 
+function extraProps(ref) {
+    return {
+        pushEvent: (event, data, callback) => ref.pushEvent(event, data, callback),
+        goto: href => liveSocket.pushHistoryPatch(href, 'push', ref.el)
+    }
+}
+
 const SvelteComponent = {
     mounted() {
         const componentName = this.el.getAttribute('data-name')
@@ -22,34 +29,18 @@ const SvelteComponent = {
 
         const Component = components[componentName]
         if (!Component) {
-            throw new Error(`Unable to find ${componentName} component. Did you forget to import it into hooks.js?`)
-        }
-
-        const pushEvent = (event, data, callback) => {
-            this.pushEvent(event, data, callback)
-        }
-
-        const goto = href => {
-            liveSocket.pushHistoryPatch(href, 'push', this.el)
+            throw new Error(`Unable to find ${componentName} component.`)
         }
 
         this._instance = new Component({
             target: this.el,
-            props: {...parsedProps(this.el), pushEvent, goto},
+            props: {...parsedProps(this.el), ...extraProps(this)},
             hydrate: true
         })
     },
 
     updated() {
-        const pushEvent = (event, data, callback) => {
-            this.pushEvent(event, data, callback)
-        }
-
-        const goto = href => {
-            liveSocket.pushHistoryPatch(href, 'push', this.el)
-        }
-
-        this._instance.$$set({...parsedProps(this.el), pushEvent, goto})
+        this._instance.$$set({...parsedProps(this.el), ...extraProps(this)})
     },
 
     destroyed() {
