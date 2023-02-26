@@ -43,23 +43,43 @@ LiveSvelte builds on top of Phoenix LiveView to allow for easy client side state
 
 ## Installation
 
-Add `live_svelte` to your list of dependencies in `mix.exs`:
+1. Add `live_svelte` to your list of dependencies in `mix.exs`:
 
 ```elixir
-def deps do
+defp deps do
   [
     {:live_svelte, "~> 0.1.0-rc4"}
   ]
 end
 ```
 
-Run the following in your terminal
+2. Adjust the `setup` and `assets.deploy` aliases in `mix.exs`:
+
+```elixir
+defp aliases do
+  [
+    setup: ["deps.get", "ecto.setup", "cmd --cd assets npm install"],
+    ...,
+    "assets.deploy": ["cmd --cd assets node build.js --deploy", "phx.digest"]
+  ]
+end
+```
+
+3. Run the following in your terminal
 ```bash
 mix deps.get
 mix live_svelte.setup
 ```
 
-Make sure you have Node installed, you can verify this by running `node --version` in your project directory.
+4. Make sure you have `node` installed, you can verify this by running `node --version` in your project directory.
+
+5. Finally, remove the `esbuild` configuration from `config/config.exs` and remove the dependency from the `deps` function in your `mix.exs`, and you are done!
+
+### What did we do?
+
+You'll notice a bunch of files get created in `/assets`, as well as some code changes in `/lib`. This mostly follows from the recommended way of using esbuild plugins, which we need to make this work. You can read more about this here: <https://hexdocs.pm/phoenix/asset_management.html#esbuild-plugins>
+
+In addition we commented out some things such as the `esbuild` watcher configured in `dev.exs` that won't be needed anymore, you can delete these comments if desired.
 
 ## Usage
 
@@ -76,7 +96,7 @@ def render(assigns) do
   ~H"""
   <.live_component
     module={LiveSvelte}
-    id="Example"
+    id="UniqueId"
     name="Example"
     props={%{number: @number}}
   />
