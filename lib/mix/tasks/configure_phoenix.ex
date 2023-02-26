@@ -13,7 +13,7 @@ defmodule Mix.Tasks.LiveSvelte.ConfigurePhoenix do
     log_info("-- Configuring Phoenix...")
 
     try do
-      configure_config()
+      configure_dev_config()
       configure_application()
     rescue
       err -> log_error(err.message)
@@ -22,31 +22,33 @@ defmodule Mix.Tasks.LiveSvelte.ConfigurePhoenix do
     Mix.Task.run("format")
   end
 
-  defp configure_config() do
-    config_file = "dev.exs"
-    config_path = find_file("config/#{config_file}", config_file)
-
+  defp configure_dev_config() do
     watcher = ~s"""
     node: ["build.js", "--watch", cd: Path.expand("../assets", __DIR__)],\
     """
 
-    File.read!(config_path)
-    |> insert(@watcher_regex, watcher, "'#{watcher}' in #{config_file}")
-    |> comment(@esbuild_regex, "old esbuild watcher in #{config_file}")
-    |> save(config_path)
+    {path, file} = path_and_file("config/", "dev.exs")
+
+    File.read!(path)
+    |> insert(@watcher_regex, watcher, "'#{watcher}' in #{file}")
+    |> comment(@esbuild_regex, "old esbuild watcher in #{file}")
+    |> save(path)
   end
 
   defp configure_application() do
-    application_file = "application.ex"
-    application_path = find_file("lib/**/#{application_file}", application_file)
-
     nodeSupervisor = ~s"""
-    {NodeJS.Supervisor, [path: "\#{File.cwd!()}/assets", pool_size: 4]}, \
+    {NodeJS.Supervisor, [path: "\#{File.cwd!()}/assets", pool_size: 4]},\
     """
 
-    File.read!(application_path)
-    |> insert(@nodejs_regex, nodeSupervisor, "'#{nodeSupervisor}' in #{application_file}")
-    |> save(application_path)
+    {path, file} = path_and_file("lib/**/", "application.ex")
+
+    File.read!(path)
+    |> insert(@nodejs_regex, nodeSupervisor, "'#{nodeSupervisor}' in #{file}")
+    |> save(path)
+  end
+
+  defp path_and_file(wildcard, filename) do
+    {find_file("#{wildcard}#{filename}", filename), filename}
   end
 
   defp find_file(wildcard, file_name) do
