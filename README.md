@@ -2,14 +2,16 @@
 
 # LiveSvelte
 
-Render Svelte directly into Phoenix LiveView with E2E reactivity.
-
 ![logo](https://github.com/woutdp/live_svelte/blob/master/logo.png?raw=true)
 
 [Installation](#installation) •
 [Usage](#usage)
 
 </div>
+
+<!-- MDOC -->
+
+Render Svelte directly into Phoenix LiveView with E2E reactivity.
 
 ## Features
 
