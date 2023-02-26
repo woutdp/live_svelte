@@ -20,8 +20,8 @@ const SvelteComponent = {
             throw new Error('Component name must be provided')
         }
 
-        const requiredApp = components[componentName]
-        if (!requiredApp) {
+        const Component = components[componentName]
+        if (!Component) {
             throw new Error(`Unable to find ${componentName} component. Did you forget to import it into hooks.js?`)
         }
 
@@ -33,7 +33,7 @@ const SvelteComponent = {
             liveSocket.pushHistoryPatch(href, 'push', this.el)
         }
 
-        this._instance = new requiredApp({
+        this._instance = new Component({
             target: this.el,
             props: {...parsedProps(this.el), pushEvent, goto},
             hydrate: true
