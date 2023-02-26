@@ -6,6 +6,8 @@ defmodule LiveSvelte do
              |> String.split("<!-- MDOC -->")
              |> Enum.fetch!(1)
 
+  @moduledoc since: "0.1.0-rc4"
+
   use Phoenix.LiveComponent
   import Phoenix.HTML
 

@@ -2,6 +2,8 @@
 
 # LiveSvelte
 
+Render Svelte directly into Phoenix LiveView with E2E reactivity.
+
 ![logo](https://github.com/woutdp/live_svelte/blob/master/logo.png?raw=true)
 
 [Installation](#installation) •
@@ -10,8 +12,6 @@
 </div>
 
 <!-- MDOC -->
-
-Render Svelte directly into Phoenix LiveView with E2E reactivity.
 
 ## Features
 
@@ -48,7 +48,7 @@ Add `live_svelte` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:live_svelte, "~> 0.1.0-rc3"}
+    {:live_svelte, "~> 0.1.0-rc4"}
   ]
 end
 ```
