@@ -181,6 +181,29 @@ scope "/", AppWeb do
 end
 ```
 
+### LiveView Live Navigation Events
+
+Inside Svelte you can define [Live Navigation](https://hexdocs.pm/phoenix_live_view/live-navigation.html) links. These links navigate from one LiveView to the other without refreshing the page.
+
+For example this can be useful when you have a Svelte store and you want this store state to remain during navigation. Example of Svelte store usage can be found in `/examples/store`.
+
+`push_navigate`
+
+```svelte
+<a href="/your-liveview-path" data-phx-link="redirect" data-phx-link-state="push">Redirect</a>
+```
+
+`push_patch`
+
+```svelte
+<a href="/your-liveview-path" data-phx-link="patch" data-phx-link-state="push">Patch</a>
+```
+
+### LiveView JavaScript Interoperability
+
+LiveView allows for a bunch of interoperability which you can read more about here:
+<https://hexdocs.pm/phoenix_live_view/js-interop.html>
+
 ### Preprocessor
 
 To use the preprocessor, install the desired preprocessor.

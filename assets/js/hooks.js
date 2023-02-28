@@ -15,8 +15,7 @@ function parsedProps(el) {
 
 function extraProps(ref) {
     return {
-        pushEvent: (event, data, callback) => ref.pushEvent(event, data, callback),
-        goto: href => liveSocket.pushHistoryPatch(href, 'push', ref.el)
+        pushEvent: (event, data, callback) => ref.pushEvent(event, data, callback)
     }
 }
 
