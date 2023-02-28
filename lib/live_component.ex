@@ -30,10 +30,13 @@ defmodule LiveSvelte do
         id={id(@name)}
         data-name={@name}
         data-props={json(@props)}
+        data-inner-block={render_slot(@inner_block)}
         phx-update="ignore"
         phx-hook="SvelteComponent"
       >
-        <%= raw(@ssr_render["html"]) %>
+        <%= raw(@ssr_render["html"]["head"]) %>
+        <%= render_slot(@inner_block) %>
+        <%= raw(@ssr_render["html"]["tail"]) %>
       </div>
     </div>
     """
@@ -44,7 +47,15 @@ defmodule LiveSvelte do
     # Making sure we only render once
     ssr_code =
       unless connected?(socket) do
-        ssr_render(assigns.name, assigns[:props])
+        props =
+          Map.merge(
+            Map.get(assigns, :props, %{}),
+            %{innerBlock: "<inner_block_placeholder/>"}
+          )
+
+        ssr_code = ssr_render(assigns.name, props)
+        [head, tail] = html_split(ssr_code["html"])
+        %{ssr_code | "html" => %{"head" => head, "tail" => tail}}
       end
 
     socket =
@@ -53,6 +64,13 @@ defmodule LiveSvelte do
       |> assign(:ssr_render, ssr_code)
 
     {:ok, socket}
+  end
+
+  defp html_split(html) do
+    case String.split(html, ~r/<inner_block_placeholder\/>/) do
+      [head, tail] -> [head, tail]
+      [head] -> [head, ""]
+    end
   end
 
   defp ssr_render(name, props, slots \\ nil)

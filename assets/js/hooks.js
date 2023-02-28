@@ -15,7 +15,8 @@ function parsedProps(el) {
 
 function extraProps(ref) {
     return {
-        pushEvent: (event, data, callback) => ref.pushEvent(event, data, callback)
+        pushEvent: (event, data, callback) => ref.pushEvent(event, data, callback),
+        innerBlock: ref.el.getAttribute('data-inner-block')
     }
 }
 
