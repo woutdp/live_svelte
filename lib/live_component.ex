@@ -13,11 +13,13 @@ defmodule LiveSvelte do
 
   attr(:props, :map, default: %{})
   attr(:name, :string)
-  attr(:rendered, :boolean, default: false)
+
+  slot(:inner_block)
 
   @doc """
   Renders a Svelte component on the server.
   """
+  @impl true
   def render(assigns) do
     ~H"""
     <div>
