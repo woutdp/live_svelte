@@ -55,8 +55,11 @@ defmodule LiveSvelte do
     {:ok, socket}
   end
 
-  defp ssr_render(name, nil), do: ssr_render(name, %{})
-  defp ssr_render(name, props), do: NodeJS.call!({"svelte/render", "render"}, [name, props])
+  defp ssr_render(name, props, slots \\ nil)
+  defp ssr_render(name, nil, slots), do: ssr_render(name, %{}, slots)
+
+  defp ssr_render(name, props, slots),
+    do: NodeJS.call!({"svelte/render", "render"}, [name, props, slots])
 
   defp json(props) do
     props
