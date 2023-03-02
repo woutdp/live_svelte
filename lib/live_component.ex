@@ -44,7 +44,7 @@ defmodule LiveSvelte do
   def update(assigns, socket) do
     # Making sure we only render once
     ssr_code =
-      unless connected?(socket) do
+      if not connected?(socket) do
         props = Map.get(assigns, :props, %{})
         slot =
           ~H"""
