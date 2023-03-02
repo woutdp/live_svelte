@@ -34,9 +34,7 @@ defmodule LiveSvelte do
         phx-update="ignore"
         phx-hook="SvelteComponent"
       >
-        <%= raw(@ssr_render["html"]["head"]) %>
-        <%= render_slot(@inner_block) %>
-        <%= raw(@ssr_render["html"]["tail"]) %>
+        <%= raw(@ssr_render["html"]) %>
       </div>
     </div>
     """
@@ -47,15 +45,14 @@ defmodule LiveSvelte do
     # Making sure we only render once
     ssr_code =
       unless connected?(socket) do
-        props =
-          Map.merge(
-            Map.get(assigns, :props, %{}),
-            %{innerBlock: "<inner_block_placeholder/>"}
-          )
-
-        ssr_code = ssr_render(assigns.name, props)
-        [head, tail] = html_split(ssr_code["html"])
-        %{ssr_code | "html" => %{"head" => head, "tail" => tail}}
+        props = Map.get(assigns, :props, %{})
+        slot =
+          ~H"""
+          <%= render_slot(@inner_block) %>
+          """
+          |> Phoenix.HTML.Safe.to_iodata()
+          |> List.to_string()
+        ssr_render(assigns.name, props, slot)
       end
 
     socket =
@@ -64,13 +61,6 @@ defmodule LiveSvelte do
       |> assign(:ssr_render, ssr_code)
 
     {:ok, socket}
-  end
-
-  defp html_split(html) do
-    case String.split(html, ~r/<inner_block_placeholder\/>/) do
-      [head, tail] -> [head, tail]
-      [head] -> [head, ""]
-    end
   end
 
   defp ssr_render(name, props, slots \\ nil)
