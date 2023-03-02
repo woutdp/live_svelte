@@ -46,12 +46,14 @@ defmodule LiveSvelte do
     ssr_code =
       if not connected?(socket) do
         props = Map.get(assigns, :props, %{})
+
         slot =
           ~H"""
           <%= render_slot(@inner_block) %>
           """
           |> Phoenix.HTML.Safe.to_iodata()
           |> List.to_string()
+
         ssr_render(assigns.name, props, slot)
       end
 
