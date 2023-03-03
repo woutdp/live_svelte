@@ -19,6 +19,7 @@ Render Svelte directly into Phoenix LiveView with E2E reactivity.
 - End-To-End Reactivity
 - Svelte Preprocessing support with [svelte-preprocess](https://github.com/sveltejs/svelte-preprocess)
 - Tailwind support
+- Slot interoperability
 
 ## Demo
 
@@ -48,7 +49,7 @@ LiveSvelte builds on top of Phoenix LiveView to allow for easy client side state
 ```elixir
 defp deps do
   [
-    {:live_svelte, "~> 0.1.0"}
+    {:live_svelte, "~> 0.2.0-rc0"}
   ]
 end
 ```
