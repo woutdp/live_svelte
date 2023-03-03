@@ -26,16 +26,19 @@ defmodule LiveSvelte do
       <%!-- TODO: This can return things like <title> which should be in the head --%>
       <%!-- <script><%= raw(@ssr_render["head"]) %></script> --%>
       <style><%= raw(@ssr_render["css"]["code"]) %></style>
-      <div
-        id={id(@name)}
-        data-name={@name}
-        data-props={json(@props)}
-        data-inner-block={render_slot(@inner_block)}
-        phx-update="ignore"
-        phx-hook="SvelteComponent"
-      >
+      <%= if not connected?(@socket) do %>
         <%= raw(@ssr_render["html"]) %>
-      </div>
+      <% else %>
+        <div
+          id={id(@name)}
+          data-name={@name}
+          data-props={json(@props)}
+          data-slot-default={Base.encode64(get_slot(assigns))}
+          phx-update="ignore"
+          phx-hook="SvelteComponent"
+        >
+        </div>
+      <% end %>
     </div>
     """
   end
@@ -46,14 +49,7 @@ defmodule LiveSvelte do
     ssr_code =
       if not connected?(socket) do
         props = Map.get(assigns, :props, %{})
-
-        slot =
-          ~H"""
-          <%= render_slot(@inner_block) %>
-          """
-          |> Phoenix.HTML.Safe.to_iodata()
-          |> List.to_string()
-
+        slot = get_slot(assigns)
         ssr_render(assigns.name, props, slot)
       end
 
@@ -63,6 +59,16 @@ defmodule LiveSvelte do
       |> assign(:ssr_render, ssr_code)
 
     {:ok, socket}
+  end
+
+  defp get_slot(assigns) do
+    ~H"""
+    <%= if assigns[:inner_block] do %>
+      <%= render_slot(@inner_block) %>
+    <% end %>
+    """
+    |> Phoenix.HTML.Safe.to_iodata()
+    |> List.to_string()
   end
 
   defp ssr_render(name, props, slots \\ nil)
