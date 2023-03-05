@@ -69,6 +69,7 @@ defmodule LiveSvelte do
     """
     |> Phoenix.HTML.Safe.to_iodata()
     |> List.to_string()
+    |> String.trim()
   end
 
   defp ssr_render(name, props, slots \\ nil)
