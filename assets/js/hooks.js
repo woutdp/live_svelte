@@ -15,56 +15,62 @@ function base64ToElement(base64) {
     return template
 }
 
-export const createSlots = (slots, el) => {
-    function createSlot(content) {
-        element = base64ToElement(content)
+function dataAttributeToJson(attributeName, el) {
+    const data = el.getAttribute(attributeName)
+    return data ? JSON.parse(data) : {}
+}
+
+function createSlots(slots, ref) {
+    const createSlot = (slotName, ref) => {
         let savedTarget, savedAnchor, savedElement
         return () => {
             return {
+                getElement() {
+                    return base64ToElement(dataAttributeToJson('data-slots', ref.el)[slotName])
+                },
                 update() {
+                    const element = this.getElement()
                     detach(savedElement)
                     insert(savedTarget, element, savedAnchor)
                     savedElement = element
                 },
                 c: noop,
                 m(target, anchor) {
+                    const element = this.getElement()
                     savedTarget = target
                     savedAnchor = anchor
                     savedElement = element
-                    insert(target, element, anchor);
+                    insert(target, element, anchor)
                 },
                 d(detaching) {
-                    if (detaching && element.innerHTML) {
-                        detach(element);
-                    }
+                    if (detaching) detach(savedElement)
                 },
                 l: noop,
-            };
+            }
         }
     }
 
     const svelteSlots = {}
 
     for (const slotName in slots) {
-        svelteSlots[slotName] = [createSlot(slots[slotName])];
+        svelteSlots[slotName] = [createSlot(slotName, ref)]
     }
 
     return svelteSlots
 }
 
 function getProps(ref) {
-    const dataProps = ref.el.getAttribute('data-props')
-    const props = dataProps ? JSON.parse(dataProps) : {}
-
     return {
-        ...props,
+        ...dataAttributeToJson('data-props', ref.el),
         pushEvent: (event, data, callback) => ref.pushEvent(event, data, callback),
-        $$slots: createSlots({default: ref.el.getAttribute('data-slot-default')}, ref.el),
+        $$slots: createSlots(dataAttributeToJson('data-slots', ref.el), ref),
         $$scope: {}
     }
 }
 
 function findSlotCtx(component) {
+    // The default slot always exists if there's a slot set
+    // even if no slot is set for the explicit default slot
     return component.$$.ctx.find(ctxElement => ctxElement.default)
 }
 
@@ -88,8 +94,14 @@ const SvelteComponent = {
     },
 
     updated() {
+        // Set the props
         this._instance.$set(getProps(this))
-        findSlotCtx(this._instance).default[0]().update()
+
+        // Set the slots
+        const slotCtx = findSlotCtx(this._instance)
+        for (const key in slotCtx) {
+            slotCtx[key][0]().update()
+        }
     },
 
     destroyed() {

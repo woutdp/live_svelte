@@ -11,6 +11,9 @@ defmodule LiveSvelte do
   use Phoenix.LiveComponent
   import Phoenix.HTML
 
+  alias LiveSvelte.Slots
+  alias LiveSvelte.SSR
+
   attr(:props, :map, default: %{})
   attr(:name, :string)
 
@@ -33,7 +36,7 @@ defmodule LiveSvelte do
           id={id(@name)}
           data-name={@name}
           data-props={json(@props)}
-          data-slot-default={Base.encode64(get_slot(assigns))}
+          data-slots={Slots.base_encode_64(@slots) |> json}
           phx-update="ignore"
           phx-hook="SvelteComponent"
         >
@@ -45,38 +48,25 @@ defmodule LiveSvelte do
 
   @impl true
   def update(assigns, socket) do
+    slots =
+      assigns
+      |> Slots.rendered_slot_map()
+      |> Slots.js_process()
+
     # Making sure we only render once
     ssr_code =
       if not connected?(socket) do
-        props = Map.get(assigns, :props, %{})
-        slot = get_slot(assigns)
-        ssr_render(assigns.name, props, slot)
+        SSR.render(assigns.name, Map.get(assigns, :props, %{}), slots)
       end
 
     socket =
       socket
       |> assign(assigns)
+      |> assign(:slots, slots)
       |> assign(:ssr_render, ssr_code)
 
     {:ok, socket}
   end
-
-  defp get_slot(assigns) do
-    ~H"""
-    <%= if assigns[:inner_block] do %>
-      <%= render_slot(@inner_block) %>
-    <% end %>
-    """
-    |> Phoenix.HTML.Safe.to_iodata()
-    |> List.to_string()
-    |> String.trim()
-  end
-
-  defp ssr_render(name, props, slots \\ nil)
-  defp ssr_render(name, nil, slots), do: ssr_render(name, %{}, slots)
-
-  defp ssr_render(name, props, slots),
-    do: NodeJS.call!({"svelte/render", "render"}, [name, props, slots])
 
   defp json(props) do
     props
