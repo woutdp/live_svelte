@@ -17,9 +17,9 @@ Render Svelte directly into Phoenix LiveView with E2E reactivity.
 
 - Server-Side Rendered (SSR) Svelte
 - End-To-End Reactivity
-- Svelte Preprocessing support with [svelte-preprocess](https://github.com/sveltejs/svelte-preprocess)
-- Tailwind support
-- Slot interoperability
+- Svelte Preprocessing Support with [svelte-preprocess](https://github.com/sveltejs/svelte-preprocess)
+- Tailwind Support
+- _Experimental_ Slot Interoperability
 
 ## Demo
 
@@ -213,6 +213,20 @@ e.g. Typescript
 ```
 cd assets && npm install --save-dev typescript
 ```
+
+## Caveats
+
+### Slot Interoperability 
+
+Slot interoperability is still experimental, **so use with caution!**
+
+Svelte doesn't have an official way of setting the slot on mounting the Svelte object or updating it on subsequent changes, unlike props. This makes using slots from within Liveview on a Svelte component fragile.
+
+The server side rendered initial Svelte rendering does have support for slots so that should work as expected.
+
+Slots may eventually reach a state where it is stable, any help in getting there is appreciated. If you know a lot about the internals of Svelte your help may be invaluable here!
+
+Any bugs related to this are welcome to be logged, PR's are especially welcome!
 
 ## Credits
 - [Ryan Cooke](https://dev.to/debussyman) - [E2E Reactivity using Svelte with Phoenix LiveView](https://dev.to/debussyman/e2e-reactivity-using-svelte-with-phoenix-liveview-38mf)
