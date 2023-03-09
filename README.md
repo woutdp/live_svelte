@@ -6,17 +6,17 @@ Render Svelte directly into Phoenix LiveView with E2E reactivity.
 
 ![logo](https://github.com/woutdp/live_svelte/blob/master/logo.png?raw=true)
 
+[Features](#features) •
+[Demo](#demo) •
 [Installation](#installation) •
 [Usage](#usage)
 
 </div>
 
-<!-- MDOC -->
-
 ## Features
 
-- Server-Side Rendered (SSR) Svelte
 - End-To-End Reactivity
+- Server-Side Rendered (SSR) Svelte
 - Svelte Preprocessing Support with [svelte-preprocess](https://github.com/sveltejs/svelte-preprocess)
 - Tailwind Support
 - _Experimental_ Slot Interoperability
@@ -40,6 +40,7 @@ LiveSvelte builds on top of Phoenix LiveView to allow for easy client side state
 ## Docs
 
 - [HexDocs](https://hexdocs.pm/live_svelte)
+- [HexPackage](https://hex.pm/packages/live_svelte)
 - [Phoenix LiveView](https://github.com/phoenixframework/phoenix_live_view)
 
 ## Installation
