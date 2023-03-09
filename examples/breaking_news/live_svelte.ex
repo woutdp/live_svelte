@@ -1,4 +1,4 @@
-defmodule Example.LiveSvelte do
+defmodule ExamplesWeb.BreakingNewsLive do
   use ExampleWeb, :live_view
 
   @initial_news [

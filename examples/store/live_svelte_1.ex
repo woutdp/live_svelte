@@ -1,5 +1,5 @@
-defmodule AppWeb.LiveSvelte1 do
-  use AppWeb, :live_view
+defmodule ExamplesWeb.LiveSvelte1 do
+  use ExamplesWeb, :live_view
 
   def render(assigns) do
     ~H"""

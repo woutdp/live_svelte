@@ -1,28 +1,24 @@
-defmodule ExamplesWeb.LogListLive do
+defmodule ExamplesWeb.SlotsLive do
   use ExamplesWeb, :live_view
 
   def render(assigns) do
     ~H"""
-    <.live_component
-      module={LiveSvelte}
-      id="LogList"
-      name="LogList"
-      props={%{items: @items}}
-    />
+    <.live_component module={LiveSvelte} name="Slots" id="slots">
+      This is the default inner_block
+      <:the-slot-name>
+        It's working
+        <%= for item <- @items do %>
+          <div class="flex justify-center items-center">
+            <b><%= item.name %></b>
+          </div>
+        <% end %>
+      </:the-slot-name>
+    </.live_component>
     """
-  end
-
-  def handle_event("add_item", %{"name" => name}, socket) do
-    socket =
-      socket
-      |> assign(:items, [%{id: System.unique_integer([:positive]), name: name} | socket.assigns.items])
-
-    {:noreply, socket}
   end
 
   def mount(_params, _session, socket) do
     if connected?(socket), do: :timer.send_interval(1000, self(), :tick)
-
     {:ok, assign(socket, :items, [])}
   end
 
