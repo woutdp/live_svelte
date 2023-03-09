@@ -26,4 +26,4 @@ live_svelte-*.tar
 /tmp/
 
 # NPM dependencies
-node_module/
+node_modules/
