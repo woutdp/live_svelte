@@ -228,6 +228,16 @@ Slots may eventually reach a state where it is stable, any help in getting there
 
 Any bugs related to this are welcome to be logged, PR's are especially welcome!
 
+## Development
+
+### Releasing
+
+- Update the version in `README.md`
+- Update the version in `package.json`
+- Update the version in `mix.exs`
+
+run `mix hex.publish`
+
 ## Credits
 - [Ryan Cooke](https://dev.to/debussyman) - [E2E Reactivity using Svelte with Phoenix LiveView](https://dev.to/debussyman/e2e-reactivity-using-svelte-with-phoenix-liveview-38mf)
 - [Svonix](https://github.com/nikokozak/svonix)

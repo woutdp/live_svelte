@@ -19,8 +19,13 @@ defmodule LiveSvelte.MixProject do
       # Docs
       name: "LiveSvelte",
       docs: [
+        name: "LiveSvelte",
         source_ref: "v#{@version}",
-        source_url: @repo_url
+        source_url: @repo_url,
+        homepage_url: @repo_url,
+        main: "readme",
+        extras: ["README.md"],
+        links: %{"GitHub" => @repo_url},
       ]
     ]
   end
@@ -30,7 +35,7 @@ defmodule LiveSvelte.MixProject do
       maintainers: ["Wout De Puysseleir"],
       licenses: ["MIT"],
       links: %{"GitHub" => @repo_url},
-      files: ~w(assets lib LICENSE.MD mix.exs package.json README.md .formatter.exs)
+      files: ~w(priv assets lib LICENSE.md mix.exs package.json README.md .formatter.exs)
     ]
   end
 
