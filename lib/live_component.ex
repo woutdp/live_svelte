@@ -1,13 +1,4 @@
 defmodule LiveSvelte do
-  @external_resource readme = Path.join([__DIR__, "../README.md"])
-
-  @moduledoc readme
-             |> File.read!()
-             |> String.split("<!-- MDOC -->")
-             |> Enum.fetch!(1)
-
-  @moduledoc since: "0.1.0-rc4"
-
   use Phoenix.LiveComponent
   import Phoenix.HTML
 

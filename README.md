@@ -49,7 +49,7 @@ LiveSvelte builds on top of Phoenix LiveView to allow for easy client side state
 ```elixir
 defp deps do
   [
-    {:live_svelte, "~> 0.2.0-rc0"}
+    {:live_svelte, "~> 0.2.0"}
   ]
 end
 ```
