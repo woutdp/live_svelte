@@ -60,7 +60,12 @@ defmodule LiveSvelte.MixProject do
   defp aliases do
     [
       "assets.build": ["esbuild module", "esbuild cdn", "esbuild cdn_min", "esbuild main"],
-      "assets.watch": ["esbuild module --watch"]
+      "assets.watch": [
+        "esbuild module --watch",
+        "esbuild cdn --watch",
+        "esbuild cdn_min --watch",
+        "esbuild main --watch"
+      ]
     ]
   end
 end

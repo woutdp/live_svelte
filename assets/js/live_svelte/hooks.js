@@ -66,7 +66,7 @@ function findSlotCtx(component) {
     return component.$$.ctx.find(ctxElement => ctxElement.default)
 }
 
-function getHooks(Components) {
+export function getHooks(Components) {
     const components = exportSvelteComponents(Components)
 
     const SvelteHook = {
@@ -107,8 +107,4 @@ function getHooks(Components) {
     return {
         SvelteHook
     }
-}
-
-module.exports = {
-    getHooks
 }

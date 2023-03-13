@@ -1,4 +1,4 @@
-function exportSvelteComponents(components) {
+export function exportSvelteComponents(components) {
     let { default: modules, filenames } = components
 
     filenames = filenames
@@ -6,8 +6,4 @@ function exportSvelteComponents(components) {
         .map(name => name.replace('.svelte', ''))
 
     return Object.assign({}, ...modules.map((m, index) => ({[filenames[index]]: m.default})))
-}
-
-module.exports = {
-    exportSvelteComponents
 }

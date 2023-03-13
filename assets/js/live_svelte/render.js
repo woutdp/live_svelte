@@ -1,4 +1,4 @@
-function getRender(componentPath) {
+export function getRender(componentPath) {
     /***
      * Render a component with the name, props and slots provided.
      */
@@ -19,8 +19,4 @@ function getRender(componentPath) {
     }
 
     return render
-}
-
-module.exports = {
-    getRender
 }
