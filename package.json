@@ -1,18 +1,19 @@
-
 {
   "name": "live_svelte",
   "version": "0.3.0-rc0",
   "description": "",
   "license": "MIT",
-  "module": "./priv/live_svelte.esm.js",
-  "main": "./priv/live_svelte.cjs.js",
+  "module": "./priv/static/live_svelte.esm.js",
+  "main": "./priv/static/live_svelte.cjs.js",
+  "unpkg": "./priv/static/live_svelte.min.js",
+  "jsdelivr": "./priv/static/live_svelte.min.js",
   "author": "Wout De Puysseleir <contact@wout.space>",
   "devDependencies": {
     "svelte": "^3.55.1"
   },
   "exports": {
-    "import": "./priv/live_svelte.esm.js",
-    "require": "./priv/live_svelte.cjs.js"
+    "import": "./priv/static/live_svelte.esm.js",
+    "require": "./priv/static/live_svelte.cjs.js"
   },
   "repository": {
     "type": "git",
@@ -22,7 +23,7 @@
     "README.md",
     "LICENSE.md",
     "package.json",
-    "assets/js/phoenix/*",
-    "priv/*"
+    "assets/js/live_svelte/*",
+    "priv/static/*"
   ]
 }

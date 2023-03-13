@@ -1,14 +1,5 @@
 import {detach, insert, noop} from 'svelte/internal'
-
-function exportSvelteComponents(components) {
-    let { default: modules, filenames } = components
-
-    filenames = filenames
-        .map(name => name.replace('../svelte/components/', ''))
-        .map(name => name.replace('.svelte', ''))
-
-    return Object.assign({}, ...modules.map((m, index) => ({[filenames[index]]: m.default})))
-}
+import {exportSvelteComponents} from './utils'
 
 function base64ToElement(base64) {
     let template = document.createElement('div')
@@ -119,6 +110,5 @@ function getHooks(Components) {
 }
 
 module.exports = {
-    exportSvelteComponents,
     getHooks
 }
