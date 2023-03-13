@@ -1,5 +1,5 @@
 import getRender from "./render"
-import getHooks from "./render"
+import getHooks from "./hooks"
 import exportSvelteComponents from './utils'
 
 export {
