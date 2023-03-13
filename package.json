@@ -4,8 +4,13 @@
   "version": "0.2.0",
   "description": "",
   "license": "MIT",
-  "main": "./priv/static/live_svelte.js",
+  "module": "./priv/live_svelte.esm.js",
+  "main": "./priv/live_svelte.cjs.js",
   "author": "Wout De Puysseleir <contact@wout.space>",
+  "exports": {
+    "import": "./priv/live_svelte.esm.js",
+    "require": "./priv/live_svelte.cjs.js"
+  },
   "repository": {
     "type": "git",
     "url": "git://github.com/woutdp/live_svelte.git"
@@ -15,6 +20,6 @@
     "LICENSE.md",
     "package.json",
     "assets/js/phoenix/*",
-    "priv/static/live_svelte.js"
+    "priv/*"
   ]
 }

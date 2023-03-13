@@ -1,13 +1,8 @@
 import * as Components from '../svelte/components/**/*'
+import {exportSvelteComponents} from 'live_svelte'
 import {detach, insert, noop} from 'svelte/internal'
 
-let {default: modules, filenames} = Components
-
-filenames = filenames
-    .map(name => name.replace('../svelte/components/', ''))
-    .map(name => name.replace('.svelte', ''))
-
-const components = Object.assign({}, ...modules.map((m, index) => ({[filenames[index]]: m.default})))
+const components = exportSvelteComponents(Components)
 
 function base64ToElement(base64) {
     let template = document.createElement('div')
