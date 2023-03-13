@@ -25,7 +25,7 @@ defmodule LiveSvelte.MixProject do
         homepage_url: @repo_url,
         main: "readme",
         extras: ["README.md"],
-        links: %{"GitHub" => @repo_url},
+        links: %{"GitHub" => @repo_url}
       ]
     ]
   end
