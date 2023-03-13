@@ -29,7 +29,7 @@ defmodule LiveSvelte do
           data-props={json(@props)}
           data-slots={Slots.base_encode_64(@slots) |> json}
           phx-update="ignore"
-          phx-hook="SvelteComponent"
+          phx-hook="SvelteHook"
         >
         </div>
       <% end %>

@@ -7,6 +7,9 @@
   "module": "./priv/live_svelte.esm.js",
   "main": "./priv/live_svelte.cjs.js",
   "author": "Wout De Puysseleir <contact@wout.space>",
+  "devDependencies": {
+    "svelte": "^3.55.1"
+  },
   "exports": {
     "import": "./priv/live_svelte.esm.js",
     "require": "./priv/live_svelte.cjs.js"
