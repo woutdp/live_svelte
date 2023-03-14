@@ -63,7 +63,7 @@ function getProps(ref) {
 function findSlotCtx(component) {
     // The default slot always exists if there's a slot set
     // even if no slot is set for the explicit default slot
-    return component.$$.ctx.find(ctxElement => ctxElement.default)
+    return component.$$.ctx.find(ctxElement => ctxElement?.default)
 }
 
 export function getHooks(Components) {

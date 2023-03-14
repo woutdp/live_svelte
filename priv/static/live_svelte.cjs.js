@@ -217,7 +217,7 @@ function getProps(ref) {
   };
 }
 function findSlotCtx(component) {
-  return component.$$.ctx.find((ctxElement) => ctxElement.default);
+  return component.$$.ctx.find((ctxElement) => ctxElement?.default);
 }
 function getHooks(Components) {
   const components = exportSvelteComponents(Components);

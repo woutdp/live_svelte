@@ -240,7 +240,7 @@ var LiveSvelte = (() => {
     });
   }
   function findSlotCtx(component) {
-    return component.$$.ctx.find((ctxElement) => ctxElement.default);
+    return component.$$.ctx.find((ctxElement) => ctxElement == null ? void 0 : ctxElement.default);
   }
   function getHooks(Components) {
     const components = exportSvelteComponents(Components);
