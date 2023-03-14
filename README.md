@@ -85,7 +85,7 @@ In addition we commented out some things such as the `esbuild` watcher configure
 
 ## Usage
 
-Svelte components need to go into the `assets/svelte/components` directory
+Svelte components need to go into the `assets/svelte` directory
 
 - The `id` can be anything, but should be unique
 - Set the `name` of the Svelte component in the `live_component`.
@@ -106,7 +106,7 @@ def render(assigns) do
 end
 ```
 
-If your component is in a directory, for example `assets/svelte/components/some-directory/SomeComponent.svelte` you need to include the directory in your name: `some-directory/SomeComponent`.
+If your component is in a directory, for example `assets/svelte/some-directory/SomeComponent.svelte` you need to include the directory in your name: `some-directory/SomeComponent`.
 
 ### Examples
 

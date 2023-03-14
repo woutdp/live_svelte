@@ -27,6 +27,6 @@ defmodule Mix.Tasks.LiveSvelte.ConfigureEsbuild do
       Mix.Generator.copy_file(file, path)
     end)
 
-    Mix.Generator.create_directory("assets/svelte/components")
+    Mix.Generator.create_directory("assets/svelte")
   end
 end
