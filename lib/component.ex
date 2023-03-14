@@ -35,20 +35,17 @@ defmodule LiveSvelte do
     ~H"""
     <%!-- TODO: This can return things like <title> which should be in the head --%>
     <%!-- <script><%= raw(@ssr_render["head"]) %></script> --%>
-    <%= if @init do %>
+    <div
+      id={id(@name)}
+      data-name={@name}
+      data-props={json(@props)}
+      data-slots={Slots.base_encode_64(@slots) |> json}
+      phx-update="ignore"
+      phx-hook="SvelteHook"
+    >
       <style><%= raw(@ssr_render["css"]["code"]) %></style>
       <%= raw(@ssr_render["html"]) %>
-    <% else %>
-      <div
-        id={id(@name)}
-        data-name={@name}
-        data-props={json(@props)}
-        data-slots={Slots.base_encode_64(@slots) |> json}
-        phx-update="ignore"
-        phx-hook="SvelteHook"
-      >
-      </div>
-    <% end %>
+    </div>
     """
   end
 
