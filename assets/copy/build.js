@@ -19,7 +19,7 @@ let optsClient = {
         importGlobPlugin(),
         sveltePlugin({
             preprocess: sveltePreprocess(),
-            compilerOptions: {hydratable: true},
+            compilerOptions: {hydratable: true, css: true},
         })
     ]
 }
