@@ -9,7 +9,7 @@ defmodule ExamplesWeb.BreakingNewsLive do
 
   def render(assigns) do
     ~H"""
-    <.live_component module={LiveSvelte} id="live-svelte" name="BreakingNews" props={%{news: @news}} />
+    <LiveSvelte.render name="BreakingNews" props={%{news: @news}} />
     """
   end
 

@@ -3,12 +3,7 @@ defmodule ExamplesWeb.LogListLive do
 
   def render(assigns) do
     ~H"""
-    <.live_component
-      module={LiveSvelte}
-      id="LogList"
-      name="LogList"
-      props={%{items: @items}}
-    />
+    <LiveSvelte.render name="LogList" props={%{items: @items}} />
     """
   end
 

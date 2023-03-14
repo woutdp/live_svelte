@@ -87,21 +87,15 @@ In addition we commented out some things such as the `esbuild` watcher configure
 
 Svelte components need to go into the `assets/svelte` directory
 
-- The `id` can be anything, but should be unique
-- Set the `name` of the Svelte component in the `live_component`.
-- Provide the `props` you want to use that should be reactive as a map to the props field
+- Set the `name` of the Svelte component.
+- _Optional:_ Provide the `props` you want to use that should be reactive as a map to the props field
 
-e.g. If your component is named `assets/svelte/components/Example.svelte`:
+e.g. If your component is named `assets/svelte/Example.svelte`:
 
 ```elixir
 def render(assigns) do
   ~H"""
-  <.live_component
-    module={LiveSvelte}
-    id="UniqueId"
-    name="Example"
-    props={%{number: @number}}
-  />
+  <LiveSvelte.render name="Example" props={%{number: @number}} />
   """
 end
 ```
@@ -153,12 +147,7 @@ defmodule AppWeb.SvelteLive do
 
   def render(assigns) do
     ~H"""
-    <.live_component
-      module={LiveSvelte}
-      id="Example"
-      name="Example"
-      props={%{number: @number}}
-    />
+    <LiveSvelte.render name="Example" props={%{number: @number}} />
     """
   end
 
