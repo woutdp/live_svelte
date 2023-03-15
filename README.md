@@ -141,6 +141,8 @@ An example project can be found in the `/example_project` directory.
 <button on:click={decrease}>-</button>
 ```
 
+_Note that here we use the pushEvent function, but you could also use `phx-click` and `phx-value-number` if you wanted._
+
 #### Create a LiveView
 
 ```elixir
