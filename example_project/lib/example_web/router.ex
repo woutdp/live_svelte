@@ -24,6 +24,7 @@ defmodule ExampleWeb.Router do
     live "/live-example-2", LiveExample2
     live "/live-example-3", LiveExample3
     live "/live-example-4", LiveExample4
+    live "/live-example-5", LiveExample5
   end
 
   # Other scopes may use custom stacks.
