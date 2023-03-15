@@ -107,6 +107,8 @@ If your component is in a directory, for example `assets/svelte/some-directory/S
 
 Examples can be found in the `/examples` directory.
 
+An example project can be found in the `/example_project` directory.
+
 #### Create a Svelte component
 
 ```svelte
