@@ -5,8 +5,15 @@ defmodule ExampleWeb.LiveExample4 do
     %{id: 1, body: "Giant Pink Elephant Sighted Downtown"},
     %{id: 2, body: "Local Cat Becomes Mayor of Small Town"},
     %{id: 3, body: "Scientists Discover New Flavor of Ice Cream"},
-    %{id: 4, body: "World's Largest Pizza Baked in Local Pizzeria, Still Not Big Enough for Customers"},
-    %{id: 5, body: "Clown Epidemic Sweeps Through Town, Everyone Laughs Until They Realize the Clowns Aren't Joking"},
+    %{
+      id: 4,
+      body: "World's Largest Pizza Baked in Local Pizzeria, Still Not Big Enough for Customers"
+    },
+    %{
+      id: 5,
+      body:
+        "Clown Epidemic Sweeps Through Town, Everyone Laughs Until They Realize the Clowns Aren't Joking"
+    }
   ]
 
   def render(assigns) do
