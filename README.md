@@ -51,7 +51,7 @@ LiveSvelte builds on top of Phoenix LiveView to allow for easy client side state
 ```elixir
 defp deps do
   [
-    {:live_svelte, "~> 0.3.1"}
+    {:live_svelte, "~> 0.3.2"}
   ]
 end
 ```
@@ -211,7 +211,7 @@ cd assets && npm install --save-dev typescript
 
 ## Caveats
 
-### Slot Interoperability 
+### Slot Interoperability
 
 Slot interoperability is still experimental, **so use with caution!**
 

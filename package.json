@@ -1,6 +1,6 @@
 {
   "name": "live_svelte",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "",
   "license": "MIT",
   "module": "./priv/static/live_svelte.esm.js",
