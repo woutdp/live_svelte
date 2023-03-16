@@ -49,7 +49,7 @@ defmodule Example.MixProject do
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
-      {:live_svelte, "~> 0.3.1"}
+      {:live_svelte, path: ".."}
     ]
   end
 
