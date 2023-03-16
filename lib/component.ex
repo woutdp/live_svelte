@@ -7,6 +7,7 @@ defmodule LiveSvelte do
 
   attr(:props, :map, default: %{})
   attr(:name, :string, required: true)
+  attr(:class, :string, default: nil)
 
   slot(:inner_block)
 
@@ -42,6 +43,7 @@ defmodule LiveSvelte do
       data-slots={Slots.base_encode_64(@slots) |> json}
       phx-update="ignore"
       phx-hook="SvelteHook"
+      class={[@name, @class]}
     >
       <style><%= raw(@ssr_render["css"]["code"]) %></style>
       <%= raw(@ssr_render["html"]) %>
