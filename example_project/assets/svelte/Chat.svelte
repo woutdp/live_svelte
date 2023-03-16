@@ -1,31 +1,56 @@
 <script>
-    import {slide} from "svelte/transition"
+  import {slide, fly, fade} from "svelte/transition"
+  import {elasticOut} from "svelte/easing"
+  import {afterUpdate} from "svelte"
 
-    export let messages
-    export let pushEvent
+  export let messages
+  export let name
+  export let pushEvent
 
-    let message = ""
-    let name = ""
+  let body = ""
+  let messagesElement
 
-    function submitMessage() {
-        if (message === "" || name === "") return
-        pushEvent("send_message", {body: message, name: name})
-        message = ""
-    }
+	afterUpdate(() => { scrollToBottom(messagesElement) })
+
+  const scrollToBottom = async (node) => {
+    node.scroll({ top: node.scrollHeight, behavior: 'smooth' })
+  }
+
+  function submitMessage() {
+    if (body === "") return
+    pushEvent("send_message", {body})
+    body = ""
+  }
 </script>
 
-<div class="flex flex-col justify-between items-between min-h-[400px]">
-    <ul class="flex flex-col gap-2">
-        {#each messages as message (message.id)}
-            <li in:slide class="bg-[#eee] rounded-full px-4 py-2 rounded-bl-none">
-                <i>{message.name}:</i> {message.body}
-            </li>
-        {/each}
-    </ul>
+<div in:fade class="flex flex-col justify-between items-between sm:border sm:rounded-lg w-full h-full sm:w-[360px] sm:h-[600px]">
+  <ul bind:this={messagesElement} class="flex flex-col gap-2 h-full sm:h-[400px] overflow-x-clip overflow-y-auto p-2">
+    {#each messages as message (message.id)}
+      {@const me = message.name === name}
+      <li
+        in:fly={{x: 100 * (me ? 1 : -1), y: -20, duration: 1000, easing: elasticOut}}
+        class="
+          rounded-[1em] px-4 py-2 flex flex-col
+          {me ? 'rounded-tr-none ml-10 bg-[#0A80FE] text-white' : 'rounded-tl-none mr-10 bg-[#E9E8EB] text-black'}
+        "
+      >
+        <span in:fly={{y: 10}} class="text-xs font-bold">{message.name}</span>
+        <span in:fade>{message.body}</span>
+      </li>
+    {/each}
+  </ul>
 
-    <form on:submit|preventDefault={submitMessage}>
-        <input type="text" name="name" class="rounded" bind:value={name} placeholder="Your Name" />
-        <input type="text" name="message" class="rounded" bind:value={message} placeholder="Message..."/>
-        <button class="bg-black text-white rounded px-4 py-2">Send</button>
-    </form>
+  <form on:submit|preventDefault={submitMessage} class="bg-gray-100 p-2 flex gap-2">
+    <!-- svelte-ignore a11y-autofocus -->
+    <input
+      type="text"
+      name="message"
+      class="flex-grow rounded-full bg-transparent text-black"
+      bind:value={body}
+      placeholder="Message..."
+      autofocus
+      autocomplete="off"
+    />
+    <button class="bg-black text-white rounded px-4 py-2">Send</button>
+  </form>
 </div>
