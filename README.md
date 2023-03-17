@@ -15,12 +15,12 @@ Render Svelte directly into Phoenix LiveView with E2E reactivity.
 
 ## Features
 
-- End-To-End Reactivity with LiveView
-- Server-Side Rendered (SSR) Svelte
-- Svelte Preprocessing Support with [svelte-preprocess](https://github.com/sveltejs/svelte-preprocess)
-- Tailwind Support
-- Dead View Support
-- _Experimental_ Slot Interoperability
+- ⚡ **End-To-End Reactivity** with LiveView
+- 🔋 **Server-Side Rendered** (SSR) Svelte
+- ⭐ **Svelte Preprocessing** Support with [svelte-preprocess](https://github.com/sveltejs/svelte-preprocess)
+- 🦄 **Tailwind** Support
+- 💀 **Dead View** Support
+- 🦥 **Slot Interoperability** *(Experimental)*
 
 ## Demo
 
