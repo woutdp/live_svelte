@@ -100,6 +100,7 @@ Svelte components need to go into the `assets/svelte` directory
 
 - Set the `name` of the Svelte component.
 - _Optional:_ Provide the `props` you want to use that should be reactive as a map to the props field
+- _Optional:_ Provide `class` to set the class attribute on the root svelte element
 
 e.g. If your component is named `assets/svelte/Example.svelte`:
 
