@@ -1,5 +1,5 @@
 <script>
-  import {slide, fly, fade} from "svelte/transition"
+  import {fly, fade} from "svelte/transition"
   import {elasticOut} from "svelte/easing"
   import {afterUpdate} from "svelte"
 
@@ -24,7 +24,7 @@
 </script>
 
 <div in:fade class="flex flex-col justify-between items-between sm:border sm:rounded-lg w-full h-full sm:w-[360px] sm:h-[600px]">
-  <ul bind:this={messagesElement} class="flex flex-col gap-2 h-full sm:h-[400px] overflow-x-clip overflow-y-auto p-2">
+  <ul bind:this={messagesElement} class="flex flex-col gap-2 h-full overflow-x-clip overflow-y-auto p-2">
     {#each messages as message (message.id)}
       {@const me = message.name === name}
       <li

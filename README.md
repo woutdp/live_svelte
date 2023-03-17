@@ -236,13 +236,25 @@ Any bugs related to this are welcome to be logged, PR's are especially welcome!
 
 ## Development
 
+### Building Static Files
+
+Make the changes in `/assets/js` and run:
+
+```bash
+mix assets.build
+```
+
 ### Releasing
 
 - Update the version in `README.md`
 - Update the version in `package.json`
 - Update the version in `mix.exs`
 
-run `mix hex.publish`
+Run:
+
+```bash
+mix hex.publish
+```
 
 ## Credits
 - [Ryan Cooke](https://dev.to/debussyman) - [E2E Reactivity using Svelte with Phoenix LiveView](https://dev.to/debussyman/e2e-reactivity-using-svelte-with-phoenix-liveview-38mf)
