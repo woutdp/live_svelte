@@ -18,13 +18,14 @@ defmodule ExampleWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
-    get "/svelte-1", PageController, :svelte_1
-    get "/svelte-2", PageController, :svelte_2
-    live "/live-example-1", LiveExample1
-    live "/live-example-2", LiveExample2
-    live "/live-example-3", LiveExample3
-    live "/live-example-4", LiveExample4
-    live "/live-example-5", LiveExample5
+    get "/simple", PageController, :svelte_1
+    get "/plus-minus-svelte", PageController, :svelte_2
+    live "/plus-minus-liveview", LiveExample1
+    live "/counter", LiveExample2
+    live "/plus-minus-hybrid", LiveExample3
+    live "/log-list", LiveExample4
+    live "/breaking-news", LiveExample5
+    live "/chat", LiveExample6
   end
 
   # Other scopes may use custom stacks.

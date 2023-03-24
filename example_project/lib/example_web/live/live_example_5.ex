@@ -1,49 +1,39 @@
 defmodule ExampleWeb.LiveExample5 do
   use ExampleWeb, :live_view
 
-  @topic "public"
-  @event_new_message "new_message"
+  @initial_news [
+    %{id: 1, body: "Giant Pink Elephant Sighted Downtown"},
+    %{id: 2, body: "Local Cat Becomes Mayor of Small Town"},
+    %{id: 3, body: "Scientists Discover New Flavor of Ice Cream"},
+    %{
+      id: 4,
+      body: "World's Largest Pizza Baked in Local Pizzeria, Still Not Big Enough for Customers"
+    },
+    %{
+      id: 5,
+      body:
+        "Clown Epidemic Sweeps Through Town, Everyone Laughs Until They Realize the Clowns Aren't Joking"
+    }
+  ]
 
   def render(assigns) do
     ~H"""
-    <div class="flex justify-center items-center h-full w-full">
-      <%= unless @name do %>
-        <form phx-submit="set_name">
-          <!-- svelte-ignore a11y-autofocus -->
-          <input type="text" placeholder="Name" name="name" class="rounded" autofocus autocomplete="name" />
-          <button class="py-2 px-4 bg-black text-white rounded">Join</button>
-        </form>
-      <% else %>
-        <LiveSvelte.render
-          name="Chat"
-          props={%{messages: @messages, name: @name}}
-          class="w-full h-full flex justify-center items-center"
-        />
-      <% end %>
-    </div>
+    <LiveSvelte.render name="BreakingNews" props={%{news: @news}} />
     """
   end
 
   def mount(_params, _session, socket) do
-    ExampleWeb.Endpoint.subscribe(@topic)
-    {:ok, assign(socket, messages: [], name: nil)}
+    {:ok, assign(socket, :news, @initial_news)}
   end
 
-  def handle_event("set_name", %{"name" => ""}, socket), do: {:noreply, socket}
-  def handle_event("set_name", %{"name" => name}, socket), do: {:noreply, assign(socket, name: name)}
-
-  def handle_event("send_message", payload, socket) do
-    payload =
-      payload
-      |> Map.put(:name, socket.assigns.name)
-      |> Map.put(:id, System.unique_integer([:positive]))
-
-    ExampleWeb.Endpoint.broadcast(@topic, @event_new_message, payload)
-
-    {:noreply, socket}
+  def handle_event("remove_news_item", %{"id" => id}, socket) do
+    updated_news = Enum.reject(socket.assigns.news, fn item -> item.id == id end)
+    {:noreply, assign(socket, :news, updated_news)}
   end
 
-  def handle_info(%{topic: @topic, event: @event_new_message, payload: payload}, socket) do
-    {:noreply, assign(socket, messages: socket.assigns.messages ++ [payload])}
+  def handle_event("add_news_item", %{"body" => body}, socket) do
+    new_item = %{id: System.unique_integer([:positive]), body: body}
+    updated_news = socket.assigns.news ++ [new_item]
+    {:noreply, assign(socket, :news, updated_news)}
   end
 end

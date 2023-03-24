@@ -1,39 +1,30 @@
 defmodule ExampleWeb.LiveExample4 do
   use ExampleWeb, :live_view
 
-  @initial_news [
-    %{id: 1, body: "Giant Pink Elephant Sighted Downtown"},
-    %{id: 2, body: "Local Cat Becomes Mayor of Small Town"},
-    %{id: 3, body: "Scientists Discover New Flavor of Ice Cream"},
-    %{
-      id: 4,
-      body: "World's Largest Pizza Baked in Local Pizzeria, Still Not Big Enough for Customers"
-    },
-    %{
-      id: 5,
-      body:
-        "Clown Epidemic Sweeps Through Town, Everyone Laughs Until They Realize the Clowns Aren't Joking"
-    }
-  ]
-
   def render(assigns) do
     ~H"""
-    <LiveSvelte.render name="BreakingNews" props={%{news: @news}} />
+    <LiveSvelte.render name="LogList" props={%{items: @items}} />
     """
   end
 
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :news, @initial_news)}
+    if connected?(socket), do: :timer.send_interval(1000, self(), :tick)
+    {:ok, assign(socket, :items, [])}
   end
 
-  def handle_event("remove_news_item", %{"id" => id}, socket) do
-    updated_news = Enum.reject(socket.assigns.news, fn item -> item.id == id end)
-    {:noreply, assign(socket, :news, updated_news)}
+  def handle_event("add_item", %{"name" => name}, socket) do
+    {:noreply, assign(socket, :items, add_log(socket, name))}
   end
 
-  def handle_event("add_news_item", %{"body" => body}, socket) do
-    new_item = %{id: System.unique_integer([:positive]), body: body}
-    updated_news = socket.assigns.news ++ [new_item]
-    {:noreply, assign(socket, :news, updated_news)}
+  def handle_info(:tick, socket) do
+    datetime =
+      DateTime.utc_now()
+      |> DateTime.to_string()
+
+    {:noreply, assign(socket, :items, add_log(socket, datetime))}
+  end
+
+  defp add_log(socket, body) do
+    [%{id: System.unique_integer([:positive]), name: body} | socket.assigns.items]
   end
 end

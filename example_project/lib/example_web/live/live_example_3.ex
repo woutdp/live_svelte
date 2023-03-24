@@ -3,28 +3,17 @@ defmodule ExampleWeb.LiveExample3 do
 
   def render(assigns) do
     ~H"""
-    <LiveSvelte.render name="LogList" props={%{items: @items}} />
+    <h1 class="flex justify-center mb-10 font-bold">Hybrid: LiveView + Svelte</h1>
+
+    <LiveSvelte.render name="CounterHybrid" props={%{number: @number}} />
     """
   end
 
-  def mount(_params, _session, socket) do
-    if connected?(socket), do: :timer.send_interval(1000, self(), :tick)
-    {:ok, assign(socket, :items, [])}
+  def mount(_session, _params, socket) do
+    {:ok, assign(socket, %{number: 10})}
   end
 
-  def handle_event("add_item", %{"name" => name}, socket) do
-    {:noreply, assign(socket, :items, add_log(socket, name))}
-  end
-
-  def handle_info(:tick, socket) do
-    datetime =
-      DateTime.utc_now()
-      |> DateTime.to_string()
-
-    {:noreply, assign(socket, :items, add_log(socket, datetime))}
-  end
-
-  defp add_log(socket, body) do
-    [%{id: System.unique_integer([:positive]), name: body} | socket.assigns.items]
+  def handle_event("set_number", %{"value" => number}, socket) do
+    {:noreply, assign(socket, :number, String.to_integer(number))}
   end
 end

@@ -29,6 +29,7 @@ defmodule ExampleWeb.LiveExample1 do
         <span class="text-xl"><%= @number %></span>
         <button class="plus" phx-click="add">+<%= @amount %></button>
       </div>
+
       <label>
         Amount:
         <input
