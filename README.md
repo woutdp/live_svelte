@@ -8,6 +8,7 @@ Render Svelte directly into Phoenix LiveView with E2E reactivity.
 
 [Features](#features) •
 [Demo](#demo) •
+[Resources](#resources) •
 [Installation](#installation) •
 [Usage](#usage)
 
@@ -48,11 +49,12 @@ You can get a really good user experience without ever needing to write any clie
 
 LiveSvelte builds on top of Phoenix LiveView to allow for easy client side state management while still allowing for communication over the websocket.
 
-## Docs
+## Resources
 
 - [HexDocs](https://hexdocs.pm/live_svelte)
 - [HexPackage](https://hex.pm/packages/live_svelte)
 - [Phoenix LiveView](https://github.com/phoenixframework/phoenix_live_view)
+- [Blog Post](https://wout.space/notes/live-svelte)
 
 ## Installation
 
