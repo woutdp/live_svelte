@@ -103,6 +103,7 @@ Svelte components need to go into the `assets/svelte` directory
 - Set the `name` of the Svelte component.
 - _Optional:_ Provide the `props` you want to use that should be reactive as a map to the props field
 - _Optional:_ Provide `class` to set the class attribute on the root svelte element
+- _Optional:_ Set `ssr` to false to disable server-side rendering
 
 e.g. If your component is named `assets/svelte/Example.svelte`:
 
@@ -220,6 +221,23 @@ To use the preprocessor, install the desired preprocessor.
 e.g. Typescript
 ```
 cd assets && npm install --save-dev typescript
+```
+
+### SSR
+
+SSR is enabled by default, but if you don't want to use Server-Side Rendering for Svelte, you can do 2 things:
+
+#### Globally
+
+If you don't want to use SSR on any component you can disable it globally.
+This will automatically be the case if you don't include the `NodeJs` supervisor in you `application.ex` file
+
+#### Component
+
+To disable SSR on a specific component, set the `ssr` property to false. Like so:
+
+```
+<LiveSvelte.render name="Example" ssr={false} />
 ```
 
 ## Caveats

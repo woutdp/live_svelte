@@ -8,6 +8,7 @@ defmodule LiveSvelte do
   attr(:props, :map, default: %{})
   attr(:name, :string, required: true)
   attr(:class, :string, default: nil)
+  attr(:ssr, :boolean, default: true)
 
   slot(:inner_block)
 
@@ -23,8 +24,12 @@ defmodule LiveSvelte do
       |> Slots.js_process()
 
     ssr_code =
-      if init do
-        SSR.render(assigns.name, Map.get(assigns, :props, %{}), slots)
+      if init and Map.get(assigns, :ssr) do
+        try do
+          SSR.render(assigns.name, Map.get(assigns, :props, %{}), slots)
+        rescue
+          SSR.NodeNotConfigured -> nil
+        end
       end
 
     assigns =
