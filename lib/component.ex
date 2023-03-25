@@ -34,8 +34,7 @@ defmodule LiveSvelte do
       |> assign(:ssr_render, ssr_code)
 
     ~H"""
-    <%!-- TODO: This can return things like <title> which should be in the head --%>
-    <%!-- <script><%= raw(@ssr_render["head"]) %></script> --%>
+    <script><%= raw(@ssr_render["head"]) %></script>
     <div
       id={id(@name)}
       data-name={@name}
