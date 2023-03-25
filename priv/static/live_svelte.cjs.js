@@ -245,7 +245,6 @@ function getHooks(Components) {
       }
     },
     destroyed() {
-      this._instance?.$destroy();
     }
   };
   return {

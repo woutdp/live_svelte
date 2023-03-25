@@ -268,8 +268,6 @@ var LiveSvelte = (() => {
         }
       },
       destroyed() {
-        var _a;
-        (_a = this._instance) == null ? void 0 : _a.$destroy();
       }
     };
     return {
