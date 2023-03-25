@@ -5,12 +5,39 @@ defmodule LiveSvelte do
   alias LiveSvelte.Slots
   alias LiveSvelte.SSR
 
-  attr(:props, :map, default: %{})
-  attr(:name, :string, required: true)
-  attr(:class, :string, default: nil)
-  attr(:ssr, :boolean, default: true)
+  attr(
+    :props,
+    :map,
+    default: %{},
+    doc: "Props to pass to the Svelte component",
+    examples: [%{foo: "bar"}, %{foo: "bar", baz: 1}, %{list: [], baz: 1, qux: %{a: 1, b: 2}}]
+  )
 
-  slot(:inner_block)
+  attr(
+    :name,
+    :string,
+    required: true,
+    doc: "Name of the Svelte component",
+    examples: ["YourComponent", "directory/Example"]
+  )
+
+  attr(
+    :class,
+    :string,
+    default: nil,
+    doc: "Class to apply to the Svelte component",
+    examples: ["my-class", "my-class another-class"]
+  )
+
+  attr(
+    :ssr,
+    :boolean,
+    default: true,
+    doc: "Whether to render the component on the server",
+    examples: [true, false]
+  )
+
+  slot(:inner_block, doc: "Inner block of the Svelte component")
 
   @doc """
   Renders a Svelte component on the server.
