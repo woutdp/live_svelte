@@ -88,7 +88,18 @@ mix live_svelte.setup
 
 4. Make sure you have `node` installed, you can verify this by running `node --version` in your project directory.
 
-5. Finally, remove the `esbuild` configuration from `config/config.exs` and remove the dependency from the `deps` function in your `mix.exs`, and you are done!
+5. For tailwind support, add `"./svelte/**/*.svelte"` to `content` in the `tailwind.config.js` file
+
+```javascript
+...
+content: [
+  ...
+  "./svelte/**/*.svelte"
+],
+...
+```
+
+6. Finally, remove the `esbuild` configuration from `config/config.exs` and remove the dependency from the `deps` function in your `mix.exs`, and you are done!
 
 ### What did we do?
 
