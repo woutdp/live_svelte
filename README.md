@@ -6,13 +6,20 @@ Render Svelte directly into Phoenix LiveView with E2E reactivity.
 
 ![logo](https://github.com/woutdp/live_svelte/blob/master/logo.png?raw=true)
 
+[Resources](#resources) •
 [Features](#features) •
 [Demo](#demo) •
-[Resources](#resources) •
 [Installation](#installation) •
 [Usage](#usage)
 
 </div>
+
+## Resources
+
+- [HexDocs](https://hexdocs.pm/live_svelte)
+- [HexPackage](https://hex.pm/packages/live_svelte)
+- [Phoenix LiveView](https://github.com/phoenixframework/phoenix_live_view)
+- [Blog Post](https://wout.space/notes/live-svelte)
 
 ## Features
 
@@ -49,12 +56,23 @@ You can get a really good user experience without ever needing to write any clie
 
 LiveSvelte builds on top of Phoenix LiveView to allow for easy client side state management while still allowing for communication over the websocket.
 
-## Resources
+### Reasons why you'd use LiveSvelte
 
-- [HexDocs](https://hexdocs.pm/live_svelte)
-- [HexPackage](https://hex.pm/packages/live_svelte)
-- [Phoenix LiveView](https://github.com/phoenixframework/phoenix_live_view)
-- [Blog Post](https://wout.space/notes/live-svelte)
+- You have (complex) local state
+- You want to use an NPM package
+- You want to take advantage of Svelte's animations
+- You want scoped CSS
+- You like Svelte and its DX :)
+
+## Requirements
+
+For Server-Side Rendering (SSR) to work you need `node` installed in your environment.
+
+Make sure you have it installed in production too. You might be using `node` only in the build step, but it might actually not be installed in your production environment.
+
+You can make sure you have `node` installed by running `node --version` in your project directory.
+
+If you don't want SSR, you can disable it by not setting `NodeJS.Supervisor` in `application.ex`. More on that in the [SSR](#SSR) section of this document.
 
 ## Installation
 
@@ -86,9 +104,7 @@ mix deps.get
 mix live_svelte.setup
 ```
 
-4. Make sure you have `node` installed, you can verify this by running `node --version` in your project directory.
-
-5. For tailwind support, add `"./svelte/**/*.svelte"` to `content` in the `tailwind.config.js` file
+4. For tailwind support, add `"./svelte/**/*.svelte"` to `content` in the `tailwind.config.js` file
 
 ```javascript
 ...
@@ -99,7 +115,7 @@ content: [
 ...
 ```
 
-6. Finally, remove the `esbuild` configuration from `config/config.exs` and remove the dependency from the `deps` function in your `mix.exs`, and you are done!
+5. Finally, remove the `esbuild` configuration from `config/config.exs` and remove the dependency from the `deps` function in your `mix.exs`, and you are done!
 
 ### What did we do?
 
