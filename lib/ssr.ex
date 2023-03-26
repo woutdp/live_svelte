@@ -1,4 +1,6 @@
 defmodule LiveSvelte.SSR.NodeNotConfigured do
+  @moduledoc false
+
   defexception message: """
                  NodeJS is not configured. Please add the following to your application.ex:
                  {NodeJS.Supervisor, [path: "#{File.cwd!()}/assets", pool_size: 4]},
@@ -6,6 +8,9 @@ defmodule LiveSvelte.SSR.NodeNotConfigured do
 end
 
 defmodule LiveSvelte.SSR do
+  @moduledoc false
+
+  @doc false
   def render(name, props, slots \\ nil)
   def render(name, nil, slots), do: render(name, %{}, slots)
 
