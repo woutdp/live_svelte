@@ -1,5 +1,5 @@
 defmodule LiveSvelte do
-  use Phoenix.Component
+  use Phoenix.Component, global_prefixes: ~w(x-)
   import Phoenix.HTML
 
   alias LiveSvelte.Slots
@@ -37,12 +37,22 @@ defmodule LiveSvelte do
     examples: [true, false]
   )
 
+  attr(:rest, :list, doc: "Any other attributes to pass to the Svelte component")
+
   slot(:inner_block, doc: "Inner block of the Svelte component")
 
   @doc """
   Renders a Svelte component on the server.
   """
   def render(assigns) do
+    assigns
+    |> dbg
+
+    rest =
+      assigns_to_attributes(assigns, [:props, :name, :class, :ssr, :inner_block])
+      |> Enum.into(%{})
+
+    props = Map.merge(assigns.props, rest)
     init = Map.get(assigns, :__changed__, nil) == nil
 
     slots =
@@ -53,7 +63,7 @@ defmodule LiveSvelte do
     ssr_code =
       if init and Map.get(assigns, :ssr) do
         try do
-          SSR.render(assigns.name, Map.get(assigns, :props, %{}), slots)
+          SSR.render(assigns.name, props, slots)
         rescue
           SSR.NodeNotConfigured -> nil
         end
@@ -61,6 +71,7 @@ defmodule LiveSvelte do
 
     assigns =
       assigns
+      |> assign(:props, props)
       |> assign(:init, init)
       |> assign(:slots, slots)
       |> assign(:ssr_render, ssr_code)
