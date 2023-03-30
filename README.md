@@ -16,19 +16,19 @@ Render Svelte directly into Phoenix LiveView with E2E reactivity.
 
 ## Resources
 
-- [HexDocs](https://hexdocs.pm/live_svelte)
-- [HexPackage](https://hex.pm/packages/live_svelte)
-- [Phoenix LiveView](https://github.com/phoenixframework/phoenix_live_view)
-- [Blog Post](https://wout.space/notes/live-svelte)
+-   [HexDocs](https://hexdocs.pm/live_svelte)
+-   [HexPackage](https://hex.pm/packages/live_svelte)
+-   [Phoenix LiveView](https://github.com/phoenixframework/phoenix_live_view)
+-   [Blog Post](https://wout.space/notes/live-svelte)
 
 ## Features
 
-- ⚡ **End-To-End Reactivity** with LiveView
-- 🔋 **Server-Side Rendered** (SSR) Svelte
-- ⭐ **Svelte Preprocessing** Support with [svelte-preprocess](https://github.com/sveltejs/svelte-preprocess)
-- 🦄 **Tailwind** Support
-- 💀 **Dead View** Support
-- 🦥 **Slot Interoperability** *(Experimental)*
+-   ⚡ **End-To-End Reactivity** with LiveView
+-   🔋 **Server-Side Rendered** (SSR) Svelte
+-   ⭐ **Svelte Preprocessing** Support with [svelte-preprocess](https://github.com/sveltejs/svelte-preprocess)
+-   🦄 **Tailwind** Support
+-   💀 **Dead View** Support
+-   🦥 **Slot Interoperability** _(Experimental)_
 
 ## Demo
 
@@ -58,11 +58,11 @@ LiveSvelte builds on top of Phoenix LiveView to allow for easy client side state
 
 ### Reasons why you'd use LiveSvelte
 
-- You have (complex) local state
-- You want to use an NPM package
-- You want to take advantage of Svelte's animations
-- You want scoped CSS
-- You like Svelte and its DX :)
+-   You have (complex) local state
+-   You want to use an NPM package
+-   You want to take advantage of Svelte's animations
+-   You want scoped CSS
+-   You like Svelte and its DX :)
 
 ## Requirements
 
@@ -99,6 +99,7 @@ end
 ```
 
 3. Run the following in your terminal
+
 ```bash
 mix deps.get
 mix live_svelte.setup
@@ -127,10 +128,10 @@ In addition we commented out some things such as the `esbuild` watcher configure
 
 Svelte components need to go into the `assets/svelte` directory
 
-- Set the `name` of the Svelte component.
-- _Optional:_ Provide the `props` you want to use that should be reactive as a map to the props field
-- _Optional:_ Provide `class` to set the class attribute on the root svelte element
-- _Optional:_ Set `ssr` to false to disable server-side rendering
+-   Set the `name` of the Svelte component.
+-   _Optional:_ Provide the `props` you want to use that should be reactive as a map to the props field
+-   _Optional:_ Provide `class` to set the class attribute on the root svelte element
+-   _Optional:_ Set `ssr` to false to disable server-side rendering
 
 e.g. If your component is named `assets/svelte/Example.svelte`:
 
@@ -164,7 +165,7 @@ An example project can be found in the `/example_project` directory.
         // This pushes the event over the websocket
         // The last parameter is optional. It's a callback for when the event is finished.
         // You could for example set a loading state until the event is finished if it takes a longer time.
-        pushEvent('set_number', { number: number + 1 }, () => {})
+        pushEvent("set_number", {number: number + 1}, () => {})
 
         // Note that we actually never set the number in the frontend!
         // We ONLY push the event to the server.
@@ -173,7 +174,7 @@ An example project can be found in the `/example_project` directory.
     }
 
     function decrease() {
-        pushEvent('set_number', { number: number - 1 }, () => {})
+        pushEvent("set_number", {number: number - 1}, () => {})
     }
 </script>
 
@@ -246,6 +247,7 @@ LiveView allows for a bunch of interoperability which you can read more about he
 To use the preprocessor, install the desired preprocessor.
 
 e.g. Typescript
+
 ```
 cd assets && npm install --save-dev typescript
 ```
@@ -293,9 +295,9 @@ mix assets.build
 
 ### Releasing
 
-- Update the version in `README.md`
-- Update the version in `package.json`
-- Update the version in `mix.exs`
+-   Update the version in `README.md`
+-   Update the version in `package.json`
+-   Update the version in `mix.exs`
 
 Run:
 
@@ -304,5 +306,6 @@ mix hex.publish
 ```
 
 ## Credits
-- [Ryan Cooke](https://dev.to/debussyman) - [E2E Reactivity using Svelte with Phoenix LiveView](https://dev.to/debussyman/e2e-reactivity-using-svelte-with-phoenix-liveview-38mf)
-- [Svonix](https://github.com/nikokozak/svonix)
+
+-   [Ryan Cooke](https://dev.to/debussyman) - [E2E Reactivity using Svelte with Phoenix LiveView](https://dev.to/debussyman/e2e-reactivity-using-svelte-with-phoenix-liveview-38mf)
+-   [Svonix](https://github.com/nikokozak/svonix)

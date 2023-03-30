@@ -1,5 +1,5 @@
 <script>
-    import {slide, fly} from 'svelte/transition'
+    import {slide, fly} from "svelte/transition"
 
     export let pushEvent
     export let items = []
@@ -10,26 +10,27 @@
 
     function addItem() {
         if (!newItemName) return
-        pushEvent('add_item', {name: newItemName})
-        newItemName = ''
+        pushEvent("add_item", {name: newItemName})
+        newItemName = ""
     }
 </script>
 
 <div class="flex flex-col">
     <label>
-        <input type="checkbox" bind:checked={showItems}>
+        <input type="checkbox" bind:checked={showItems} />
         show list
     </label>
 
     <label>
-        <input type="range" bind:value={i} max={items.length}>
+        <input type="range" bind:value={i} max={items.length} />
         {i}
     </label>
 
     <div class="mb-2">
         <form>
-            <input type="test" bind:value={newItemName} class="border rounded px-2 py-1"/>
-            <button type="submit" on:click|preventDefault={addItem} class="bg-black rounded text-white px-2 py-1 font-bold">Add item</button>
+            <input type="test" bind:value={newItemName} class="border rounded px-2 py-1" />
+            <button type="submit" on:click|preventDefault={addItem} class="bg-black rounded text-white px-2 py-1 font-bold">Add item</button
+            >
         </form>
     </div>
 </div>
@@ -45,4 +46,3 @@
         {/each}
     </div>
 {/if}
-

@@ -1,8 +1,8 @@
-import {detach, insert, noop} from 'svelte/internal'
-import {exportSvelteComponents} from './utils'
+import {detach, insert, noop} from "svelte/internal"
+import {exportSvelteComponents} from "./utils"
 
 function base64ToElement(base64) {
-    let template = document.createElement('div')
+    let template = document.createElement("div")
     template.innerHTML = atob(base64).trim()
     return template
 }
@@ -18,7 +18,7 @@ function createSlots(slots, ref) {
         return () => {
             return {
                 getElement() {
-                    return base64ToElement(dataAttributeToJson('data-slots', ref.el)[slotName])
+                    return base64ToElement(dataAttributeToJson("data-slots", ref.el)[slotName])
                 },
                 update() {
                     const element = this.getElement()
@@ -53,10 +53,10 @@ function createSlots(slots, ref) {
 
 function getProps(ref) {
     return {
-        ...dataAttributeToJson('data-props', ref.el),
+        ...dataAttributeToJson("data-props", ref.el),
         pushEvent: (event, data, callback) => ref.pushEvent(event, data, callback),
-        $$slots: createSlots(dataAttributeToJson('data-slots', ref.el), ref),
-        $$scope: {}
+        $$slots: createSlots(dataAttributeToJson("data-slots", ref.el), ref),
+        $$scope: {},
     }
 }
 
@@ -71,9 +71,9 @@ export function getHooks(Components) {
 
     const SvelteHook = {
         mounted() {
-            const componentName = this.el.getAttribute('data-name')
+            const componentName = this.el.getAttribute("data-name")
             if (!componentName) {
-                throw new Error('Component name must be provided')
+                throw new Error("Component name must be provided")
             }
 
             const Component = components[componentName]
@@ -84,7 +84,7 @@ export function getHooks(Components) {
             this._instance = new Component({
                 target: this.el,
                 props: getProps(this),
-                hydrate: true
+                hydrate: true,
             })
         },
 
@@ -104,10 +104,10 @@ export function getHooks(Components) {
             // If we do a page navigation, this would remove the component in the DOM,
             // and then it would to the transition, causing a flicker of unrendered content
             // Since we're doing a page transition anyway, the component will be remove automatically
-        }
+        },
     }
 
     return {
-        SvelteHook
+        SvelteHook,
     }
 }

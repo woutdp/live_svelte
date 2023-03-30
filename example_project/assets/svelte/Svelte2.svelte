@@ -7,9 +7,9 @@
 
 <div class="flex flex-col justify-center items-center gap-4">
     <div class="flex flex-row items-center justify-center gap-10">
-        <button class="minus" on:click={() => number -= amount}>-{amount}</button>
+        <button class="minus" on:click={() => (number -= amount)}>-{amount}</button>
         <span class="text-xl">{number}</span>
-        <button class="plus" on:click={() => number += amount}>+{amount}</button>
+        <button class="plus" on:click={() => (number += amount)}>+{amount}</button>
     </div>
     <label>
         Amount:

@@ -3,11 +3,11 @@
     export let pushEvent
 
     function increase() {
-        pushEvent('set_number', { number: number + 1 })
+        pushEvent("set_number", {number: number + 1})
     }
 
     function decrease() {
-        pushEvent('set_number', { number: number - 1 })
+        pushEvent("set_number", {number: number - 1})
     }
 </script>
 

@@ -1,7 +1,8 @@
 <script>
-    import store from './store'
+    import store from "./store"
 </script>
 
 <label>
-    <input type="checkbox" bind:checked={$store}/> {$store}
+    <input type="checkbox" bind:checked={$store} />
+    {$store}
 </label>
