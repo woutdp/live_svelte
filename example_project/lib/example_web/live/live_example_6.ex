@@ -7,7 +7,7 @@ defmodule ExampleWeb.LiveExample6 do
   def render(assigns) do
     ~H"""
     <div class="flex justify-center items-center h-full w-full">
-      <%= unless @name do %>
+      <%= if !@name do %>
         <form phx-submit="set_name">
           <!-- svelte-ignore a11y-autofocus -->
           <input
