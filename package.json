@@ -1,29 +1,34 @@
 {
-  "name": "live_svelte",
-  "version": "0.3.5",
-  "description": "",
-  "license": "MIT",
-  "module": "./priv/static/live_svelte.esm.js",
-  "main": "./priv/static/live_svelte.cjs.js",
-  "unpkg": "./priv/static/live_svelte.min.js",
-  "jsdelivr": "./priv/static/live_svelte.min.js",
-  "author": "Wout De Puysseleir <contact@wout.space>",
-  "devDependencies": {
-    "svelte": "^3.55.1"
-  },
-  "exports": {
-    "import": "./priv/static/live_svelte.esm.js",
-    "require": "./priv/static/live_svelte.cjs.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/woutdp/live_svelte.git"
-  },
-  "files": [
-    "README.md",
-    "LICENSE.md",
-    "package.json",
-    "assets/js/live_svelte/*",
-    "priv/static/*"
-  ]
+    "name": "live_svelte",
+    "version": "0.3.5",
+    "description": "",
+    "license": "MIT",
+    "module": "./priv/static/live_svelte.esm.js",
+    "main": "./priv/static/live_svelte.cjs.js",
+    "unpkg": "./priv/static/live_svelte.min.js",
+    "jsdelivr": "./priv/static/live_svelte.min.js",
+    "author": "Wout De Puysseleir <contact@wout.space>",
+    "scripts": {
+        "format": "npx prettier --write ."
+    },
+    "devDependencies": {
+        "svelte": "^3.55.1",
+        "prettier": "2.8.7",
+        "prettier-plugin-svelte": "^2.10.0"
+    },
+    "exports": {
+        "import": "./priv/static/live_svelte.esm.js",
+        "require": "./priv/static/live_svelte.cjs.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/woutdp/live_svelte.git"
+    },
+    "files": [
+        "README.md",
+        "LICENSE.md",
+        "package.json",
+        "assets/js/live_svelte/*",
+        "priv/static/*"
+    ]
 }

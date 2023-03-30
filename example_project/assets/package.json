@@ -1,16 +1,16 @@
 {
-  "devDependencies": {
-    "esbuild": "^0.16.17",
-    "esbuild-plugin-import-glob": "^0.1.1",
-    "esbuild-svelte": "^0.7.3",
-    "svelte": "^3.56.0",
-    "svelte-preprocess": "^5.0.2"
-  },
-  "dependencies": {
-    "dynamic-marquee": "^2.6.2",
-    "live_svelte": "file:../..",
-    "phoenix": "file:../deps/phoenix",
-    "phoenix_html": "file:../deps/phoenix_html",
-    "phoenix_live_view": "file:../deps/phoenix_live_view"
-  }
+    "devDependencies": {
+        "esbuild": "^0.16.17",
+        "esbuild-plugin-import-glob": "^0.1.1",
+        "esbuild-svelte": "^0.7.3",
+        "svelte": "^3.56.0",
+        "svelte-preprocess": "^5.0.2"
+    },
+    "dependencies": {
+        "dynamic-marquee": "^2.6.2",
+        "live_svelte": "file:../..",
+        "phoenix": "file:../deps/phoenix",
+        "phoenix_html": "file:../deps/phoenix_html",
+        "phoenix_live_view": "file:../deps/phoenix_live_view"
+    }
 }
