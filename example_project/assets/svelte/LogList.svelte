@@ -28,8 +28,9 @@
     <div class="mb-2">
         <form>
             <input type="test" bind:value={newItemName} class="border rounded px-2 py-1" />
-            <button type="submit" on:click|preventDefault={addItem} class="bg-black rounded text-white px-2 py-1 font-bold">Add item</button
-            >
+            <button type="submit" class="bg-black rounded text-white px-2 py-1 font-bold" on:click|preventDefault={addItem}>
+                Add item
+            </button>
         </form>
     </div>
 </div>

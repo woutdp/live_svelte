@@ -28,9 +28,9 @@
             <li
                 in:fly={{x: 100 * (me ? 1 : -1), y: -20, duration: 1000, easing: elasticOut}}
                 class="
-          rounded-[1em] px-4 py-2 flex flex-col
-          {me ? 'rounded-tr-none ml-10 bg-[#0A80FE] text-white' : 'rounded-tl-none mr-10 bg-[#E9E8EB] text-black'}
-        "
+                    rounded-[1em] px-4 py-2 flex flex-col
+                    {me ? 'rounded-tr-none ml-10 bg-[#0A80FE] text-white' : 'rounded-tl-none mr-10 bg-[#E9E8EB] text-black'}
+                "
             >
                 <span in:fly={{y: 10}} class="text-xs font-bold">{message.name}</span>
                 <span>{message.body}</span>
