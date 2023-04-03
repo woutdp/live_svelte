@@ -12,8 +12,8 @@ defmodule ExampleWeb.LiveExample4 do
     {:ok, assign(socket, :items, [])}
   end
 
-  def handle_event("add_item", %{"name" => name}, socket) do
-    {:noreply, assign(socket, :items, add_log(socket, name))}
+  def handle_event("add_item", %{"body" => body}, socket) do
+    {:noreply, assign(socket, :items, add_log(socket, body))}
   end
 
   def handle_info(:tick, socket) do
@@ -25,6 +25,6 @@ defmodule ExampleWeb.LiveExample4 do
   end
 
   defp add_log(socket, body) do
-    [%{id: System.unique_integer([:positive]), name: body} | socket.assigns.items]
+    [%{id: System.unique_integer([:positive]), body: body} | socket.assigns.items]
   end
 end
