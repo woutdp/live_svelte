@@ -35,7 +35,7 @@ Render Svelte directly into Phoenix LiveView with E2E reactivity.
 
 `/examples/advanced_chat`
 
-https://user-images.githubusercontent.com/3637265/225778578-98ac2197-0b6d-4aa2-9c7f-76c096c9b75c.mp4
+https://user-images.githubusercontent.com/3637265/229902870-29166253-3d18-4b24-bbca-83c4b6648578.webm
 
 <br />
 Svelte handles the look and feel of the chat, while LiveView takes care of syncing. E2E reactivity to the Svelte component so we don't really need to fetch anything! The 'login' to enter your name is a simple LiveView form. Hybrid!
@@ -44,7 +44,7 @@ Svelte handles the look and feel of the chat, while LiveView takes care of synci
 
 `/examples/breaking_news`
 
-https://user-images.githubusercontent.com/3637265/221381302-c9ff31fb-77a0-44f2-8c79-1a1a6b7e5893.mp4
+https://user-images.githubusercontent.com/3637265/229902860-f7ada6b4-4a20-4105-9ee9-79c0cbad8d72.webm
 
 <br />
 News items are synced with the server while the speed is only client side.
