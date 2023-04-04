@@ -20,6 +20,7 @@ Render Svelte directly into Phoenix LiveView with E2E reactivity.
 -   [HexPackage](https://hex.pm/packages/live_svelte)
 -   [Phoenix LiveView](https://github.com/phoenixframework/phoenix_live_view)
 -   [Blog Post](https://wout.space/notes/live-svelte)
+-   [Youtube Introduction](https://www.youtube.com/watch?v=JMkvbW35QvA)
 
 ## Features
 
