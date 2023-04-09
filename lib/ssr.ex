@@ -3,7 +3,7 @@ defmodule LiveSvelte.SSR.NodeNotConfigured do
 
   defexception message: """
                  NodeJS is not configured. Please add the following to your application.ex:
-                 {NodeJS.Supervisor, [path: "#{File.cwd!()}/assets", pool_size: 4]},
+                 {NodeJS.Supervisor, [path: Application.app_dir(:my_app, "/priv/static/assets"), pool_size: 4]},
                """
 end
 

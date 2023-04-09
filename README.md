@@ -82,7 +82,7 @@ If you don't want SSR, you can disable it by not setting `NodeJS.Supervisor` in 
 ```elixir
 defp deps do
   [
-    {:live_svelte, "~> 0.3.5"}
+    {:live_svelte, "~> 0.4.0"}
   ]
 end
 ```
@@ -117,7 +117,23 @@ content: [
 ...
 ```
 
-5. Finally, remove the `esbuild` configuration from `config/config.exs` and remove the dependency from the `deps` function in your `mix.exs`, and you are done!
+5. Go to `application.ex` and replace `:my_app` with your app name at the following line:
+
+```elixir
+children = [
+  {NodeJS.Supervisor, [path: Application.app_dir(:my_app, "/priv/static/assets"), pool_size: 4]},
+  ...
+]
+```
+
+6. Add the following to your `config.exs` and replace `:my_app` with your app name
+
+```elixir
+# Configures LiveSvelte
+config :live_svelte, :otp_name, :my_app
+```
+
+7. Finally, remove the `esbuild` configuration from `config/config.exs` and remove the dependency from the `deps` function in your `mix.exs`, and you are done!
 
 ### What did we do?
 
@@ -260,7 +276,7 @@ SSR is enabled by default, but if you don't want to use Server-Side Rendering fo
 #### Globally
 
 If you don't want to use SSR on any component you can disable it globally.
-This will automatically be the case if you don't include the `NodeJs` supervisor in you `application.ex` file
+This will automatically be the case if you don't include the `NodeJS` supervisor in you `application.ex` file
 
 #### Component
 
