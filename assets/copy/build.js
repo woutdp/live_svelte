@@ -62,11 +62,6 @@ if (deploy) {
         ...optsClient,
         minify: true,
     }
-
-    optsServer = {
-        ...optsServer,
-        minify: true,
-    }
 }
 
 const client = esbuild.build(optsClient)
