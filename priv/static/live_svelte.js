@@ -46,20 +46,17 @@ var LiveSvelte = (() => {
   __export(live_svelte_exports, {
     exportSvelteComponents: () => exportSvelteComponents,
     getHooks: () => getHooks,
-    getRender: () => getRender
+    render: () => render
   });
 
   // js/live_svelte/render.js
-  function getRender(componentPath) {
-    function render(name, props = {}, slots = null) {
-      if (__require.resolve(componentPath) in __require.cache) {
-        delete __require.cache[__require.resolve(componentPath)];
-      }
-      const component = __require(componentPath)[name].default;
-      const $$slots = Object.fromEntries(Object.entries(slots).map(([k, v]) => [k, () => v])) || {};
-      return component.render(props, { $$slots, context: /* @__PURE__ */ new Map() });
+  function render(serverPath, name, props = {}, slots = null) {
+    if (__require.resolve(serverPath) in __require.cache) {
+      delete __require.cache[__require.resolve(serverPath)];
     }
-    return render;
+    const component = __require(serverPath)[name].default;
+    const $$slots = Object.fromEntries(Object.entries(slots).map(([k, v]) => [k, () => v])) || {};
+    return component.render(props, { $$slots, context: /* @__PURE__ */ new Map() });
   }
 
   // ../node_modules/svelte/internal/index.mjs
