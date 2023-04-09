@@ -294,6 +294,36 @@ Make the changes in `/assets/js` and run:
 mix assets.build
 ```
 
+Or run the watcher:
+
+```bash
+mix assets.build --watch
+```
+
+### Local Setup
+
+#### Example Project
+
+You can use `/example_project` as a way to test `live_svelte` locally.
+
+#### Custom Project
+
+You can also use your own project.
+
+Clone `live_svelte` to the parent directory of the project you want to test it in.
+
+Inside `mix.exs`
+
+```elixir
+{:live_svelte, path: "../live_svelte"},
+```
+
+Inside `assets/package.json`
+
+```javascript
+"live_svelte": "file:../../live_svelte",
+```
+
 ### Releasing
 
 -   Update the version in `README.md`
