@@ -74,7 +74,7 @@ defmodule LiveSvelte do
       data-slots={Slots.base_encode_64(@slots) |> json}
       phx-update="ignore"
       phx-hook="SvelteHook"
-      class={[@name, @class]}
+      class={@class}
     >
       <style><%= raw(@ssr_render["css"]["code"]) %></style>
       <%= raw(@ssr_render["html"]) %>
