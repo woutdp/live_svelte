@@ -20,6 +20,7 @@ defmodule ExampleWeb.Router do
     get "/", PageController, :home
     get "/simple", PageController, :svelte_1
     get "/plus-minus-svelte", PageController, :svelte_2
+    get "/lodash", PageController, :svelte_3
     live "/plus-minus-liveview", LiveExample1
     live "/counter", LiveExample2
     live "/plus-minus-hybrid", LiveExample3
