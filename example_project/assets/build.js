@@ -15,6 +15,9 @@ let optsClient = {
     target: "es2017",
     outdir: "../priv/static/assets",
     logLevel: "info",
+    minify: deploy,
+    sourcemap: watch ? "inline" : false,
+    watch,
     plugins: [
         importGlobPlugin(),
         sveltePlugin({
@@ -34,6 +37,8 @@ let optsServer = {
     target: "node19.6.1",
     outdir: "../priv/static/assets/server",
     logLevel: "info",
+    sourcemap: watch ? "inline" : false,
+    watch,
     plugins: [
         importGlobPlugin(),
         sveltePlugin({
@@ -43,49 +48,17 @@ let optsServer = {
     ],
 }
 
-if (watch) {
-    optsClient = {
-        ...optsClient,
-        watch,
-        sourcemap: "inline",
-    }
-
-    optsServer = {
-        ...optsServer,
-        watch,
-        sourcemap: "inline",
-    }
-}
-
-if (deploy) {
-    optsClient = {
-        ...optsClient,
-        minify: true,
-    }
-
-    optsServer = {
-        ...optsServer,
-        minify: true,
-    }
-}
-
 const client = esbuild.build(optsClient)
 const server = esbuild.build(optsServer)
 
 if (watch) {
     client.then(_result => {
-        process.stdin.on("close", () => {
-            process.exit(0)
-        })
-
+        process.stdin.on("close", () => process.exit(0))
         process.stdin.resume()
     })
 
     server.then(_result => {
-        process.stdin.on("close", () => {
-            process.exit(0)
-        })
-
+        process.stdin.on("close", () => process.exit(0))
         process.stdin.resume()
     })
 }
