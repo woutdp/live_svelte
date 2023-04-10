@@ -356,3 +356,7 @@ mix hex.publish
 
 -   [Ryan Cooke](https://dev.to/debussyman) - [E2E Reactivity using Svelte with Phoenix LiveView](https://dev.to/debussyman/e2e-reactivity-using-svelte-with-phoenix-liveview-38mf)
 -   [Svonix](https://github.com/nikokozak/svonix)
+
+## LiveSvelte Projects
+
+-   [ash-svelte-flowbite](https://github.com/dev-guy/ash-svelte-flowbite)
