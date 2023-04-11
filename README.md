@@ -73,7 +73,7 @@ Make sure you have it installed in production too. You might be using `node` onl
 
 You can make sure you have `node` installed by running `node --version` in your project directory.
 
-If you don't want SSR, you can disable it by not setting `NodeJS.Supervisor` in `application.ex`. More on that in the [SSR](#SSR) section of this document.
+If you don't want SSR, you can disable it by not setting `NodeJS.Supervisor` in `application.ex`. More on that in the [SSR](#ssr-server-side-rendering) section of this document.
 
 ## Installation
 
@@ -269,16 +269,26 @@ e.g. Typescript
 cd assets && npm install --save-dev typescript
 ```
 
-### SSR
+### SSR (Server-Side Rendering)
 
-SSR is enabled by default, but if you don't want to use Server-Side Rendering for Svelte, you can do 2 things:
+If you're unfamiliar with SSR (Server-Side Rendering), it is a feature of Svelte to... render Svelte on the server. This means on first page load you get to see HTML instead of a blank page. Immediately after the first page load the page is '[hydrated](https://www.youtube.com/watch?v=D46aT3mx9LU)', which is a fancy word for adding reactivity to your component. This happens in the background, you don't notice this step happening.
 
-#### Globally
+The way LiveSvelte updates itself through LiveView is by letting Svelte handle all the HTML edits. Usually LiveView would edit the HTML by passing messages through the websocket. In our case we only pass the data we provided in the props attribute to Svelte through the websocket. No HTML is being touched by LiveView, Svelte takes care of that.
+
+Like mentioned, without SSR you'd see a brief flash of un-rendered content. Sometimes you can get away with not rendering Svelte on the server, for example when your Svelte component doesn't do any rendering on first page load and needs to be manually toggled for visibility by the user. Or when it is a component that has no visual component to it like tracking your mouse cursor and sending it back to the server.
+
+In theses cases you can turn of SSR.
+
+#### Disabling SSR
+
+SSR is enabled by default when you install LiveSvelte. If you don't want to use Server-Side Rendering for Svelte, you have 2 options:
+
+##### Globally
 
 If you don't want to use SSR on any component you can disable it globally.
-This will automatically be the case if you don't include the `NodeJS` supervisor in you `application.ex` file
+This will automatically be the case if you don't include the `NodeJS` supervisor in the `application.ex` file
 
-#### Component
+##### Component
 
 To disable SSR on a specific component, set the `ssr` property to false. Like so:
 
