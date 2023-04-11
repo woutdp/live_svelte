@@ -1,5 +1,6 @@
 {
     "devDependencies": {
+        "@types/lodash": "^4.14.192",
         "dynamic-marquee": "^2.6.2",
         "esbuild": "^0.16.17",
         "esbuild-plugin-import-glob": "^0.1.1",
@@ -7,7 +8,8 @@
         "lodash": "^4.17.21",
         "stylus": "^0.55.0",
         "svelte": "^3.56.0",
-        "svelte-preprocess": "^5.0.2"
+        "svelte-preprocess": "^5.0.2",
+        "typescript": "^4.9.4"
     },
     "dependencies": {
         "live_svelte": "file:../..",
