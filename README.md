@@ -82,7 +82,7 @@ If you don't want SSR, you can disable it by not setting `NodeJS.Supervisor` in 
 ```elixir
 defp deps do
   [
-    {:live_svelte, "~> 0.4.0"}
+    {:live_svelte, "~> 0.4.1"}
   ]
 end
 ```
