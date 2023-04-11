@@ -5,6 +5,7 @@
         "esbuild-plugin-import-glob": "^0.1.1",
         "esbuild-svelte": "^0.7.3",
         "lodash": "^4.17.21",
+        "stylus": "^0.55.0",
         "svelte": "^3.56.0",
         "svelte-preprocess": "^5.0.2"
     },

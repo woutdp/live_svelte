@@ -8,8 +8,7 @@ defmodule Example.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      {NodeJS.Supervisor,
-       [path: Application.app_dir(:example, "/priv/static/assets"), pool_size: 4]},
+      {NodeJS.Supervisor, [path: Application.app_dir(:example, "/priv/static/assets"), pool_size: 4]},
       # Start the Telemetry supervisor
       ExampleWeb.Telemetry,
       # Start the Ecto repository

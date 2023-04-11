@@ -1,9 +1,17 @@
 <script>
     import * as _ from "lodash"
 
-    export let list
-
-    list = _.sortBy(list, i => i)
+    export let unordered
+    let ordered = _.sortBy(unordered, i => i)
 </script>
 
-{list}
+<h1>Lodash and Stylus Preprocessor</h1>
+<p>Unordered: <code>{unordered}</code></p>
+<p>Ordered: <code>{ordered}</code></p>
+
+<style lang="stylus">
+    h1
+        color red
+        font-weight bold
+        font-size 1.5em
+</style>
