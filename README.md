@@ -117,16 +117,7 @@ content: [
 ...
 ```
 
-5. Go to `application.ex` and replace `:my_app` with your app name at the following line:
-
-```elixir
-children = [
-  {NodeJS.Supervisor, [path: Application.app_dir(:my_app, "/priv/static/assets"), pool_size: 4]},
-  ...
-]
-```
-
-6. Finally, remove the `esbuild` configuration from `config/config.exs` and remove the dependency from the `deps` function in your `mix.exs`, and you are done!
+5. Finally, remove the `esbuild` configuration from `config/config.exs` and remove the dependency from the `deps` function in your `mix.exs`, and you are done!
 
 ### What did we do?
 

@@ -37,7 +37,7 @@ defmodule Mix.Tasks.LiveSvelte.ConfigurePhoenix do
 
   defp configure_application() do
     nodeSupervisor = ~s"""
-    {NodeJS.Supervisor, [path: Application.app_dir(:my_app, "/priv/static/assets"), pool_size: 4]},\
+    {NodeJS.Supervisor, [path: LiveSvelte.SSR.server_path(), pool_size: 4]},\
     """
 
     {path, file} = path_and_file("lib/**/", "application.ex")
