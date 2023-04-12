@@ -2,25 +2,17 @@
 
 # LiveSvelte
 
-Render Svelte directly into Phoenix LiveView with E2E reactivity.
+Svelte inside Phoenix LiveView with seamless end-to-end reactivity
 
 ![logo](https://github.com/woutdp/live_svelte/blob/master/logo.png?raw=true)
 
-[Resources](#resources) •
 [Features](#features) •
+[Resources](#resources) •
 [Demo](#demo) •
 [Installation](#installation) •
 [Usage](#usage)
 
 </div>
-
-## Resources
-
--   [HexDocs](https://hexdocs.pm/live_svelte)
--   [HexPackage](https://hex.pm/packages/live_svelte)
--   [Phoenix LiveView](https://github.com/phoenixframework/phoenix_live_view)
--   [Blog Post](https://wout.space/notes/live-svelte)
--   [Youtube Introduction](https://www.youtube.com/watch?v=JMkvbW35QvA)
 
 ## Features
 
@@ -30,6 +22,14 @@ Render Svelte directly into Phoenix LiveView with E2E reactivity.
 -   🦄 **Tailwind** Support
 -   💀 **Dead View** Support
 -   🦥 **Slot Interoperability** _(Experimental)_
+
+## Resources
+
+-   [HexDocs](https://hexdocs.pm/live_svelte)
+-   [HexPackage](https://hex.pm/packages/live_svelte)
+-   [Phoenix LiveView](https://github.com/phoenixframework/phoenix_live_view)
+-   [Blog Post](https://wout.space/notes/live-svelte)
+-   [Youtube Introduction](https://www.youtube.com/watch?v=JMkvbW35QvA)
 
 ## Demo
 
@@ -60,7 +60,7 @@ LiveSvelte builds on top of Phoenix LiveView to allow for easy client side state
 ### Reasons why you'd use LiveSvelte
 
 -   You have (complex) local state
--   You want to use an NPM package
+-   You want to take full advantage of Javascript's ecosystem
 -   You want to take advantage of Svelte's animations
 -   You want scoped CSS
 -   You like Svelte and its DX :)
@@ -145,10 +145,12 @@ In addition we commented out some things such as the `esbuild` watcher configure
 
 Svelte components need to go into the `assets/svelte` directory
 
--   Set the `name` of the Svelte component.
--   _Optional:_ Provide the `props` you want to use that should be reactive as a map to the props field
--   _Optional:_ Provide `class` to set the class attribute on the root svelte element
--   _Optional:_ Set `ssr` to false to disable server-side rendering
+Attributes:
+
+-   `name`: Specify the Svelte component
+-   `props` _(Optional)_: Provide the `props` you want to use that should be reactive as a map to the props field
+-   `class` _(Optional)_: Provide `class` to set the class attribute on the root svelte element
+-   `ssr` _(Optional)_: Set `ssr` to `false` to disable server-side rendering
 
 e.g. If your component is named `assets/svelte/Example.svelte`:
 
@@ -164,9 +166,23 @@ If your component is in a directory, for example `assets/svelte/some-directory/S
 
 ### Examples
 
-Examples can be found in the `/examples` directory.
+Examples can be found in the `/examples` and `/example_project` directories.
 
-An example project can be found in the `/example_project` directory.
+Most of the `/example_project` examples are visible in the [Youtube demo video](https://www.youtube.com/watch?v=JMkvbW35QvA).
+
+I recommend cloning `live_svelte` and running the example project in `/example_project` by running the following commands:
+
+```
+git clone https://github.com/woutdp/live_svelte.git
+cd ./live_svelte/example_project
+npm install --prefix assets
+mix deps.get
+mix phx.server
+```
+
+Server should be running on `localhost:4000`
+
+If you have examples you want to add, feel free to create a PR, I'd be happy to add them.
 
 #### Create a Svelte component
 
