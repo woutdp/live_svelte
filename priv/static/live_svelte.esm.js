@@ -7,11 +7,11 @@ var __require = /* @__PURE__ */ ((x) => typeof require !== "undefined" ? require
 });
 
 // js/live_svelte/render.js
-function render(serverPath, name, props = {}, slots = null) {
-  if (__require.resolve(serverPath) in __require.cache) {
-    delete __require.cache[__require.resolve(serverPath)];
+function render(name, props = {}, slots = null) {
+  if (__require.resolve(__filename) in __require.cache) {
+    delete __require.cache[__require.resolve(__filename)];
   }
-  const component = __require(serverPath)[name].default;
+  const component = __require(__filename)[name].default;
   const $$slots = Object.fromEntries(Object.entries(slots).map(([k, v]) => [k, () => v])) || {};
   return component.render(props, { $$slots, context: /* @__PURE__ */ new Map() });
 }

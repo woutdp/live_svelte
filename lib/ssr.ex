@@ -16,11 +16,7 @@ defmodule LiveSvelte.SSR do
 
   def render(name, props, slots) do
     try do
-      server_path =
-        Application.get_env(:live_svelte, :otp_name)
-        |> Application.app_dir("/priv/static/assets/server/server.js")
-
-      NodeJS.call!({"server/server", "ssrRenderComponent"}, [server_path, name, props, slots])
+      NodeJS.call!({"server/server", "ssrRenderComponent"}, [name, props, slots])
     catch
       :exit, {:noproc, _} -> raise LiveSvelte.SSR.NodeNotConfigured
     end

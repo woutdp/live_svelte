@@ -82,7 +82,7 @@ If you don't want SSR, you can disable it by not setting `NodeJS.Supervisor` in 
 ```elixir
 defp deps do
   [
-    {:live_svelte, "~> 0.4.1"}
+    {:live_svelte, "~> 0.4.2"}
   ]
 end
 ```
@@ -126,14 +126,7 @@ children = [
 ]
 ```
 
-6. Add the following to your `config.exs` and replace `:my_app` with your app name
-
-```elixir
-# Configures LiveSvelte
-config :live_svelte, :otp_name, :my_app
-```
-
-7. Finally, remove the `esbuild` configuration from `config/config.exs` and remove the dependency from the `deps` function in your `mix.exs`, and you are done!
+6. Finally, remove the `esbuild` configuration from `config/config.exs` and remove the dependency from the `deps` function in your `mix.exs`, and you are done!
 
 ### What did we do?
 
