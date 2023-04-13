@@ -29,9 +29,11 @@ Svelte inside Phoenix LiveView with seamless end-to-end reactivity
 -   [HexPackage](https://hex.pm/packages/live_svelte)
 -   [Phoenix LiveView](https://github.com/phoenixframework/phoenix_live_view)
 -   [Blog Post](https://wout.space/notes/live-svelte)
--   [Youtube Introduction](https://www.youtube.com/watch?v=JMkvbW35QvA)
+-   [YouTube Introduction](https://www.youtube.com/watch?v=JMkvbW35QvA)
 
 ## Demo
+
+For a full intro and demo check out the [YouTube introduction](https://www.youtube.com/watch?v=JMkvbW35QvA)
 
 `/examples/advanced_chat`
 
@@ -152,7 +154,7 @@ If your component is in a directory, for example `assets/svelte/some-directory/S
 
 Examples can be found in the `/examples` and `/example_project` directories.
 
-Most of the `/example_project` examples are visible in the [Youtube demo video](https://www.youtube.com/watch?v=JMkvbW35QvA).
+Most of the `/example_project` examples are visible in the [YouTube demo video](https://www.youtube.com/watch?v=JMkvbW35QvA).
 
 I recommend cloning `live_svelte` and running the example project in `/example_project` by running the following commands:
 
