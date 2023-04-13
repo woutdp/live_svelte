@@ -370,3 +370,5 @@ mix hex.publish
 ## LiveSvelte Projects
 
 -   [ash-svelte-flowbite](https://github.com/dev-guy/ash-svelte-flowbite)
+
+_Using LiveSvelte in a public project? Let me know and I'll add it to this list!_
