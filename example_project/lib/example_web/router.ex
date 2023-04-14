@@ -28,6 +28,7 @@ defmodule ExampleWeb.Router do
     live "/breaking-news", LiveExample5
     live "/chat", LiveExample6
     live "/lights", LiveLights
+    live "/struct", LiveStruct
   end
 
   # Other scopes may use custom stacks.
