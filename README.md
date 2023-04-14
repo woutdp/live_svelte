@@ -298,6 +298,70 @@ To disable SSR on a specific component, set the `ssr` property to false. Like so
 <LiveSvelte.render name="Example" ssr={false} />
 ```
 
+### Structs and Ecto
+
+We use [Jason](https://github.com/michalmuskala/jason) to serialize any data you pass in the props so it can be handled by Javascript.
+Jason doesn't know how to handle structs by default, so you need to define it yourself.
+
+#### Structs
+
+For example, if you have a regular struct like this:
+
+```elixir
+defmodule User do
+  defstruct name: "John", age: 27, address: "Main St"
+end
+```
+
+You must define `@derive`
+
+```elixir
+defmodule User do
+  @derive Jason.Encoder
+  defstruct name: "John", age: 27, address: "Main St"
+end
+```
+
+Be careful though, as you might accidentally leak certain fields you don't want the client to access, you can include which fields to serialize:
+
+```elixir
+defmodule User do
+  @derive {Jason.Encoder, only: [:name, :age]}
+  defstruct name: "John", age: 27, address: "Main St"
+end
+```
+
+#### Ecto
+
+In ecto's case it's important to _also_ emit the `__meta__` field as it's not serializable.
+
+Check out the following example.
+
+```elixir
+defmodule Example.Planets.Planet do
+  use Ecto.Schema
+  import Ecto.Changeset
+  @derive {Jason.Encoder, except: [:__meta__]}
+
+  schema "planets" do
+    field :diameter, :integer
+    field :mass, :integer
+    field :name, :string
+
+    timestamps()
+  end
+
+  ...
+end
+```
+
+#### Documentation
+
+More documentation on the topic:
+
+-   [HexDocs](https://hexdocs.pm/jason/Jason.Encoder.html)
+-   [GitHub](https://github.com/michalmuskala/jason#encoders)
+
 ## Caveats
 
 ### Slot Interoperability
@@ -368,6 +432,7 @@ mix hex.publish
 
 -   [Ryan Cooke](https://dev.to/debussyman) - [E2E Reactivity using Svelte with Phoenix LiveView](https://dev.to/debussyman/e2e-reactivity-using-svelte-with-phoenix-liveview-38mf)
 -   [Svonix](https://github.com/nikokozak/svonix)
+-   [Sveltex](https://github.com/virkillz/sveltex)
 
 ## LiveSvelte Projects
 
