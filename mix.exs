@@ -53,6 +53,7 @@ defmodule LiveSvelte.MixProject do
       {:jason, "~> 1.2"},
       {:nodejs, "~> 2.0"},
       {:phoenix, "~> 1.7"},
+      {:phoenix_html, "~> 3.3"},
       {:phoenix_live_view, "~> 0.18.3"}
     ]
   end

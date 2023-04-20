@@ -54,6 +54,8 @@ defmodule ExampleWeb do
       use Phoenix.LiveView,
         layout: {ExampleWeb.Layouts, :app}
 
+      import LiveSvelte.Sigil
+
       unquote(html_helpers())
     end
   end
