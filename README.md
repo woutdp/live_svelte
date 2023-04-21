@@ -421,6 +421,7 @@ Inside `assets/package.json`
 -   Update the version in `README.md`
 -   Update the version in `package.json`
 -   Update the version in `mix.exs`
+-   Update the changelog
 
 Run:
 
