@@ -16,6 +16,7 @@ let optsClient = {
     minify: deploy,
     sourcemap: watch ? "inline" : false,
     watch,
+    tsconfig: "./tsconfig.json",
     plugins: [
         importGlobPlugin(),
         sveltePlugin({
@@ -36,6 +37,7 @@ let optsServer = {
     logLevel: "info",
     sourcemap: watch ? "inline" : false,
     watch,
+    tsconfig: "./tsconfig.json",
     plugins: [
         importGlobPlugin(),
         sveltePlugin({
