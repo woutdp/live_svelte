@@ -238,6 +238,88 @@ scope "/", AppWeb do
 end
 ```
 
+### LiveSvelte As An Alternative LiveView DSL
+
+We can go one step further and use LiveSvelte as an alternative to the standard LiveView DSL. This idea is inspired by [Surface UI](https://surface-ui.org/).
+
+Take a look at the following example:
+
+```elixir
+defmodule ExampleWeb.LiveSigil do
+  use ExampleWeb, :live_view
+
+  def render(assigns) do
+    ~V"""
+    <script>
+      export let number = 5
+      let other = 1
+
+      $: combined = other + number
+    </script>
+
+    <p>This is number: {number}</p>
+    <p>This is other: {other}</p>
+    <p>This is other + number: {combined}</p>
+
+    <button phx-click="increment">Increment</button>
+    <button on:click={() => other += 1}>Increment</button>
+    """
+  end
+
+  def mount(_params, _session, socket) do
+    {:ok, assign(socket, :number, 1)}
+  end
+
+  def handle_event("increment", _value, socket) do
+    {:noreply, assign(socket, :number, socket.assigns.number + 1)}
+  end
+end
+```
+
+Use the `~V` sigil instead of `~H` and your LiveView will be Svelte instead of an HEEx template.
+
+#### Installation
+
+1. Add `import LiveSvelte.Sigil` inside the `live_view` function in your project, this can be found in `/lib/<app_name>_web.ex`:
+
+```elixir
+def live_view do
+  quote do
+    use Phoenix.LiveView,
+      layout: {ExampleWeb.Layouts, :app}
+
+    import LiveSvelte.Sigil
+
+    unquote(html_helpers())
+  end
+end
+```
+
+2. Ignore build files in your `.gitignore`. The sigil will create Svelte files that are then picked up by `esbuild`, these files don't need to be included in your git repo:
+
+```gitignore
+# Ignore automatically generated Svelte files by the ~V sigil
+/assets/svelte/_build/
+```
+
+#### Neovim Treesitter Config
+
+To enable syntax highlighting in Neovim with Treesitter, create the following file:
+
+`~/.config/nvim/after/queries/elixir/injections.scm`
+
+```
+; extends
+
+; Svelte
+(sigil
+  (sigil_name) @_sigil_name
+  (quoted_content) @svelte
+(#eq? @_sigil_name "V"))
+```
+
+Also make sure Svelte and Elixir is installed in Treesitter.
+
 ### LiveView Live Navigation Events
 
 Inside Svelte you can define [Live Navigation](https://hexdocs.pm/phoenix_live_view/live-navigation.html) links. These links navigate from one LiveView to the other without refreshing the page.
@@ -335,7 +417,7 @@ end
 
 In ecto's case it's important to _also_ emit the `__meta__` field as it's not serializable.
 
-Check out the following example.
+Check out the following example:
 
 ```elixir
 defmodule Example.Planets.Planet do
