@@ -18,6 +18,7 @@ Svelte inside Phoenix LiveView with seamless end-to-end reactivity
 
 -   ⚡ **End-To-End Reactivity** with LiveView
 -   🔋 **Server-Side Rendered** (SSR) Svelte
+-   🪄 **Sigil** as an [Alternative LiveView DSL](#livesvelte-as-an-alternative-liveview-dsl)
 -   ⭐ **Svelte Preprocessing** Support with [svelte-preprocess](https://github.com/sveltejs/svelte-preprocess)
 -   🦄 **Tailwind** Support
 -   💀 **Dead View** Support
@@ -280,7 +281,7 @@ Use the `~V` sigil instead of `~H` and your LiveView will be Svelte instead of a
 
 #### Installation
 
-1. Add `import LiveSvelte.Sigil` inside the `live_view` function in your project, this can be found in `/lib/<app_name>_web.ex`:
+1. Add `import LiveSvelte` inside the `live_view` function in your project, this can be found in `/lib/<app_name>_web.ex`:
 
 ```elixir
 def live_view do
@@ -288,7 +289,7 @@ def live_view do
     use Phoenix.LiveView,
       layout: {ExampleWeb.Layouts, :app}
 
-    import LiveSvelte.Sigil
+    import LiveSvelte
 
     unquote(html_helpers())
   end
