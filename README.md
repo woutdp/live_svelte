@@ -321,6 +321,16 @@ To enable syntax highlighting in Neovim with Treesitter, create the following fi
 
 Also make sure Svelte and Elixir is installed in Treesitter.
 
+#### Options
+
+Options can be passed in the mount by setting `svelte_opts`, check the following example:
+
+```elixir
+def mount(_params, _session, socket) do
+  {:ok, assign(socket, some_value: 1, svelte_opts: %{ssr: false, class: "example-class"})}
+end
+```
+
 ### LiveView Live Navigation Events
 
 Inside Svelte you can define [Live Navigation](https://hexdocs.pm/phoenix_live_view/live-navigation.html) links. These links navigate from one LiveView to the other without refreshing the page.

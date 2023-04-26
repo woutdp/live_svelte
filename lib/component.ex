@@ -101,8 +101,19 @@ defmodule LiveSvelte do
       |> Map.keys()
 
     assigns
-    |> Enum.filter(fn {k, _v} -> k in prop_keys end)
+    |> Enum.filter(fn
+      {:svelte_opts, _v} -> false
+      {k, _v} -> k in prop_keys
+    end)
     |> Enum.into(%{})
+  end
+
+  @doc false
+  def get_ssr(assigns) do
+    case get_in(assigns, [:svelte_opts, :ssr]) do
+      nil -> true
+      ssr -> ssr
+    end
   end
 
   @doc false
@@ -115,7 +126,12 @@ defmodule LiveSvelte do
 
     quote do
       ~H"""
-      <LiveSvelte.render name={"_build/#{__MODULE__}"} props={get_props(assigns)} />
+      <LiveSvelte.render
+        name={"_build/#{__MODULE__}"}
+        props={get_props(assigns)}
+        ssr={get_ssr(assigns)}
+        class={get_in(assigns, [:svelte_opts, :class])}
+      />
       """
     end
   end

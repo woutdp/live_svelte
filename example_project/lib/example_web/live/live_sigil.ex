@@ -21,7 +21,7 @@ defmodule ExampleWeb.LiveSigil do
   end
 
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :number, 1)}
+    {:ok, assign(socket, number: 1)}
   end
 
   def handle_event("increment", _value, socket) do
