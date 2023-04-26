@@ -4,27 +4,31 @@ defmodule ExampleWeb.LiveSigil do
   def render(assigns) do
     ~V"""
     <script>
-      export let number = 5
-      let other = 1
+      export let number = 1
+      let number2 = 5
 
-      $: combined = other + number
+      $: combined = number + number2
     </script>
 
-    <div class="flex flex-col">
-      <p>This is number: {number}</p>
-      <p>This is other: {other}</p>
-      <p>This is other + number: {combined}</p>
-      <button phx-click="increment">Increment</button>
-      <button on:click={() => other += 1}>Increment</button>
-    </div>
+    {number} + {number2} = {combined}
+
+    <button class="rounded" phx-click="increment">+ server</button>
+    <button class="rounded" on:click={() => number2 += 1}>+ client</button>
+
+    <style lang="stylus">
+      button
+        background-color black
+        color white
+        padding 0.5rem 1rem
+    </style>
     """
   end
 
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, number: 1)}
+    {:ok, assign(socket, :number, 10)}
   end
 
-  def handle_event("increment", _value, socket) do
+  def handle_event("increment", _values, socket) do
     {:noreply, assign(socket, :number, socket.assigns.number + 1)}
   end
 end
