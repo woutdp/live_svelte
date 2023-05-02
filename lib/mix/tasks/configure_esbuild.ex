@@ -10,7 +10,7 @@ defmodule Mix.Tasks.LiveSvelte.ConfigureEsbuild do
 
     Mix.Project.deps_paths(depth: 1)
     |> Map.fetch!(:live_svelte)
-    |> Path.join("assets/copy/**/*{.js}")
+    |> Path.join("assets/copy/**/*.{js,json}")
     |> Path.wildcard()
     |> Enum.each(fn file ->
       split = Path.split(file)
