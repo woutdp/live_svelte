@@ -241,6 +241,8 @@ end
 
 ### LiveSvelte As An Alternative LiveView DSL
 
+[Blogpost on the topic](https://wout.space/notes/live-svelte-as-liveview-dsl)
+
 We can go one step further and use LiveSvelte as an alternative to the standard LiveView DSL. This idea is inspired by [Surface UI](https://surface-ui.org/).
 
 Take a look at the following example:
