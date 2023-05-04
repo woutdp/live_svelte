@@ -12,19 +12,10 @@ defmodule Mix.Tasks.LiveSvelte.ConfigureEsbuild do
     |> Map.fetch!(:live_svelte)
     |> Path.join("assets/copy/**/*.{js,json}")
     |> Path.wildcard()
-    |> Enum.each(fn file ->
-      split = Path.split(file)
-      assets_index = Enum.find_index(split, fn item -> item == "assets" end)
+    |> Enum.each(fn full_path ->
+      [_beginning, relative_path] = String.split(full_path, "copy", parts: 2)
 
-      path =
-        split
-        |> Stream.with_index()
-        |> Stream.reject(fn {_item, i} -> assets_index > i end)
-        |> Enum.map(&elem(&1, 0))
-        |> Enum.reject(&(&1 == "copy"))
-        |> Path.join()
-
-      Mix.Generator.copy_file(file, path)
+      Mix.Generator.copy_file(full_path, "assets" <> relative_path)
     end)
 
     Mix.Generator.create_directory("assets/svelte")
