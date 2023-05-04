@@ -101,11 +101,10 @@ defmodule LiveSvelte do
       |> Map.keys()
 
     assigns
-    |> Enum.filter(fn
+    |> Map.filter(fn
       {:svelte_opts, _v} -> false
       {k, _v} -> k in prop_keys
     end)
-    |> Enum.into(%{})
   end
 
   @doc false
