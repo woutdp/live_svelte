@@ -374,7 +374,7 @@ The way LiveSvelte updates itself through LiveView is by letting Svelte handle a
 
 Like mentioned, without SSR you'd see a brief flash of un-rendered content. Sometimes you can get away with not rendering Svelte on the server, for example when your Svelte component doesn't do any rendering on first page load and needs to be manually toggled for visibility by the user. Or when it is a component that has no visual component to it like tracking your mouse cursor and sending it back to the server.
 
-In theses cases you can turn of SSR.
+In theses cases you can turn off SSR.
 
 #### Disabling SSR
 
