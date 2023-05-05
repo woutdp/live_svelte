@@ -471,6 +471,14 @@ Slots may eventually reach a state where it is stable, any help in getting there
 
 Any bugs related to this are welcome to be logged, PR's are especially welcome!
 
+### "Secret State"
+
+With LiveView, it's easy to keep things secret. Let's say you have a conditional that only renders when something is `true`, in LiveView there's no way to know what that conditional will show until it is shown, that's because the HTML is sent over the wire.
+
+With LiveSvelte, we're dealing with JSON being sent to Svelte, which in turn takes that JSON data and conditionally renders something, even if we don't set the conditional to `true`, the Svelte code will contain code on what to show when the conditional turns `true`.
+
+In a lot of scenarios this is not an issue, but it can be and is something you should be aware of.
+
 ## Development
 
 ### Building Static Files
