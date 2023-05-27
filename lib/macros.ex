@@ -29,7 +29,7 @@ defmodule LiveSvelte.Macros do
           <LiveSvelte.svelte
             name={Map.get(var!(assigns), :__component_name)}
             class={Map.get(var!(assigns), :class)}
-            ssr={false}
+            ssr={LiveSvelte.get_ssr(var!(assigns)) |> IO.inspect(label: "ssr")}
             props={Map.get(var!(assigns), :props, %{})}
           />
           """
