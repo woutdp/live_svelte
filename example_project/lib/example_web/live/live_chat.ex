@@ -1,6 +1,6 @@
 defmodule ExampleWeb.LiveExample6 do
   use ExampleWeb, :live_view
-  use LiveSvelte.Macros
+  use LiveSvelte.Components
 
   @topic "public"
   @event_new_message "new_message"
