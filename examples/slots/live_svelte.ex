@@ -3,7 +3,7 @@ defmodule ExamplesWeb.SlotsLive do
 
   def render(assigns) do
     ~H"""
-    <LiveSvelte.render name="Slots">
+    <LiveSvelte.svelte name="Slots">
       This is the default inner_block
       <:the-slot-name>
         It's working
@@ -13,7 +13,7 @@ defmodule ExamplesWeb.SlotsLive do
           </div>
         <% end %>
       </:the-slot-name>
-    </LiveSvelte.render>
+    </LiveSvelte.svelte>
     """
   end
 

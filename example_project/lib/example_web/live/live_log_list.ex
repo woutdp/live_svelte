@@ -3,7 +3,7 @@ defmodule ExampleWeb.LiveExample4 do
 
   def render(assigns) do
     ~H"""
-    <LiveSvelte.render name="LogList" props={%{items: @items}} />
+    <.svelte name="LogList" props={%{items: @items}} />
     """
   end
 

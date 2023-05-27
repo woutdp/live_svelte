@@ -54,8 +54,6 @@ defmodule ExampleWeb do
       use Phoenix.LiveView,
         layout: {ExampleWeb.Layouts, :app}
 
-      import LiveSvelte
-
       unquote(html_helpers())
     end
   end
@@ -88,6 +86,8 @@ defmodule ExampleWeb do
       # Core UI components and translation
       import ExampleWeb.CoreComponents
       import ExampleWeb.Gettext
+
+      import LiveSvelte
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS

@@ -14,7 +14,7 @@ defmodule ExampleWeb.AdvancedChat do
           <button class="py-2 px-4 bg-black text-white rounded">Join</button>
         </form>
       <% else %>
-        <LiveSvelte.render
+        <LiveSvelte.svelte
           name="AdvancedChat"
           props={%{messages: @messages, name: @name}}
           class="w-full h-full flex justify-center items-center"

@@ -42,7 +42,7 @@ defmodule LiveSvelte do
   @doc """
   Renders a Svelte component on the server.
   """
-  def render(assigns) do
+  def svelte(assigns) do
     init = Map.get(assigns, :__changed__, nil) == nil
 
     slots =
@@ -80,6 +80,11 @@ defmodule LiveSvelte do
       <%= raw(@ssr_render["html"]) %>
     </div>
     """
+  end
+
+  def render(assigns) do
+    IO.warn "`LiveSvelte.render/1` is deprecated; call `LiveSvelte.svelte/1` instead.", Macro.Env.stacktrace(__ENV__)
+    svelte(assigns)
   end
 
   defp json(props) do
@@ -125,7 +130,7 @@ defmodule LiveSvelte do
 
     quote do
       ~H"""
-      <LiveSvelte.render
+      <LiveSvelte.svelte
         name={"_build/#{__MODULE__}"}
         props={get_props(assigns)}
         ssr={get_ssr(assigns)}

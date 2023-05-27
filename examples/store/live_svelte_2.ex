@@ -8,7 +8,7 @@ defmodule ExamplesWeb.LiveSvelte2 do
       <.link navigate={~p"/svelte-1"}>svelte-1 with navigate</.link>
       <.link patch={~p"/svelte-1"}>svelte-1 with patch</.link>
     </div>
-    <LiveSvelte.render name="StoreExample2" />
+    <LiveSvelte.svelte name="StoreExample2" />
     """
   end
 end

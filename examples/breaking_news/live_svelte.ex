@@ -11,7 +11,7 @@ defmodule ExampleWeb.BreakingNewsLive do
 
   def render(assigns) do
     ~H"""
-    <LiveSvelte.render name="BreakingNews" props={%{news: @news}} />
+    <LiveSvelte.svelte name="BreakingNews" props={%{news: @news}} />
     """
   end
 

@@ -11,8 +11,8 @@ defmodule ExampleWeb.LiveLights do
     ~H"""
     <div class="max-w-screen-xl mx-auto p-4 flex flex-col gap-4">
       <h1 class="text-center text-2xl font-light my-4">Light Bulb Controller</h1>
-      <LiveSvelte.render name="LightStatusBar" props={%{brightness: @brightness}} />
-      <LiveSvelte.render name="LightControllers" props={%{isOn: isOn?(@brightness)}} />
+      <.svelte name="LightStatusBar" props={%{brightness: @brightness}} />
+      <.svelte name="LightControllers" props={%{isOn: isOn?(@brightness)}} />
     </div>
     """
   end

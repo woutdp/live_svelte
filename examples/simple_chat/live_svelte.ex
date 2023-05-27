@@ -6,7 +6,7 @@ defmodule ExampleWeb.SimpleChatLive do
 
   def render(assigns) do
     ~H"""
-    <LiveSvelte.render name="Chat" props={%{messages: @messages}}/>
+    <LiveSvelte.svelte name="Chat" props={%{messages: @messages}}/>
     """
   end
 

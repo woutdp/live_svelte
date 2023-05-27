@@ -5,7 +5,7 @@ defmodule ExampleWeb.LiveExample3 do
     ~H"""
     <h1 class="flex justify-center mb-10 font-bold">Hybrid: LiveView + Svelte</h1>
 
-    <LiveSvelte.render name="CounterHybrid" props={%{number: @number}} />
+    <.svelte name="CounterHybrid" props={%{number: @number}} />
     """
   end
 

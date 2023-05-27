@@ -85,7 +85,7 @@ If you don't want SSR, you can disable it by not setting `NodeJS.Supervisor` in 
 ```elixir
 defp deps do
   [
-    {:live_svelte, "~> 0.5.1"}
+    {:live_svelte, "~> 0.6.0"}
   ]
 end
 ```
@@ -109,7 +109,25 @@ mix deps.get
 mix live_svelte.setup
 ```
 
-4. For tailwind support, add `"./svelte/**/*.svelte"` to `content` in the `tailwind.config.js` file
+4. Add `import LiveSvelte` in `html_helpers/0` inside `/lib/<app_name>_web.ex` like so:
+
+```elixir
+# /lib/<app_name>_web.ex
+
+defp html_helpers do
+  quote do
+
+    # ...
+
+    import LiveSvelte  # <-- Add this line
+
+    # ...
+
+  end
+end
+```
+
+5. For tailwind support, add `"./svelte/**/*.svelte"` to `content` in the `tailwind.config.js` file
 
 ```javascript
 ...
@@ -144,7 +162,7 @@ e.g. If your component is named `assets/svelte/Example.svelte`:
 ```elixir
 def render(assigns) do
   ~H"""
-  <LiveSvelte.render name="Example" props={%{number: @number}} />
+  <.svelte name="Example" props={%{number: @number}} />
   """
 end
 ```
@@ -214,7 +232,7 @@ defmodule AppWeb.SvelteLive do
 
   def render(assigns) do
     ~H"""
-    <LiveSvelte.render name="Example" props={%{number: @number}} />
+    <.svelte name="Example" props={%{number: @number}} />
     """
   end
 
@@ -283,7 +301,7 @@ Use the `~V` sigil instead of `~H` and your LiveView will be Svelte instead of a
 
 #### Installation
 
-1. Add `import LiveSvelte` inside the `live_view` function in your project, this can be found in `/lib/<app_name>_web.ex`:
+1. If it's not already imported inside `html_helpers/0`, add `import LiveSvelte` inside the `live_view` function in your project, this can be found in `/lib/<app_name>_web.ex`:
 
 ```elixir
 def live_view do
@@ -390,7 +408,7 @@ This will automatically be the case if you don't include the `NodeJS` supervisor
 To disable SSR on a specific component, set the `ssr` property to false. Like so:
 
 ```
-<LiveSvelte.render name="Example" ssr={false} />
+<.svelte name="Example" ssr={false} />
 ```
 
 ### Structs and Ecto
