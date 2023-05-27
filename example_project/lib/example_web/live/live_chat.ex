@@ -1,5 +1,6 @@
 defmodule ExampleWeb.LiveExample6 do
   use ExampleWeb, :live_view
+  use LiveSvelte.Macros
 
   @topic "public"
   @event_new_message "new_message"
@@ -21,10 +22,10 @@ defmodule ExampleWeb.LiveExample6 do
           <button class="py-2 px-4 bg-black text-white rounded">Join</button>
         </form>
       <% else %>
-        <.svelte
-          name="Chat"
-          props={%{messages: @messages, name: @name}}
-          class="w-full h-full flex justify-center items-center"
+        <.Chat
+            messages={@messages}
+            name={@name}
+            class="w-full h-full flex justify-center items-center"
         />
       <% end %>
     </div>
