@@ -1,4 +1,4 @@
-defmodule LiveSvelte.Macros do
+defmodule LiveSvelte.Components do
   @moduledoc """
   Macros to improve the developer experience of crossing the Liveview/Svelte boundary.
   """
