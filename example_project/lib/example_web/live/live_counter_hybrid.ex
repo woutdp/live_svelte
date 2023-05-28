@@ -1,11 +1,12 @@
 defmodule ExampleWeb.LiveExample3 do
   use ExampleWeb, :live_view
+  use LiveSvelte.Components
 
   def render(assigns) do
     ~H"""
     <h1 class="flex justify-center mb-10 font-bold">Hybrid: LiveView + Svelte</h1>
 
-    <.svelte name="CounterHybrid" props={%{number: @number}} />
+    <.CounterHybrid number={@number} />
     """
   end
 
