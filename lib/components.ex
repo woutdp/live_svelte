@@ -8,34 +8,7 @@ defmodule LiveSvelte.Components do
   """
   defmacro __using__(_opts) do
     get_svelte_components()
-    |> Enum.map(fn name ->
-      quote do
-        def unquote(:"#{name}")(assigns) do
-          props =
-            assigns
-            |> Map.filter(fn
-              {:svelte_opts, _v} -> false
-              {k, _v} -> k not in [:__changed__]
-              _ -> false
-            end)
-
-          var!(assigns) =
-            assign(assigns,
-              __component_name: unquote(name),
-              props: props || %{}
-            )
-
-          ~H"""
-          <LiveSvelte.svelte
-            name={Map.get(var!(assigns), :__component_name)}
-            class={Map.get(var!(assigns), :class)}
-            ssr={LiveSvelte.get_ssr(var!(assigns)) |> IO.inspect(label: "ssr")}
-            props={Map.get(var!(assigns), :props, %{})}
-          />
-          """
-        end
-      end
-    end)
+    |> Enum.map(&name_to_function/1)
   end
 
   @doc """
@@ -51,5 +24,34 @@ defmodule LiveSvelte.Components do
       |> Path.basename()
       |> String.replace(".svelte", "")
     end)
+  end
+
+  defp name_to_function(name) do
+    quote do
+      def unquote(:"#{name}")(assigns) do
+        props =
+          assigns
+          |> Map.filter(fn
+            {:svelte_opts, _v} -> false
+            {k, _v} -> k not in [:__changed__]
+            _ -> false
+          end)
+
+        var!(assigns) =
+          assign(assigns,
+            __component_name: unquote(name),
+            props: props || %{}
+          )
+
+        ~H"""
+        <LiveSvelte.svelte
+          name={Map.get(var!(assigns), :__component_name)}
+          class={Map.get(var!(assigns), :class)}
+          ssr={LiveSvelte.get_ssr(var!(assigns))}
+          props={Map.get(var!(assigns), :props, %{})}
+        />
+        """
+      end
+    end
   end
 end
