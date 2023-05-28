@@ -169,6 +169,24 @@ end
 
 If your component is in a directory, for example `assets/svelte/some-directory/SomeComponent.svelte` you need to include the directory in your name: `some-directory/SomeComponent`.
 
+### The Components Macro 
+
+There is also an Elixir macro which checks your `assets/svelte` folder for any Svelte components, and injects local function `def`s for those components into the calling module.
+
+This allows for an alternative, more JSX-like authoring experience inside Liveviews.
+
+e.g. in the below example, a Svelte component called `Example` is available to be called inside the Liveview template:
+
+```elixir
+use LiveSvelte.Components 
+
+def render(assigns) do
+  ~H"""
+  <.Example number={@number} />
+  """
+end
+```
+
 ### Examples
 
 Examples can be found in the `/examples` and `/example_project` directories.
