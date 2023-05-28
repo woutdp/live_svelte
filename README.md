@@ -138,7 +138,7 @@ content: [
 ...
 ```
 
-5. Finally, remove the `esbuild` configuration from `config/config.exs` and remove the dependency from the `deps` function in your `mix.exs`, and you are done!
+6. Finally, remove the `esbuild` configuration from `config/config.exs` and remove the dependency from the `deps` function in your `mix.exs`, and you are done!
 
 ### What did we do?
 
