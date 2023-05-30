@@ -82,7 +82,6 @@ var _boolean_attributes = [
   "hidden",
   "inert",
   "ismap",
-  "itemscope",
   "loop",
   "multiple",
   "muted",
@@ -209,6 +208,7 @@ function getProps(ref) {
   return {
     ...dataAttributeToJson("data-props", ref.el),
     pushEvent: (event, data, callback) => ref.pushEvent(event, data, callback),
+    pushEventTo: (selectorOrTarget, event, data, callback) => ref.pushEventTo(selectorOrTarget, event, data, callback),
     $$slots: createSlots(dataAttributeToJson("data-slots", ref.el), ref),
     $$scope: {}
   };

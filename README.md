@@ -221,7 +221,10 @@ If you have examples you want to add, feel free to create a PR, I'd be happy to 
 <button on:click={decrease}>-</button>
 ```
 
-_Note that here we use the pushEvent function, but you could also use `phx-click` and `phx-value-number` if you wanted._
+_Note: that here we use the `pushEvent` function, but you could also use `phx-click` and `phx-value-number` if you wanted._
+
+_`pushEventTo` is available too and works exactly the same way as specified in the [documentation](https://hexdocs.pm/phoenix_live_view/js-interop.html#client-hooks-via-phx-hook)._
+
 
 #### Create a LiveView
 
