@@ -1,7 +1,7 @@
 defmodule LiveSvelte.MixProject do
   use Mix.Project
 
-  @version "0.7.0"
+  @version "0.7.1"
   @repo_url "https://github.com/woutdp/live_svelte"
 
   def project do
@@ -51,13 +51,13 @@ defmodule LiveSvelte.MixProject do
 
   defp deps do
     [
-      {:esbuild, "~> 0.5", runtime: Mix.env() == :dev},
-      {:ex_doc, "~> 0.19", only: :dev, runtime: false},
       {:jason, "~> 1.2"},
       {:nodejs, "~> 2.0"},
-      {:phoenix, "~> 1.7"},
-      {:phoenix_html, "~> 3.3"},
-      {:phoenix_live_view, "~> 0.18.3"}
+      {:phoenix, ">= 1.7.0"},
+      {:phoenix_html, ">= 3.3.1"},
+      {:phoenix_live_view, ">= 0.18.0"},
+      {:esbuild, "~> 0.5", runtime: Mix.env() == :dev},
+      {:ex_doc, "~> 0.19", only: :dev, runtime: false},
     ]
   end
 
