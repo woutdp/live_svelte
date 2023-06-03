@@ -85,7 +85,7 @@ If you don't want SSR, you can disable it by not setting `NodeJS.Supervisor` in 
 ```elixir
 defp deps do
   [
-    {:live_svelte, "~> 0.7.1"}
+    {:live_svelte, "~> 0.8.0"}
   ]
 end
 ```
@@ -169,7 +169,7 @@ end
 
 If your component is in a directory, for example `assets/svelte/some-directory/SomeComponent.svelte` you need to include the directory in your name: `some-directory/SomeComponent`.
 
-### The Components Macro 
+### The Components Macro
 
 There is also an Elixir macro which checks your `assets/svelte` folder for any Svelte components, and injects local function `def`s for those components into the calling module.
 
@@ -178,7 +178,7 @@ This allows for an alternative, more JSX-like authoring experience inside Livevi
 e.g. in the below example, a Svelte component called `Example` is available to be called inside the Liveview template:
 
 ```elixir
-use LiveSvelte.Components 
+use LiveSvelte.Components
 
 def render(assigns) do
   ~H"""
