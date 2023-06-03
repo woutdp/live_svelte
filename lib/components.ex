@@ -33,22 +33,23 @@ defmodule LiveSvelte.Components do
           assigns
           |> Map.filter(fn
             {:svelte_opts, _v} -> false
-            {k, _v} -> k not in [:__changed__]
+            {k, _v} -> k not in [:__changed__, :__given__, :ssr]
             _ -> false
           end)
 
         var!(assigns) =
-          assign(assigns,
-            __component_name: unquote(name),
-            props: props || %{}
-          )
+          assigns
+          |> Map.put(:__component_name, unquote(name))
+          |> Map.put_new(:ssr, true)
+          |> Map.put_new(:class, nil)
+          |> assign(:props, props)
 
         ~H"""
         <LiveSvelte.svelte
-          name={Map.get(var!(assigns), :__component_name)}
-          class={Map.get(var!(assigns), :class)}
-          ssr={LiveSvelte.get_ssr(var!(assigns))}
-          props={Map.get(var!(assigns), :props, %{})}
+          name={@__component_name}
+          class={@class}
+          ssr={@ssr}
+          props={@props}
         />
         """
       end
