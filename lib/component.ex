@@ -61,7 +61,6 @@ defmodule LiveSvelte do
 
     assigns =
       assigns
-      |> assign(:init, init)
       |> assign(:slots, slots)
       |> assign(:ssr_render, ssr_code)
 
