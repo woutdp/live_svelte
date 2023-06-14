@@ -38,8 +38,11 @@ defmodule LiveSvelte.MixProject do
     [
       maintainers: ["Wout De Puysseleir"],
       licenses: ["MIT"],
-      links: %{"GitHub" => @repo_url},
-      files: ~w(priv assets lib LICENSE.md mix.exs package.json README.md .formatter.exs)
+      links: %{
+        Changelog: @repo_url <> "/blob/master/CHANGELOG.md",
+        GitHub: @repo_url
+      },
+      files: ~w(priv assets lib mix.exs package.json .formatter.exs LICENSE.md README.md CHANGELOG.md)
     ]
   end
 
