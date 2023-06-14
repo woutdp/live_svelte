@@ -1,6 +1,8 @@
 <div align="center">
 
 # LiveSvelte
+[![GitHub](https://img.shields.io/github/stars/woutdp/live_svelte?style=social)](https://github.com/woutdp/live_svelte)
+[![Hex.pm](https://img.shields.io/hexpm/v/live_svelte.svg)](https://hex.pm/packages/live_svelte)
 
 Svelte inside Phoenix LiveView with seamless end-to-end reactivity
 
