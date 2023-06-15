@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
--  Added [LiveSvelte Components Macro](https://github.com/woutdp/live_svelte#the-components-macro) - [PR](https://github.com/woutdp/live_svelte/pull/50)
+-   Added [LiveSvelte Components Macro](https://github.com/woutdp/live_svelte#the-components-macro) - [PR](https://github.com/woutdp/live_svelte/pull/50)
 
 ## [0.7.1] - 2023-06-03
 
@@ -21,18 +21,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
--  Added `pushEventTo`
+-   Added `pushEventTo`
 
 ## [0.6.0] - 2023-05-26
 
 ### Added
 
--  Install instructions on importing LiveSvelte inside `html_helpers` so `<.svelte />` is possible.
+-   Install instructions on importing LiveSvelte inside `html_helpers` so `<.svelte />` is possible.
 
 ### Changed
 
--  Deprecated `LiveSvelte.render` in favor of `LiveSvelte.svelte`
--  Now we're using `<.svelte />` instead of `<LiveSvelte.render />` in the examples
+-   Deprecated `LiveSvelte.render` in favor of `LiveSvelte.svelte`
+-   Now we're using `<.svelte />` instead of `<LiveSvelte.render />` in the examples
 
 ## [0.5.1] - 2023-05-06
 

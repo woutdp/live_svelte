@@ -8,7 +8,7 @@ defmodule ExampleWeb.LiveExample6 do
   def render(assigns) do
     ~H"""
     <div class="flex justify-center items-center h-full w-full">
-      <form phx-submit="set_name" :if={!@name}>
+      <form :if={!@name} phx-submit="set_name">
         <!-- svelte-ignore a11y-autofocus -->
         <input
           type="text"
@@ -21,10 +21,10 @@ defmodule ExampleWeb.LiveExample6 do
         <button class="py-2 px-4 bg-black text-white rounded">Join</button>
       </form>
       <.Chat
-          messages={@messages}
-          name={@name}
-          class="w-full h-full flex justify-center items-center"
-          :if={@name}
+        :if={@name}
+        messages={@messages}
+        name={@name}
+        class="w-full h-full flex justify-center items-center"
       />
     </div>
     """

@@ -26,8 +26,8 @@ import {getHooks} from "live_svelte"
 import * as SvelteComponents from "../svelte/**/*"
 
 const Hooks = {
-  ...createLiveJsonHooks(),
-  ...getHooks(SvelteComponents)
+    ...createLiveJsonHooks(),
+    ...getHooks(SvelteComponents),
 }
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
