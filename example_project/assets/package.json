@@ -12,6 +12,7 @@
         "typescript": "^4.9.4"
     },
     "dependencies": {
+        "live_json": "file:../deps/live_json",
         "live_svelte": "file:../..",
         "phoenix": "file:../deps/phoenix",
         "phoenix_html": "file:../deps/phoenix_html",

@@ -31,6 +31,7 @@ defmodule ExampleWeb.Router do
     live "/struct", LiveStruct
     live "/sigil", LiveSigil
     live "/svelvet", LiveSvelvet
+    live "/live-json", LiveJson
   end
 
   # Other scopes may use custom stacks.

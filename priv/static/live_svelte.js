@@ -106,6 +106,7 @@ var LiveSvelte = (() => {
     "hidden",
     "inert",
     "ismap",
+    "itemscope",
     "loop",
     "multiple",
     "muted",
@@ -228,8 +229,16 @@ var LiveSvelte = (() => {
     }
     return svelteSlots;
   }
+  function getLiveJsonProps(ref) {
+    liveJsonData = {};
+    for (const liveJsonElement of dataAttributeToJson("data-live-json", ref.el)) {
+      if (window[liveJsonElement])
+        liveJsonData[liveJsonElement] = window[liveJsonElement];
+    }
+    return liveJsonData;
+  }
   function getProps(ref) {
-    return __spreadProps(__spreadValues({}, dataAttributeToJson("data-props", ref.el)), {
+    return __spreadProps(__spreadValues(__spreadValues({}, dataAttributeToJson("data-props", ref.el)), getLiveJsonProps(ref)), {
       pushEvent: (event, data, callback) => ref.pushEvent(event, data, callback),
       pushEventTo: (selectorOrTarget, event, data, callback) => ref.pushEventTo(selectorOrTarget, event, data, callback),
       $$slots: createSlots(dataAttributeToJson("data-slots", ref.el), ref),
@@ -250,6 +259,10 @@ var LiveSvelte = (() => {
         const Component = components[componentName];
         if (!Component) {
           throw new Error(`Unable to find ${componentName} component.`);
+        }
+        for (const liveJsonElement of dataAttributeToJson("data-live-json", this.el)) {
+          window.addEventListener(`${liveJsonElement}_initialized`, (event) => this._instance.$set(getProps(this)), false);
+          window.addEventListener(`${liveJsonElement}_patched`, (event) => this._instance.$set(getProps(this)), false);
         }
         this._instance = new Component({
           target: this.el,
