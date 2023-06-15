@@ -42,7 +42,8 @@ defmodule LiveSvelte.MixProject do
         Changelog: @repo_url <> "/blob/master/CHANGELOG.md",
         GitHub: @repo_url
       },
-      files: ~w(priv assets lib mix.exs package.json .formatter.exs LICENSE.md README.md CHANGELOG.md)
+      files:
+        ~w(priv assets lib mix.exs package.json .formatter.exs LICENSE.md README.md CHANGELOG.md)
     ]
   end
 
@@ -60,7 +61,7 @@ defmodule LiveSvelte.MixProject do
       {:phoenix_html, ">= 3.3.1"},
       {:phoenix_live_view, ">= 0.18.0"},
       {:esbuild, "~> 0.5", runtime: Mix.env() == :dev},
-      {:ex_doc, "~> 0.19", only: :dev, runtime: false},
+      {:ex_doc, "~> 0.19", only: :dev, runtime: false}
     ]
   end
 
