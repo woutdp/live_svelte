@@ -187,10 +187,14 @@ function createSlots(slots, ref) {
   return svelteSlots;
 }
 function getLiveJsonProps(ref) {
+  json = dataAttributeToJson("data-live-json", ref.el);
+  if (typeof json === "object" && json !== null && !Array.isArray(json))
+    return json;
   liveJsonData = {};
-  for (const liveJsonElement of dataAttributeToJson("data-live-json", ref.el)) {
-    if (window[liveJsonElement])
-      liveJsonData[liveJsonElement] = window[liveJsonElement];
+  for (const liveJsonVariable of json) {
+    let data = window[liveJsonVariable];
+    if (data)
+      liveJsonData[liveJsonVariable] = data;
   }
   return liveJsonData;
 }
@@ -219,7 +223,7 @@ function getHooks(Components) {
       if (!Component) {
         throw new Error(`Unable to find ${componentName} component.`);
       }
-      for (const liveJsonElement of dataAttributeToJson("data-live-json", this.el)) {
+      for (const liveJsonElement of Object.keys(dataAttributeToJson("data-live-json", this.el))) {
         window.addEventListener(`${liveJsonElement}_initialized`, (event) => this._instance.$set(getProps(this)), false);
         window.addEventListener(`${liveJsonElement}_patched`, (event) => this._instance.$set(getProps(this)), false);
       }

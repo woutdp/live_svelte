@@ -3,10 +3,7 @@ defmodule ExampleWeb.LiveJson do
 
   def render(assigns) do
     ~H"""
-    <.svelte
-      name="LiveJson"
-      live_json_props={%{big_data_set: @ljbig_data_set}}
-    />
+    <.svelte name="LiveJson" live_json_props={%{big_data_set: @ljbig_data_set}} />
     """
   end
 
@@ -14,7 +11,7 @@ defmodule ExampleWeb.LiveJson do
     data =
       for i <- 1..100_000,
           into: %{} do
-        {i, Enum.random(1..1_000_000)}
+        {i, Enum.random(1..1_000_000_000)}
       end
 
     {:ok, LiveJson.initialize(socket, "big_data_set", data)}

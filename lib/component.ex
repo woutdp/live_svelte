@@ -88,7 +88,7 @@ defmodule LiveSvelte do
         id={id(@name)}
         data-name={@name}
         data-props={json(@props)}
-        data-live-json={json(Map.keys(@live_json_props))}
+        data-live-json={render_live_json(@live_json_props, @ssr_render)}
         data-slots={Slots.base_encode_64(@slots) |> json}
         phx-update="ignore"
         phx-hook="SvelteHook"
@@ -118,6 +118,9 @@ defmodule LiveSvelte do
       {:error, _} -> ""
     end
   end
+
+  def render_live_json(data, nil), do: json(Map.keys(data))
+  def render_live_json(data, _ssr_render), do: json(data)
 
   defp id(name), do: "#{name}-#{System.unique_integer([:positive])}"
 

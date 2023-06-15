@@ -52,15 +52,21 @@ function createSlots(slots, ref) {
 }
 
 function getLiveJsonProps(ref) {
+    json = dataAttributeToJson("data-live-json", ref.el)
+
+    // On SSR, data-live-json is the full object we want
+    // After SSR, data-live-json is an array of keys, and we'll get the data from the window
+    if (typeof json === "object" && json !== null && !Array.isArray(json)) return json
+
     liveJsonData = {}
-    for (const liveJsonElement of dataAttributeToJson("data-live-json", ref.el)) {
-        if (window[liveJsonElement]) liveJsonData[liveJsonElement] = window[liveJsonElement]
+    for (const liveJsonVariable of json) {
+        let data = window[liveJsonVariable]
+        if (data) liveJsonData[liveJsonVariable] = data
     }
     return liveJsonData
 }
 
 function getProps(ref) {
-
     return {
         ...dataAttributeToJson("data-props", ref.el),
         ...getLiveJsonProps(ref),
@@ -92,7 +98,7 @@ export function getHooks(Components) {
                 throw new Error(`Unable to find ${componentName} component.`)
             }
 
-            for (const liveJsonElement of dataAttributeToJson("data-live-json", this.el)) {
+            for (const liveJsonElement of Object.keys(dataAttributeToJson("data-live-json", this.el))) {
                 window.addEventListener(`${liveJsonElement}_initialized`, event => this._instance.$set(getProps(this)), false)
                 window.addEventListener(`${liveJsonElement}_patched`, event => this._instance.$set(getProps(this)), false)
             }
