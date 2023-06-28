@@ -78,6 +78,7 @@ defmodule LiveSvelte do
 
     assigns =
       assigns
+      |> assign(:init, init)
       |> assign(:slots, slots)
       |> assign(:ssr_render, ssr_code)
 
@@ -88,7 +89,7 @@ defmodule LiveSvelte do
         id={id(@name)}
         data-name={@name}
         data-props={json(@props)}
-        data-live-json={render_live_json(@live_json_props, @ssr_render)}
+        data-live-json={if @init, do: json(@live_json_props), else: @live_json_props |> Map.keys() |> json()}
         data-slots={Slots.base_encode_64(@slots) |> json}
         phx-update="ignore"
         phx-hook="SvelteHook"
@@ -118,9 +119,6 @@ defmodule LiveSvelte do
       {:error, _} -> ""
     end
   end
-
-  def render_live_json(data, nil), do: json(Map.keys(data))
-  def render_live_json(data, _ssr_render), do: json(data)
 
   defp id(name), do: "#{name}-#{System.unique_integer([:positive])}"
 

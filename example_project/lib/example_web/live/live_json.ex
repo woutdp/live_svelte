@@ -3,7 +3,16 @@ defmodule ExampleWeb.LiveJson do
 
   def render(assigns) do
     ~H"""
-    <.svelte name="LiveJson" live_json_props={%{big_data_set: @ljbig_data_set}} />
+    <div class="flex gap-10">
+      <div>
+        SSR:
+        <.svelte name="LiveJson" live_json_props={%{big_data_set: @ljbig_data_set}} />
+      </div>
+      <div>
+        No SSR:
+        <.svelte name="LiveJson" live_json_props={%{big_data_set: @ljbig_data_set}} ssr={false} />
+      </div>
+    </div>
     """
   end
 

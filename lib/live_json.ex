@@ -5,7 +5,7 @@ defmodule LiveSvelte.LiveJson do
     :live_json_props,
     :map,
     default: %{},
-    doc: "LiveJson props to pass to the Svelte component"
+    doc: "LiveJSON props to pass to the svelte component"
   )
 
   slot(:inner_block)
@@ -13,12 +13,11 @@ defmodule LiveSvelte.LiveJson do
   def live_json(assigns) do
     ~H"""
     <%= if @live_json_props != %{} do %>
-      <div id="lj" phx-hook="LiveJSON">
-        <%= render_slot(@inner_block) %>
-      </div>
-    <% else %>
-      <%= render_slot(@inner_block) %>
+      <div id={id("lj")} phx-hook="LiveJSON" />
     <% end %>
+    <%= render_slot(@inner_block) %>
     """
   end
+
+  defp id(name), do: "#{name}-#{System.unique_integer([:positive])}"
 end
