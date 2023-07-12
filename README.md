@@ -469,7 +469,7 @@ end
 
 #### Ecto
 
-In ecto's case it's important to _also_ emit the `__meta__` field as it's not serializable.
+In ecto's case it's important to _also_ omit the `__meta__` field as it's not serializable.
 
 Check out the following example:
 
