@@ -75,7 +75,7 @@ LiveSvelte builds on top of Phoenix LiveView to allow for easy client side state
 
 For Server-Side Rendering (SSR) to work you need `node` (version 19 or later) installed in your environment.
 
-Make sure you have it installed in production too. You might be using `node` only in the build step, but it might actually not be installed in your production environment.
+Make sure you have it installed in production too. You might be using `node` in the build step, but it might actually not be installed in your production environment.
 
 You can make sure you have `node` installed by running `node --version` in your project directory.
 
