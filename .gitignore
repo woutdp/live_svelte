@@ -27,3 +27,6 @@ live_svelte-*.tar
 
 # NPM dependencies
 node_modules/
+
+# Elixir tools
+.elixir-tools/
