@@ -443,7 +443,7 @@ By default, LiveSvelte sends your entire json object over the wire through LiveV
 
 `live_json` on the other hand allows you to only send a _diff_ of the json to Svelte. This is very useful the bigger your json objects get.
 
-Counterintuitively, you don't always want to use `live_json`. Sometimes it's cheaper to just send your entire object again. Although diffs are small, they do add a little bit of data to your json. So if your object are relatively small, I'd recommend not using `live_json`, but it's something to experiment with for your use-case.
+Counterintuitively, you don't always want to use `live_json`. Sometimes it's cheaper to send your entire object again. Although diffs are small, they do add a little bit of data to your json. So if your json is relatively small, I'd recommend not using `live_json`, but it's something to experiment with for your use-case.
 
 #### Usage
 
