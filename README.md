@@ -25,6 +25,7 @@ Svelte inside Phoenix LiveView with seamless end-to-end reactivity
 -   ⭐ **Svelte Preprocessing** Support with [svelte-preprocess](https://github.com/sveltejs/svelte-preprocess)
 -   🦄 **Tailwind** Support
 -   💀 **Dead View** Support
+-   🤏 **live_json** Support
 -   🦥 **Slot Interoperability** _(Experimental)_
 
 ## Resources
@@ -433,6 +434,43 @@ To disable SSR on a specific component, set the `ssr` property to false. Like so
 ```
 <.svelte name="Example" ssr={false} />
 ```
+
+### live_json
+
+LiveSvelte has support for [live_json](https://github.com/Miserlou/live_json).
+
+By default, LiveSvelte sends your entire json object over the wire through LiveView. This can be expensive if your json object is big and changes frequently.
+
+`live_json` on the other hand allows you to only send a _diff_ of the json to Svelte. This is very useful the bigger your json objects get.
+
+Counterintuitively, you don't always want to use `live_json`. Sometimes it's cheaper to just send your entire object again. Although diffs are small, they do add a little bit of data to your json. So if your object are relatively small, I'd recommend not using `live_json`, but it's something to experiment with for your use-case.
+
+#### Usage
+
+1. Install [live_json](https://github.com/Miserlou/live_json#installation)
+
+2. Use `live_json` in your project with LiveSvelte. For example:
+
+```elixir
+def render(assigns) do
+  ~H"""
+    <.svelte name="Component" live_json_props={%{my_prop: @ljmy_prop}}/>
+  """
+end
+
+def mount(_, _, socket) do
+  # Get `my_big_json_object` somehow
+  {:ok, LiveJson.initialize("my_prop", my_big_json_object)}
+end
+
+def handle_info(%Broadcast{event: "update", payload: my_big_json_object}, socket) do
+  {:noreply, LiveJson.push_patch(socket, "my_prop", my_big_json_object)}
+end
+```
+
+#### Example
+
+You can find an example [here](https://github.com/woutdp/live_svelte/blob/master/example_project/lib/example_web/live/live_json.ex).
 
 ### Structs and Ecto
 
