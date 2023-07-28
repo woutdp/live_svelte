@@ -30,7 +30,6 @@ let optsClient = {
 let optsServer = {
     entryPoints: ["js/server.js"],
     platform: "node",
-    format: "cjs",
     bundle: true,
     conditions: ["svelte", "default"],
     minify: false,
@@ -44,7 +43,7 @@ let optsServer = {
         importGlobPlugin(),
         sveltePlugin({
             preprocess: sveltePreprocess(),
-            compilerOptions: {hydratable: true, generate: "ssr", format: "cjs"},
+            compilerOptions: {hydratable: true, generate: "ssr"},
         }),
     ],
 }
