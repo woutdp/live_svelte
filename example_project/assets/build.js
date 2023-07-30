@@ -10,11 +10,11 @@ const deploy = args.includes("--deploy")
 let optsClient = {
     entryPoints: ["js/app.js"],
     bundle: true,
+    minify: deploy,
     target: "es2017",
-    conditions: ["svelte", "default"],
+    conditions: ["svelte"],
     outdir: "../priv/static/assets",
     logLevel: "info",
-    minify: deploy,
     sourcemap: watch ? "inline" : false,
     watch,
     tsconfig: "./tsconfig.json",
@@ -22,7 +22,7 @@ let optsClient = {
         importGlobPlugin(),
         sveltePlugin({
             preprocess: sveltePreprocess(),
-            compilerOptions: {hydratable: true, css: true},
+            compilerOptions: {hydratable: true, css: 'injected'},
         }),
     ],
 }
@@ -31,9 +31,9 @@ let optsServer = {
     entryPoints: ["js/server.js"],
     platform: "node",
     bundle: true,
-    conditions: ["svelte", "default"],
     minify: false,
     target: "node19.6.1",
+    conditions: ["svelte"],
     outdir: "../priv/static/assets/server",
     logLevel: "info",
     sourcemap: watch ? "inline" : false,

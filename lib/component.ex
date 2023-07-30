@@ -54,7 +54,7 @@ defmodule LiveSvelte do
   Renders a Svelte component on the server.
   """
   def svelte(assigns) do
-    init = Map.get(assigns, :__changed__, nil) == nil
+    init = Map.get(assigns, :__changed__) == nil
 
     slots =
       assigns
@@ -89,6 +89,7 @@ defmodule LiveSvelte do
         id={id(@name)}
         data-name={@name}
         data-props={json(@props)}
+        data-ssr={@ssr_render != nil}
         data-live-json={if @init, do: json(@live_json_props), else: @live_json_props |> Map.keys() |> json()}
         data-slots={Slots.base_encode_64(@slots) |> json}
         phx-update="ignore"

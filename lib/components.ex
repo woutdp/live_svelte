@@ -15,15 +15,9 @@ defmodule LiveSvelte.Components do
   TODO: This could perhaps be optimized to only read the files once per compilation.
   """
   def get_svelte_components do
-    "./assets/svelte/"
-    |> Path.join("**/*.svelte")
+    "./assets/svelte/*.svelte"
     |> Path.wildcard()
-    |> Enum.filter(&(not String.contains?(&1, "_build/")))
-    |> Enum.map(fn path ->
-      path
-      |> Path.basename()
-      |> String.replace(".svelte", "")
-    end)
+    |> Enum.map(fn path -> Path.basename(path, ".svelte") end)
   end
 
   defp name_to_function(name) do
