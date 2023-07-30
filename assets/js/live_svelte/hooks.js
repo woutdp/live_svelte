@@ -2,7 +2,7 @@ import {detach, insert, noop} from "svelte/internal"
 import {exportSvelteComponents} from "./utils"
 
 function base64ToElement(base64) {
-    let template = document.createElement("div")
+    const template = document.createElement("div")
     template.innerHTML = atob(base64).trim()
     return template
 }
@@ -52,15 +52,15 @@ function createSlots(slots, ref) {
 }
 
 function getLiveJsonProps(ref) {
-    json = dataAttributeToJson("data-live-json", ref.el)
+    const json = dataAttributeToJson("data-live-json", ref.el)
 
     // On SSR, data-live-json is the full object we want
     // After SSR, data-live-json is an array of keys, and we'll get the data from the window
     if (typeof json === "object" && json !== null && !Array.isArray(json)) return json
 
-    liveJsonData = {}
+    const liveJsonData = {}
     for (const liveJsonVariable of json) {
-        let data = window[liveJsonVariable]
+        const data = window[liveJsonVariable]
         if (data) liveJsonData[liveJsonVariable] = data
     }
     return liveJsonData
@@ -106,7 +106,7 @@ export function getHooks(Components) {
             this._instance = new Component({
                 target: this.el,
                 props: getProps(this),
-                hydrate: true,
+                hydrate: this.el.hasAttribute("data-ssr"),
             })
         },
 
