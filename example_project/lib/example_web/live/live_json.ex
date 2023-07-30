@@ -5,8 +5,7 @@ defmodule ExampleWeb.LiveJson do
     ~H"""
     <div class="flex gap-10">
       <div>
-        SSR:
-        <.svelte name="LiveJson" live_json_props={%{big_data_set: @ljbig_data_set}} />
+        SSR: <.svelte name="LiveJson" live_json_props={%{big_data_set: @ljbig_data_set}} />
       </div>
       <div>
         No SSR:
