@@ -22,7 +22,7 @@ let optsClient = {
         importGlobPlugin(),
         sveltePlugin({
             preprocess: sveltePreprocess(),
-            compilerOptions: {hydratable: true, css: 'injected'},
+            compilerOptions: {hydratable: true, css: "injected"},
         }),
     ],
 }
