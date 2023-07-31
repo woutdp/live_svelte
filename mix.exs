@@ -60,7 +60,7 @@ defmodule LiveSvelte.MixProject do
       {:phoenix, ">= 1.7.0"},
       {:phoenix_html, ">= 3.3.1"},
       {:phoenix_live_view, ">= 0.18.0"},
-      {:esbuild, "~> 0.5", runtime: Mix.env() == :dev},
+      {:esbuild, "~> 0.5", only: :dev},
       {:ex_doc, "~> 0.19", only: :dev, runtime: false}
     ]
   end
