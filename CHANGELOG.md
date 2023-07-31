@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.2] - 2023-07-31
+
+### Fixed
+
+-   Cleanup and simplify `render` function - [PR](https://github.com/woutdp/live_svelte/pull/61)
+-   Mark `esbuild` as dev only dependency - [PR](https://github.com/woutdp/live_svelte/pull/62)
+
 ## [0.10.1] - 2023-07-30
 
 ### Fixed
