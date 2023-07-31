@@ -5,6 +5,7 @@
     "license": "MIT",
     "module": "./priv/static/live_svelte.esm.js",
     "main": "./priv/static/live_svelte.cjs.js",
+    "types": "./assets/js/live_svelte/types.d.ts",
     "unpkg": "./priv/static/live_svelte.min.js",
     "jsdelivr": "./priv/static/live_svelte.min.js",
     "author": "Wout De Puysseleir <contact@wout.space>",
@@ -17,6 +18,7 @@
         "prettier-plugin-svelte": "^2.10.0"
     },
     "exports": {
+        "types": "./assets/js/live_svelte/types.d.ts",
         "import": "./priv/static/live_svelte.esm.js",
         "require": "./priv/static/live_svelte.cjs.js"
     },
