@@ -26,13 +26,10 @@ __export(live_svelte_exports, {
 module.exports = __toCommonJS(live_svelte_exports);
 
 // js/live_svelte/render.js
-function render(name, props = {}, slots = null) {
-  if (require.resolve(__filename) in require.cache) {
-    delete require.cache[require.resolve(__filename)];
-  }
+function render(name, props, slots) {
   const component = require(__filename)[name];
-  const $$slots = Object.fromEntries(Object.entries(slots).map(([k, v]) => [k, () => v])) || {};
-  return component.render(props, { $$slots, context: /* @__PURE__ */ new Map() });
+  const $$slots = Object.fromEntries(Object.entries(slots).map(([k, v]) => [k, () => v]));
+  return component.render(props, { $$slots });
 }
 
 // ../node_modules/svelte/internal/index.mjs

@@ -50,13 +50,10 @@ var LiveSvelte = (() => {
   });
 
   // js/live_svelte/render.js
-  function render(name, props = {}, slots = null) {
-    if (__require.resolve(__filename) in __require.cache) {
-      delete __require.cache[__require.resolve(__filename)];
-    }
+  function render(name, props, slots) {
     const component = __require(__filename)[name];
-    const $$slots = Object.fromEntries(Object.entries(slots).map(([k, v]) => [k, () => v])) || {};
-    return component.render(props, { $$slots, context: /* @__PURE__ */ new Map() });
+    const $$slots = Object.fromEntries(Object.entries(slots).map(([k, v]) => [k, () => v]));
+    return component.render(props, { $$slots });
   }
 
   // ../node_modules/svelte/internal/index.mjs
