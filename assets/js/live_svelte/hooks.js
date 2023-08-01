@@ -1,5 +1,5 @@
 import {detach, insert, noop} from "svelte/internal"
-import {exportSvelteComponents} from "./utils"
+import {normalizeComponents} from "./utils"
 
 function base64ToElement(base64) {
     const template = document.createElement("div")
@@ -82,8 +82,8 @@ function findSlotCtx(component) {
     return component.$$.ctx.find(ctxElement => ctxElement?.default)
 }
 
-export function getHooks(Components) {
-    const components = exportSvelteComponents(Components)
+export function getHooks(components) {
+    components = normalizeComponents(components)
 
     const SvelteHook = {
         mounted() {

@@ -13,7 +13,7 @@ defmodule LiveSvelte.SSR do
   @doc false
   def render(name, props, slots) do
     try do
-      NodeJS.call!({"server", "ssrRenderComponent"}, [name, props, slots])
+      NodeJS.call!({"server", "render"}, [name, props, slots])
     catch
       :exit, {:noproc, _} -> raise LiveSvelte.SSR.NodeNotConfigured
     end

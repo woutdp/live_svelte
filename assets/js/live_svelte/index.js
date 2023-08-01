@@ -1,3 +1,2 @@
-export {render} from "./render"
+export {getRender} from "./render"
 export {getHooks} from "./hooks"
-export {exportSvelteComponents} from "./utils"

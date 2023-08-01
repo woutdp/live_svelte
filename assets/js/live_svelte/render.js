@@ -1,9 +1,11 @@
-/***
- * Render a component with the name, props and slots provided.
- */
-export function render(name, props, slots) {
-    const component = require(__filename)[name]
-    const $$slots = Object.fromEntries(Object.entries(slots).map(([k, v]) => [k, () => v]))
+import {normalizeComponents} from "./utils"
 
-    return component.render(props, {$$slots})
+export function getRender(components) {
+    components = normalizeComponents(components)
+
+    return function render(name, props, slots) {
+        const Component = components[name]
+        const $$slots = Object.fromEntries(Object.entries(slots).map(([k, v]) => [k, () => v]))
+        return Component.render(props, {$$slots})
+    }
 }

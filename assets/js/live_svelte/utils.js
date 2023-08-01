@@ -1,7 +1,11 @@
-export function exportSvelteComponents(components) {
-    let {default: modules, filenames} = components
+export function normalizeComponents(components) {
+    if (!Array.isArray(components.default) || !Array.isArray(components.filenames)) return components
 
-    filenames = filenames.map(name => name.replace("../svelte/", "")).map(name => name.replace(".svelte", ""))
-
-    return Object.assign({}, ...modules.map((m, index) => ({[filenames[index]]: m.default})))
+    const normalized = {}
+    for (const [index, module] of components.default.entries()) {
+        const Component = module.default
+        const name = components.filenames[index].replace("../svelte/", "").replace(".svelte", "")
+        normalized[name] = Component
+    }
+    return normalized
 }

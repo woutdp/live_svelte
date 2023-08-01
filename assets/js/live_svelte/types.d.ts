@@ -9,6 +9,5 @@ export type Live = {
     uploadTo(phxTarget: any, name: string, files: any): void
 }
 
-export declare const render: (name: string, props: object, slots: object) => any
-export declare const getHooks: (components: {default: any[]; filenames: string[]}) => object
-export declare const exportSvelteComponents: (components: {default: any[]; filenames: string[]}) => object
+export declare const getHooks: (components: object) => object
+export declare const getRender: (components: object) => (name: string, props: object, slots: object) => any
