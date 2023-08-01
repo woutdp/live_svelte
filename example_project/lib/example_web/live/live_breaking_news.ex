@@ -24,7 +24,7 @@ defmodule ExampleWeb.LiveExample5 do
         import {onMount} from "svelte"
 
         export let news = []
-        export let pushEvent
+        export let live
 
         let newItem = ""
         let marquee
@@ -36,13 +36,13 @@ defmodule ExampleWeb.LiveExample5 do
         function addItem() {
             if (newItem === "") return
             if (news.length === 0) marquee.appendItem(createItem(newItem))
-            pushEvent("add_news_item", {body: newItem})
+            live.pushEvent("add_news_item", {body: newItem})
             newItem = ""
         }
 
         // Function to remove an item from the news feed
         function removeItem(id) {
-            pushEvent("remove_news_item", {id: id})
+            live.pushEvent("remove_news_item", {id: id})
         }
 
         // Run this code when the component is mounted to the DOM

@@ -2,14 +2,14 @@
     import {slide} from "svelte/transition"
 
     export let messages
-    export let pushEvent
+    export let live
 
     let message = ""
     let name = ""
 
     function submitMessage() {
         if (message === "" || name === "") return
-        pushEvent("send_message", {body: message, name: name})
+        live.pushEvent("send_message", {body: message, name: name})
         message = ""
     }
 </script>

@@ -70,8 +70,7 @@ function getProps(ref) {
     return {
         ...dataAttributeToJson("data-props", ref.el),
         ...getLiveJsonProps(ref),
-        pushEvent: (event, data, callback) => ref.pushEvent(event, data, callback),
-        pushEventTo: (selectorOrTarget, event, data, callback) => ref.pushEventTo(selectorOrTarget, event, data, callback),
+        live: ref,
         $$slots: createSlots(dataAttributeToJson("data-slots", ref.el), ref),
         $$scope: {},
     }

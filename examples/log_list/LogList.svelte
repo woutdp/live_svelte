@@ -1,7 +1,7 @@
 <script>
     import {slide, fly} from "svelte/transition"
 
-    export let pushEvent
+    export let live
     export let items = []
 
     let newItemName
@@ -10,7 +10,7 @@
 
     function addItem() {
         if (!newItemName) return
-        pushEvent("add_item", {name: newItemName})
+        live.pushEvent("add_item", {name: newItemName})
         newItemName = ""
     }
 </script>
