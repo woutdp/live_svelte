@@ -12,7 +12,7 @@ let optsClient = {
     bundle: true,
     minify: deploy,
     target: "es2017",
-    conditions: ["svelte"],
+    conditions: ["svelte", "browser"],
     outdir: "../priv/static/assets",
     logLevel: "info",
     sourcemap: watch ? "inline" : false,
