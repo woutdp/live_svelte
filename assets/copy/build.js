@@ -34,7 +34,7 @@ let optsServer = {
     minify: false,
     target: "node19.6.1",
     conditions: ["svelte"],
-    outdir: "../priv/static/assets/server",
+    outdir: "../priv/svelte",
     logLevel: "info",
     sourcemap: watch ? "inline" : false,
     watch,
