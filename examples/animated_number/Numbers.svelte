@@ -2,14 +2,14 @@
     import {fly} from "svelte/transition"
 
     export let number = 1
-    export let pushEvent
+    export let live
 
     function increase() {
-        pushEvent("set_number", {number: number + 1})
+        live.pushEvent("set_number", {number: number + 1})
     }
 
     function decrease() {
-        pushEvent("set_number", {number: number - 1})
+        live.pushEvent("set_number", {number: number - 1})
     }
 </script>
 

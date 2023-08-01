@@ -5,7 +5,7 @@
     import {onMount} from "svelte"
 
     export let news = []
-    export let pushEvent
+    export let live
 
     let newItem = ""
     let marquee
@@ -16,12 +16,12 @@
     function addItem() {
         if (newItem === "") return
         if (news.length === 0) marquee.appendItem(createItem(newItem))
-        pushEvent("add_news_item", {body: newItem})
+        live.pushEvent("add_news_item", {body: newItem})
         newItem = ""
     }
 
     function removeItem(id) {
-        pushEvent("remove_news_item", {id: id})
+        live.pushEvent("remove_news_item", {id: id})
     }
 
     onMount(async () => {

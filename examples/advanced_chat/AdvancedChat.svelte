@@ -5,7 +5,7 @@
 
     export let messages
     export let name
-    export let pushEvent
+    export let live
 
     let body = ""
     let messagesElement
@@ -20,7 +20,7 @@
 
     function submitMessage() {
         if (body === "") return
-        pushEvent("send_message", {body})
+        live.pushEvent("send_message", {body})
         body = ""
     }
 </script>

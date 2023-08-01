@@ -1,9 +1,9 @@
 <script>
-    export let pushEvent
+    export let live
     export let isOn = false
     const toggleLight = () => {
         isOn = !isOn
-        pushEvent(isOn ? "on" : "off")
+        live.pushEvent(isOn ? "on" : "off")
     }
 </script>
 

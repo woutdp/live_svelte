@@ -1,13 +1,13 @@
 <script>
     export let number
-    export let pushEvent
+    export let live
 
     function increase() {
-        pushEvent("set_number", {number: number + 1})
+        live.pushEvent("set_number", {number: number + 1})
     }
 
     function decrease() {
-        pushEvent("set_number", {number: number - 1})
+        live.pushEvent("set_number", {number: number - 1})
     }
 </script>
 
