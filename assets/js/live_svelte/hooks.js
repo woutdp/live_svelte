@@ -1,62 +1,63 @@
-import {detach, insert, noop} from "svelte/internal"
 import {normalizeComponents} from "./utils"
 
-function base64ToElement(base64) {
-    const template = document.createElement("div")
-    template.innerHTML = atob(base64).trim()
-    return template
-}
-
-function dataAttributeToJson(attributeName, el) {
-    const data = el.getAttribute(attributeName)
+function getAttributeJson(ref, attributeName) {
+    const data = ref.el.getAttribute(attributeName)
     return data ? JSON.parse(data) : {}
 }
 
-function createSlots(slots, ref) {
-    const createSlot = (slotName, ref) => {
-        let savedTarget, savedAnchor, savedElement
-        return () => {
+function detach(node) {
+    node.parentNode?.removeChild(node)
+}
+
+function insert(target, node, anchor) {
+    target.insertBefore(node, anchor || null)
+}
+
+function noop() {}
+
+function getSlots(ref) {
+    const slots = {}
+
+    for (const slotName in getAttributeJson(ref, "data-slots")) {
+        const slot = () => {
             return {
                 getElement() {
-                    return base64ToElement(dataAttributeToJson("data-slots", ref.el)[slotName])
+                    const bese64 = getAttributeJson(ref, "data-slots")[slotName]
+                    const element = document.createElement("div")
+                    element.innerHTML = atob(base64).trim()
+                    return element
                 },
                 update() {
-                    const element = this.getElement()
-                    detach(savedElement)
-                    insert(savedTarget, element, savedAnchor)
-                    savedElement = element
+                    detach(this.savedElement)
+                    this.savedElement = this.getElement()
+                    insert(this.savedTarget, this.savedElement, this.savedAnchor)
                 },
                 c: noop,
                 m(target, anchor) {
-                    const element = this.getElement()
-                    savedTarget = target
-                    savedAnchor = anchor
-                    savedElement = element
-                    insert(target, element, anchor)
+                    this.savedTarget = target
+                    this.savedAnchor = anchor
+                    this.savedElement = this.getElement()
+                    insert(this.savedTarget, this.savedElement, this.savedAnchor)
                 },
                 d(detaching) {
-                    if (detaching) detach(savedElement)
+                    if (detaching) detach(this.savedElement)
                 },
                 l: noop,
             }
         }
+
+        slots[slotName] = [slot]
     }
 
-    const svelteSlots = {}
-
-    for (const slotName in slots) {
-        svelteSlots[slotName] = [createSlot(slotName, ref)]
-    }
-
-    return svelteSlots
+    return slots
 }
 
 function getLiveJsonProps(ref) {
-    const json = dataAttributeToJson("data-live-json", ref.el)
+    const json = getAttributeJson(ref, "data-live-json")
 
     // On SSR, data-live-json is the full object we want
     // After SSR, data-live-json is an array of keys, and we'll get the data from the window
-    if (typeof json === "object" && json !== null && !Array.isArray(json)) return json
+    if (!Array.isArray(json)) return json
 
     const liveJsonData = {}
     for (const liveJsonVariable of json) {
@@ -68,10 +69,10 @@ function getLiveJsonProps(ref) {
 
 function getProps(ref) {
     return {
-        ...dataAttributeToJson("data-props", ref.el),
+        ...getAttributeJson(ref, "data-props"),
         ...getLiveJsonProps(ref),
         live: ref,
-        $$slots: createSlots(dataAttributeToJson("data-slots", ref.el), ref),
+        $$slots: getSlots(ref),
         $$scope: {},
     }
 }
@@ -97,7 +98,7 @@ export function getHooks(components) {
                 throw new Error(`Unable to find ${componentName} component.`)
             }
 
-            for (const liveJsonElement of Object.keys(dataAttributeToJson("data-live-json", this.el))) {
+            for (const liveJsonElement of Object.keys(getAttributeJson(this, "data-live-json"))) {
                 window.addEventListener(`${liveJsonElement}_initialized`, event => this._instance.$set(getProps(this)), false)
                 window.addEventListener(`${liveJsonElement}_patched`, event => this._instance.$set(getProps(this)), false)
             }
