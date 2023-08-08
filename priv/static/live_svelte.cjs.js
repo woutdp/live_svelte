@@ -19,17 +19,32 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 // js/live_svelte/index.js
 var live_svelte_exports = {};
 __export(live_svelte_exports, {
-  exportSvelteComponents: () => exportSvelteComponents,
   getHooks: () => getHooks,
-  render: () => render
+  getRender: () => getRender
 });
 module.exports = __toCommonJS(live_svelte_exports);
 
+// js/live_svelte/utils.js
+function normalizeComponents(components) {
+  if (!Array.isArray(components.default) || !Array.isArray(components.filenames))
+    return components;
+  const normalized = {};
+  for (const [index, module2] of components.default.entries()) {
+    const Component = module2.default;
+    const name = components.filenames[index].replace("../svelte/", "").replace(".svelte", "");
+    normalized[name] = Component;
+  }
+  return normalized;
+}
+
 // js/live_svelte/render.js
-function render(name, props, slots) {
-  const component = require(__filename)[name];
-  const $$slots = Object.fromEntries(Object.entries(slots).map(([k, v]) => [k, () => v]));
-  return component.render(props, { $$slots });
+function getRender(components) {
+  components = normalizeComponents(components);
+  return function render(name, props, slots) {
+    const Component = components[name];
+    const $$slots = Object.fromEntries(Object.entries(slots).map(([k, v]) => [k, () => v]));
+    return Component.render(props, { $$slots });
+  };
 }
 
 // ../node_modules/svelte/internal/index.mjs
@@ -149,13 +164,6 @@ if (typeof HTMLElement === "function") {
   };
 }
 
-// js/live_svelte/utils.js
-function exportSvelteComponents(components) {
-  let { default: modules, filenames } = components;
-  filenames = filenames.map((name) => name.replace("../svelte/", "")).map((name) => name.replace(".svelte", ""));
-  return Object.assign({}, ...modules.map((m, index) => ({ [filenames[index]]: m.default })));
-}
-
 // js/live_svelte/hooks.js
 function base64ToElement(base64) {
   const template = document.createElement("div");
@@ -218,8 +226,7 @@ function getProps(ref) {
   return {
     ...dataAttributeToJson("data-props", ref.el),
     ...getLiveJsonProps(ref),
-    pushEvent: (event, data, callback) => ref.pushEvent(event, data, callback),
-    pushEventTo: (selectorOrTarget, event, data, callback) => ref.pushEventTo(selectorOrTarget, event, data, callback),
+    live: ref,
     $$slots: createSlots(dataAttributeToJson("data-slots", ref.el), ref),
     $$scope: {}
   };
@@ -227,8 +234,8 @@ function getProps(ref) {
 function findSlotCtx(component) {
   return component.$$.ctx.find((ctxElement) => ctxElement?.default);
 }
-function getHooks(Components) {
-  const components = exportSvelteComponents(Components);
+function getHooks(components) {
+  components = normalizeComponents(components);
   const SvelteHook = {
     mounted() {
       const componentName = this.el.getAttribute("data-name");
