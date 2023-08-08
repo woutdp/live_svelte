@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.11.0] - ...
+
+This update involves some breaking changes laid out in [PR](https://github.com/woutdp/live_svelte/pull/65).
+Most of these changes should be resolved by running `mix live_svelte.setup`.
+
+Manual migration guide:
+
+-   Update the `build.js` file by setting `optsServer.outdir` to `outdir: "../priv/svelte"`
+-   Update the `build.js` file by setting `compilerOptions` to include `{dev: !deploy, ...}`
+-   Add `/priv/svelte/` to your `.gitignore` file
+
+### Added
+
+-   Add "browser" to client esbuild conditions for svelte 4
+-   Add typescript definitions
+-   Added dev option in compilerOptions
+
+### Changed
+
+-   Move ssr build from `priv/static/assets` into `priv/svelte`
+
 ## [0.10.2] - 2023-07-31
 
 ### Fixed
