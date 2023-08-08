@@ -8,6 +8,7 @@ defmodule Mix.Tasks.LiveSvelte.ConfigurePhoenix do
   @watcher_regex ~r/watchers:\s\[(?!\s+node:)/
   @esbuild_regex ~r/(?<!# )esbuild: {.*}/
   @nodejs_regex ~r/children\s+=\s+\[(?!\s+\{NodeJS)/
+  @gitignore_regex ~r/\Z/
 
   def run(_) do
     log_info("-- Configuring Phoenix...")
@@ -15,6 +16,7 @@ defmodule Mix.Tasks.LiveSvelte.ConfigurePhoenix do
     try do
       configure_dev_config()
       configure_application()
+      configure_gitignore()
     rescue
       err -> log_error(err.message)
     end
@@ -23,27 +25,45 @@ defmodule Mix.Tasks.LiveSvelte.ConfigurePhoenix do
   end
 
   defp configure_dev_config() do
-    watcher = ~s"""
+    text = ~s"""
     node: ["build.js", "--watch", cd: Path.expand("../assets", __DIR__)],\
     """
 
     {path, file} = path_and_file("config/", "dev.exs")
 
     File.read!(path)
-    |> insert(@watcher_regex, watcher, "'#{watcher}' in #{file}")
+    |> insert(@watcher_regex, text, "'#{text}' in #{file}")
     |> comment(@esbuild_regex, "old esbuild watcher in #{file}")
     |> save(path)
   end
 
   defp configure_application() do
-    nodeSupervisor = ~s"""
+    text = ~s"""
     {NodeJS.Supervisor, [path: LiveSvelte.SSR.server_path(), pool_size: 4]},\
     """
 
     {path, file} = path_and_file("lib/**/", "application.ex")
 
     File.read!(path)
-    |> insert(@nodejs_regex, nodeSupervisor, "'#{nodeSupervisor}' in #{file}")
+    |> insert(@nodejs_regex, text, "'#{text}' in #{file}")
+    |> save(path)
+  end
+
+  defp configure_gitignore() do
+    text = ~s"""
+
+
+    # Ignore automatically generated Svelte files by the ~V sigil
+    /assets/svelte/_build/
+
+    # Ignore ssr build for svelte.
+    /priv/svelte/\
+    """
+
+    {path, file} = path_and_file("", ".gitignore")
+
+    File.read!(path)
+    |> insert(@gitignore_regex, text, "'#{text}' in #{file}")
     |> save(path)
   end
 
