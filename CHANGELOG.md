@@ -12,9 +12,11 @@ Most of these changes should be resolved by running `mix live_svelte.setup`.
 
 Manual migration guide:
 
+-   Use `export let live; live.pushEvent();` instead of `export let pushEvent; pushEvent();`, example is available in the readme
 -   Update the `build.js` file by setting `optsServer.outdir` to `outdir: "../priv/svelte"`
 -   Update the `build.js` file by setting `compilerOptions` to include `{dev: !deploy, ...}`
 -   Add `/priv/svelte/` to your `.gitignore` file
+-   Replace the `server.js` file
 
 ### Added
 
@@ -25,6 +27,7 @@ Manual migration guide:
 ### Changed
 
 -   Move ssr build from `priv/static/assets` into `priv/svelte`
+-   Use `export let live` instead of `export let pushEvent` and `export let pushEventTo` allowing for a more broad use of LiveView JS interop.
 
 ## [0.10.2] - 2023-07-31
 
