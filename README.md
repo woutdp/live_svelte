@@ -218,14 +218,14 @@ If you have examples you want to add, feel free to create a PR, I'd be happy to 
     // The number prop is reactive,
     // this means if the server assigns the number, it will update in the frontend
     export let number = 1
-    // pushEvent to ... push events to the server.
-    export let pushEvent
+    // live contains all exported LiveView methods available to the frontend
+    export let live
 
     function increase() {
         // This pushes the event over the websocket
         // The last parameter is optional. It's a callback for when the event is finished.
         // You could for example set a loading state until the event is finished if it takes a longer time.
-        pushEvent("set_number", {number: number + 1}, () => {})
+        live.pushEvent("set_number", {number: number + 1}, () => {})
 
         // Note that we actually never set the number in the frontend!
         // We ONLY push the event to the server.
@@ -245,7 +245,16 @@ If you have examples you want to add, feel free to create a PR, I'd be happy to 
 
 _Note: that here we use the `pushEvent` function, but you could also use `phx-click` and `phx-value-number` if you wanted._
 
-_`pushEventTo` is available too and works exactly the same way as specified in the [documentation](https://hexdocs.pm/phoenix_live_view/js-interop.html#client-hooks-via-phx-hook)._
+The following methods are available on `live`:
+
+-   `pushEvent`
+-   `pushEventTo`
+-   `handleEvent`
+-   `removeHandleEvent`
+-   `upload`
+-   `uploadTo`
+
+More about this in the [LiveView documentation on js-interop](https://hexdocs.pm/phoenix_live_view/js-interop.html#client-hooks-via-phx-hook)
 
 #### Create a LiveView
 
