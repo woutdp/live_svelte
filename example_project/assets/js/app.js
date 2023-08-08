@@ -23,11 +23,11 @@ import {LiveSocket} from "phoenix_live_view"
 import topbar from "../vendor/topbar"
 import {createLiveJsonHooks} from "live_json"
 import {getHooks} from "live_svelte"
-import * as SvelteComponents from "../svelte/**/*"
+import * as Components from "../svelte/**/*.svelte"
 
 const Hooks = {
     ...createLiveJsonHooks(),
-    ...getHooks(SvelteComponents),
+    ...getHooks(Components),
 }
 
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
