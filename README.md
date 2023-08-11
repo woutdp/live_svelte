@@ -569,21 +569,7 @@ With LiveSvelte, we're dealing with JSON being sent to Svelte, which in turn tak
 
 In a lot of scenarios this is not an issue, but it can be and is something you should be aware of.
 
-## Development
-
-### Building Static Files
-
-Make the changes in `/assets/js` and run:
-
-```bash
-mix assets.build
-```
-
-Or run the watcher:
-
-```bash
-mix assets.build --watch
-```
+## LiveSvelte Development
 
 ### Local Setup
 
@@ -607,6 +593,20 @@ Inside `assets/package.json`
 
 ```javascript
 "live_svelte": "file:../../live_svelte",
+```
+
+### Building Static Files
+
+Make the changes in `/assets/js` and run:
+
+```bash
+mix assets.build
+```
+
+Or run the watcher:
+
+```bash
+mix assets.build --watch
 ```
 
 ### Releasing
