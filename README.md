@@ -217,11 +217,14 @@ If you have examples you want to add, feel free to create a PR, I'd be happy to 
 
 ```svelte
 <script>
+    import {getLive} from "live_svelte"
+
+    // live contains all exported LiveView methods available to the frontend
+    const live = getLive()
+
     // The number prop is reactive,
     // this means if the server assigns the number, it will update in the frontend
     export let number = 1
-    // live contains all exported LiveView methods available to the frontend
-    export let live
 
     function increase() {
         // This pushes the event over the websocket
@@ -236,7 +239,7 @@ If you have examples you want to add, feel free to create a PR, I'd be happy to 
     }
 
     function decrease() {
-        pushEvent("set_number", {number: number - 1}, () => {})
+        live.pushEvent("set_number", {number: number - 1}, () => {})
     }
 </script>
 

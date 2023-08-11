@@ -1,6 +1,10 @@
 <script>
-    export let live
+    import {getLive} from "live_svelte"
+
+    const live = getLive()
+
     export let isOn = false
+
     const toggleLight = () => {
         isOn = !isOn
         live.pushEvent(isOn ? "on" : "off")

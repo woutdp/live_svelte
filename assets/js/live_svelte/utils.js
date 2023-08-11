@@ -9,3 +9,13 @@ export function normalizeComponents(components) {
     }
     return normalized
 }
+
+let getSvelteContext = undefined
+
+export function setupLive(getContext) {
+    getSvelteContext = getContext
+}
+
+export function getLive() {
+    return getSvelteContext?.(getLive)
+}
