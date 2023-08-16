@@ -54,7 +54,7 @@ defmodule LiveSvelte do
   Renders a Svelte component on the server.
   """
   def svelte(assigns) do
-    init = Map.get(assigns, :__changed__) == nil
+    init = assigns.__changed__ == nil
 
     slots =
       assigns
@@ -62,7 +62,7 @@ defmodule LiveSvelte do
       |> Slots.js_process()
 
     ssr_code =
-      if init and Map.get(assigns, :ssr) do
+      if init and assigns.ssr do
         try do
           props =
             Map.merge(
