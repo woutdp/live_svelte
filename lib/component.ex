@@ -3,6 +3,7 @@ defmodule LiveSvelte do
   import Phoenix.HTML
   import LiveSvelte.LiveJson
 
+  alias Phoenix.LiveView
   alias LiveSvelte.Slots
   alias LiveSvelte.SSR
 
@@ -39,6 +40,13 @@ defmodule LiveSvelte do
   )
 
   attr(
+    :socket,
+    :map,
+    default: nil,
+    doc: "LiveView socket, should be provided when rendering inside LiveView"
+  )
+
+  attr(
     :live_json_props,
     :map,
     default: %{},
@@ -55,6 +63,7 @@ defmodule LiveSvelte do
   """
   def svelte(assigns) do
     init = assigns.__changed__ == nil
+    dead = assigns.socket == nil or not LiveView.connected?(assigns.socket)
 
     slots =
       assigns
@@ -62,7 +71,7 @@ defmodule LiveSvelte do
       |> Slots.js_process()
 
     ssr_code =
-      if init and assigns.ssr do
+      if init and dead and assigns.ssr do
         try do
           props =
             Map.merge(
@@ -138,10 +147,10 @@ defmodule LiveSvelte do
   end
 
   @doc false
-  def get_ssr(assigns) do
-    case get_in(assigns, [:svelte_opts, :ssr]) do
-      nil -> true
-      ssr -> ssr
+  def get_socket(assigns) do
+    case get_in(assigns, [:svelte_opts, :socket]) || assigns[:socket] do
+      %LiveView.Socket{} = socket -> socket
+      _ -> nil
     end
   end
 
@@ -158,7 +167,8 @@ defmodule LiveSvelte do
       <LiveSvelte.svelte
         name={"_build/#{__MODULE__}"}
         props={get_props(assigns)}
-        ssr={get_ssr(assigns)}
+        socket={get_socket(assigns)}
+        ssr={get_in(assigns, [:svelte_opts, :ssr]) != false}
         class={get_in(assigns, [:svelte_opts, :class])}
       />
       """

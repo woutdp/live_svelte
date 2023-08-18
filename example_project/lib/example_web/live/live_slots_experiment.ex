@@ -3,7 +3,7 @@ defmodule ExampleWeb.LiveSlotsExperiment do
 
   def render(assigns) do
     ~H"""
-    <.svelte name="SlotsExperiment">
+    <.svelte name="SlotsExperiment" socket={@socket}>
       Inside Slot
     </.svelte>
     """
