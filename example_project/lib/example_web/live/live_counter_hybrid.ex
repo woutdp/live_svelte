@@ -6,7 +6,7 @@ defmodule ExampleWeb.LiveExample3 do
     ~H"""
     <h1 class="flex justify-center mb-10 font-bold">Hybrid: LiveView + Svelte</h1>
 
-    <.CounterHybrid number={@number} />
+    <.CounterHybrid number={@number} socket={@socket} />
     """
   end
 

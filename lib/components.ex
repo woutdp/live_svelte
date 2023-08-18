@@ -23,25 +23,21 @@ defmodule LiveSvelte.Components do
   defp name_to_function(name) do
     quote do
       def unquote(:"#{name}")(assigns) do
-        props =
-          assigns
-          |> Map.filter(fn
-            {:svelte_opts, _v} -> false
-            {k, _v} -> k not in [:__changed__, :__given__, :ssr]
-            _ -> false
-          end)
+        props = Map.drop(assigns, [:__changed__, :__given__, :ssr, :class, :socket])
 
         var!(assigns) =
           assigns
           |> Map.put(:__component_name, unquote(name))
           |> Map.put_new(:ssr, true)
           |> Map.put_new(:class, nil)
+          |> Map.put_new(:socket, nil)
           |> assign(:props, props)
 
         ~H"""
         <LiveSvelte.svelte
           name={@__component_name}
           class={@class}
+          socket={@socket}
           ssr={@ssr}
           props={@props}
         />

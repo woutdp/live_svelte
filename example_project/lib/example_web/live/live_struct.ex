@@ -11,7 +11,7 @@ defmodule ExampleWeb.LiveStruct do
   def render(assigns) do
     ~H"""
     <h1 class="text-lg">An example of how to pass a struct to Svelte:</h1>
-    <.svelte name="Struct" props={%{struct: @struct}} />
+    <.svelte name="Struct" props={%{struct: @struct}} socket={@socket} />
     """
   end
 

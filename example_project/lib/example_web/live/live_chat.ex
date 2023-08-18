@@ -25,6 +25,7 @@ defmodule ExampleWeb.LiveExample6 do
         messages={@messages}
         name={@name}
         class="w-full h-full flex justify-center items-center"
+        socket={@socket}
       />
     </div>
     """

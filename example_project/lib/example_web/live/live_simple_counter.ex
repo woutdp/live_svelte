@@ -15,7 +15,7 @@ defmodule ExampleWeb.LiveExample2 do
       </div>
       <div class="bg-[#eee] rounded p-2 m-2 w-[fit-content]">
         <h1 class="text-xs font-bold flex items-end justify-end">LiveSvelte</h1>
-        <.svelte name="SimpleCounter" props={%{number: @number}} />
+        <.svelte name="SimpleCounter" props={%{number: @number}} socket={@socket} />
       </div>
     </div>
     """
