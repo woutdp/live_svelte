@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.12.0] - 2023-08-19
+
+### Changed
+
+-   Must now provide the `socket` when rendering in a LiveView [PR](https://github.com/woutdp/live_svelte/pull/74)
+
+### Fixed
+
+-   Fixed some TypeScript definitions
+
 ## [0.11.0] - 2023-08-08
 
 This update involves some breaking changes laid out in [PR](https://github.com/woutdp/live_svelte/pull/65).
