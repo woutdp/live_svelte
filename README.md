@@ -168,7 +168,7 @@ e.g. If your component is named `assets/svelte/Example.svelte`:
 ```elixir
 def render(assigns) do
   ~H"""
-  <.svelte name="Example" props={%{number: @number}} />
+  <.svelte name="Example" props={%{number: @number}} socket={@socket} />
   """
 end
 ```
@@ -188,7 +188,7 @@ use LiveSvelte.Components
 
 def render(assigns) do
   ~H"""
-  <.Example number={@number} />
+  <.Example number={@number} socket={@socket} />
   """
 end
 ```
@@ -267,7 +267,7 @@ defmodule AppWeb.SvelteLive do
 
   def render(assigns) do
     ~H"""
-    <.svelte name="Example" props={%{number: @number}} />
+    <.svelte name="Example" props={%{number: @number}} socket={@socket} />
     """
   end
 
@@ -465,7 +465,7 @@ Counterintuitively, you don't always want to use `live_json`. Sometimes it's che
 ```elixir
 def render(assigns) do
   ~H"""
-    <.svelte name="Component" live_json_props={%{my_prop: @ljmy_prop}}/>
+    <.svelte name="Component" live_json_props={%{my_prop: @ljmy_prop}} socket={@socket} />
   """
 end
 
