@@ -30,3 +30,6 @@ node_modules/
 
 # Elixir tools
 .elixir-tools/
+
+# Build files
+priv/static/
