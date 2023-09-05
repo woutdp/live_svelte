@@ -256,6 +256,8 @@ The following methods are available on `live`:
 -   `upload`
 -   `uploadTo`
 
+These need to be run on the client, they can't be run in SSR. Either make sure they're called on an action (e.g. clicking a button) or wrap them with `onMount`.
+
 More about this in the [LiveView documentation on js-interop](https://hexdocs.pm/phoenix_live_view/js-interop.html#client-hooks-via-phx-hook)
 
 #### Create a LiveView
