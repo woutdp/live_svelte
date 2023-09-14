@@ -1,10 +1,7 @@
-defmodule LiveSvelte.SSR.NodeNotConfigured do
+defmodule LiveSvelte.SSR.NotConfigured do
   @moduledoc false
 
-  defexception message: """
-                 NodeJS is not configured. Please add the following to your application.ex:
-                 {NodeJS.Supervisor, [path: LiveSvelte.SSR.server_path(), pool_size: 4]},
-               """
+  defexception [:message]
 end
 
 defmodule LiveSvelte.SSR do
