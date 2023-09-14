@@ -8,19 +8,46 @@ defmodule LiveSvelte.SSR.NodeNotConfigured do
 end
 
 defmodule LiveSvelte.SSR do
-  @moduledoc false
+  @moduledoc """
+  A behaviour for rendering Svelte components server-side.
 
-  @doc false
+  To define a custom renderer, change the application config in `config.exs`:
+
+      config :live_svelte, ssr_module: MyCustomSSRModule
+  """
+
+  @type component_name :: String.t
+  @type props :: %{optional(String.t | atom) => any}
+  @type slots :: %{optional(String.t | atom) => any}
+
+  @typedoc """
+  A render response which should take the shape:
+      %{
+        "css" => %{
+          "code" => String.t | nil,
+          "map" => String.t | nil
+        },
+        "head" => String.t,
+        "html" => String.t
+      }
+  """
+  @type render_response :: %{
+    required(String.t) => %{
+      required(String.t) => String.t | nil
+    } | String.t
+  }
+
+  @callback render(component_name, props, slots) :: render_response | no_return
+
+  @spec render(component_name, props, slots) :: render_response | no_return
   def render(name, props, slots) do
-    try do
-      NodeJS.call!({"server", "render"}, [name, props, slots])
-    catch
-      :exit, {:noproc, _} -> raise LiveSvelte.SSR.NodeNotConfigured
-    end
+    mod = Application.get_env(:live_svelte, :ssr_module, LiveSvelte.SSR.NodeJS)
+
+    mod.render(name, props, slots)
   end
 
+  @deprecated "Use LiveSvelte.SSR.NodeJS.server_path/0 instead."
   def server_path() do
-    {:ok, path} = :application.get_application()
-    Application.app_dir(path, "/priv/svelte")
+    LiveSvelte.SSR.NodeJS.server_path()
   end
 end
