@@ -81,7 +81,7 @@ defmodule LiveSvelte do
 
           SSR.render(assigns.name, props, slots)
         rescue
-          SSR.NodeNotConfigured -> nil
+          SSR.NotConfigured -> nil
         end
       end
 

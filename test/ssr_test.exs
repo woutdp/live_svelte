@@ -6,6 +6,13 @@ defmodule LiveSvelte.SSRTest do
     assert Application.get_env(:live_svelte, :ssr_module) == LiveSvelte.SSR.NodeJS
   end
 
+  test "Node.js raises the correct exception" do
+    load_config("config/config.exs")
+    assert_raise(LiveSvelte.SSR.NotConfigured, fn -> 
+      LiveSvelte.SSR.NodeJS.render("Test", %{}, %{})
+    end)
+  end
+
   test "It uses a different SSR module" do
     load_config("test/ssr_test/test_config.exs")
     assert Application.get_env(:live_svelte, :ssr_module) == SomeOtherSSRModule
