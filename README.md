@@ -236,7 +236,7 @@ If you have examples you want to add, feel free to create a PR, I'd be happy to 
     }
 
     function decrease() {
-        pushEvent("set_number", {number: number - 1}, () => {})
+        live.pushEvent("set_number", {number: number - 1}, () => {})
     }
 </script>
 
