@@ -11,8 +11,10 @@ defmodule Mix.Tasks.LiveSvelte.Setup do
       "configure_phoenix",
       "configure_esbuild"
     ]
-    |> Enum.map(&Task.async(fn -> Mix.Task.run("live_svelte." <> &1) end))
-    |> Enum.map(&Task.await(&1, :infinity))
+    |> Enum.map(
+      &(Task.async(fn -> Mix.Task.run("live_svelte." <> &1) end)
+        |> Task.await(:infinity))
+    )
 
     log_success("live_svelte setup finished.")
   end
