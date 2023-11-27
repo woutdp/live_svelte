@@ -103,10 +103,12 @@ defp aliases do
   [
     setup: ["deps.get", "ecto.setup", "cmd --cd assets npm install"],
     ...,
-    "assets.deploy": ["cmd --cd assets node build.js --deploy", "phx.digest"]
+    "assets.deploy": ["tailwind default --minify", "cmd --cd assets node build.js --deploy", "phx.digest"]
   ]
 end
 ```
+
+Note: `tailwind default --minify` is only required in the `assets.deploy` alias if you're using Tailwind. If you are not using Tailwind, you can remove it from the list.
 
 3. Run the following in your terminal
 
