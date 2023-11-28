@@ -13,7 +13,8 @@ Svelte inside Phoenix LiveView with seamless end-to-end reactivity
 [Resources](#resources) •
 [Demo](#demo) •
 [Installation](#installation) •
-[Usage](#usage)
+[Usage](#usage) •
+[Deployment](#deployment) 
 
 </div>
 
