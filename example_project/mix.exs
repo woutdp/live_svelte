@@ -36,6 +36,7 @@ defmodule Example.MixProject do
       {:finch, "~> 0.13"},
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
+      {:json_diff_ex, "~> 0.6", override: true},
       {:live_json, "~> 0.4.5"},
       {:live_svelte, path: ".."},
       {:phoenix, "~> 1.7.1"},
