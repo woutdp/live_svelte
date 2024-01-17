@@ -122,10 +122,7 @@ export function getHooks(components) {
         },
 
         destroyed() {
-            // We don't want to destroy the component
-            // If we do a page navigation, this would remove the component in the DOM,
-            // and then it would to the transition, causing a flicker of unrendered content
-            // Since we're doing a page transition anyway, the component will be remove automatically
+            this._instance.$destroy()
         },
     }
 
