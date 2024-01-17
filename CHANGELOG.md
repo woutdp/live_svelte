@@ -6,10 +6,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## UNRELEASED
+## [0.13.0] - 2024-01-17
+
+### Added
+
+-   Added flake setup with direnv
+
+### Fixed
+
+-   Memory leak [issue](https://github.com/woutdp/live_svelte/issues/108)
+-   Explicitly set npm install folder [fixes package.json on Windows](https://github.com/woutdp/live_svelte/issues/75)
+-   Properly support binary for SSR
 
 ### Changed
 
 -   Started work on a plugable SSR renderer [PR](https://github.com/woutdp/live_svelte/pull/82)
+-   Async and improved setup tasks
 
 ## [0.12.0] - 2023-08-19
 
