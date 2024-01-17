@@ -1,6 +1,6 @@
 import Config
 
-config :live_svelte, 
+config :live_svelte,
   ssr_module: LiveSvelte.SSR.NodeJS
 
 if Mix.env() == :dev do

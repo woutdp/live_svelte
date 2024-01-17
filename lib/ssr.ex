@@ -13,9 +13,9 @@ defmodule LiveSvelte.SSR do
       config :live_svelte, ssr_module: MyCustomSSRModule
   """
 
-  @type component_name :: String.t
-  @type props :: %{optional(String.t | atom) => any}
-  @type slots :: %{optional(String.t | atom) => any}
+  @type component_name :: String.t()
+  @type props :: %{optional(String.t() | atom) => any}
+  @type slots :: %{optional(String.t() | atom) => any}
 
   @typedoc """
   A render response which should take the shape:
@@ -29,10 +29,12 @@ defmodule LiveSvelte.SSR do
       }
   """
   @type render_response :: %{
-    required(String.t) => %{
-      required(String.t) => String.t | nil
-    } | String.t
-  }
+          required(String.t()) =>
+            %{
+              required(String.t()) => String.t() | nil
+            }
+            | String.t()
+        }
 
   @callback render(component_name, props, slots) :: render_response | no_return
 

@@ -1,5 +1,6 @@
 defmodule LiveSvelte.SSRTest do
-  use ExUnit.Case, async: false # must be synchronous, tests are sensitive to config changes
+  # must be synchronous, tests are sensitive to config changes
+  use ExUnit.Case, async: false
 
   test "Node.js is used by default for SSR" do
     load_config("config/config.exs")
@@ -8,7 +9,8 @@ defmodule LiveSvelte.SSRTest do
 
   test "Node.js raises the correct exception" do
     load_config("config/config.exs")
-    assert_raise(LiveSvelte.SSR.NotConfigured, fn -> 
+
+    assert_raise(LiveSvelte.SSR.NotConfigured, fn ->
       LiveSvelte.SSR.NodeJS.render("Test", %{}, %{})
     end)
   end
