@@ -33,3 +33,9 @@ node_modules/
 
 # Build files
 priv/static/
+
+# Direnv
+.direnv
+.nix-hex
+.nix-mix
+.erlang-history
