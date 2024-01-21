@@ -206,6 +206,7 @@ I recommend cloning `live_svelte` and running the example project in `/example_p
 
 ```
 git clone https://github.com/woutdp/live_svelte.git
+mix assets.build
 cd ./live_svelte/example_project
 npm install --prefix assets
 mix deps.get
