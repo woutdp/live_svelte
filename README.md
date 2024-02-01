@@ -151,9 +151,17 @@ content: [
 
 ### What did we do?
 
-You'll notice a bunch of files get created in `/assets`, as well as some code changes in `/lib`. This mostly follows from the recommended way of using esbuild plugins, which we need to make this work. You can read more about this here: <https://hexdocs.pm/phoenix/asset_management.html#esbuild-plugins>
+Phoenix's default configuration of esbuild (via the Elixir wrapper) [does not allow you to use esbuild plugins](https://hexdocs.pm/phoenix/asset_management.html#esbuild-plugins). The standard Elixir `esbuild` package works great for simple projects with Phoenix hooks, but to use LiveSvelte we need a more complex setup.
 
-In addition we commented out some things such as the `esbuild` watcher configured in `dev.exs` that won't be needed anymore, you can delete these comments if desired.
+To use plugins, Phoenix recommends replacing the default build system with a build script. So, in setup, we go from using the standard `esbuild` package to using `esbuild` directly as a `node_module`.
+
+As a result, you'll notice some related changes:
+
+* A bunch of files get created in `/assets`.
+* There are some code changes in `/lib`.
+* We no longer use the standard Elixir `esbuild` watcher, as we created a new watcher that does the same thing.
+
+The setup process commented out some lines of code, like configuration in `dev.exs`. It's safe to delete commented-out code if you desire.
 
 ## Usage
 
