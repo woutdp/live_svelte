@@ -122,12 +122,7 @@ defmodule LiveSvelte do
   end
 
   defp json(props) do
-    props
-    |> Jason.encode()
-    |> case do
-      {:ok, encoded} -> encoded
-      {:error, _} -> ""
-    end
+    Jason.encode!(props)
   end
 
   defp id(name), do: "#{name}-#{System.unique_integer([:positive])}"
