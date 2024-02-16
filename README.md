@@ -730,5 +730,6 @@ fly apps open
 
 -   [Territoriez.io](https://territoriez.io)
 -   [ash-svelte-flowbite](https://github.com/dev-guy/ash-svelte-flowbite)
+-   [Local-First Todo App](https://github.com/tonydangblog/liveview-svelte-pwa)
 
 _Using LiveSvelte in a public project? Let me know and I'll add it to this list!_
