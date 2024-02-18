@@ -1,8 +1,10 @@
 <script>
     import {slide} from "svelte/transition"
+    import {getLive} from "live_svelte"
+
+    const live = getLive()
 
     export let messages
-    export let live
 
     let message = ""
     let name = ""

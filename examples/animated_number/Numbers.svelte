@@ -1,8 +1,10 @@
 <script>
     import {fly} from "svelte/transition"
+    import {getLive} from "live_svelte"
+
+    const live = getLive()
 
     export let number = 1
-    export let live
 
     function increase() {
         live.pushEvent("set_number", {number: number + 1})
