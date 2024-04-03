@@ -87,7 +87,7 @@ If you don't want SSR, you can disable it by not setting `NodeJS.Supervisor` in 
 
 _If you're updating from an older version, make sure to check the `CHANGELOG.md` for breaking changes._
 
-1. Add `live_svelte` to your list of dependencies in `mix.exs`:
+1. Add `live_svelte` to your list of dependencies of your Phoenix app in `mix.exs`:
 
 ```elixir
 defp deps do
