@@ -14,7 +14,7 @@ Svelte inside Phoenix LiveView with seamless end-to-end reactivity
 [Demo](#demo) •
 [Installation](#installation) •
 [Usage](#usage) •
-[Deployment](#deployment) 
+[Deployment](#deployment)
 
 </div>
 
@@ -92,7 +92,7 @@ _If you're updating from an older version, make sure to check the `CHANGELOG.md`
 ```elixir
 defp deps do
   [
-    {:live_svelte, "~> 0.13.0"}
+    {:live_svelte, "~> 0.13.1"}
   ]
 end
 ```
@@ -157,9 +157,9 @@ To use plugins, Phoenix recommends replacing the default build system with a bui
 
 As a result, you'll notice some related changes:
 
-* A bunch of files get created in `/assets`.
-* There are some code changes in `/lib`.
-* We no longer use the standard Elixir `esbuild` watcher, as we created a new watcher that does the same thing.
+-   A bunch of files get created in `/assets`.
+-   There are some code changes in `/lib`.
+-   We no longer use the standard Elixir `esbuild` watcher, as we created a new watcher that does the same thing.
 
 The setup process commented out some lines of code, like configuration in `dev.exs`. It's safe to delete commented-out code if you desire.
 
@@ -638,7 +638,7 @@ mix hex.publish
 
 ## Deployment
 
-Deploying a LiveSvelte app is the same as deploying a regular Phoenix app, except that you will need to ensure that `nodejs` (version 19 or later) is installed in your production environment. 
+Deploying a LiveSvelte app is the same as deploying a regular Phoenix app, except that you will need to ensure that `nodejs` (version 19 or later) is installed in your production environment.
 
 The below guide shows how to deploy a LiveSvelte app to [Fly.io](https://fly.io/), but similar steps can be taken to deploy to other hosting providers.
 You can find more information on how to deploy a Phoenix app [here](https://hexdocs.pm/phoenix/deployment.html).
@@ -696,7 +696,7 @@ RUN apt-get update -y && \
 ...
 ```
 
-Note: `nodejs` is installed BOTH in the build stage and in the final image. This is because we need `nodejs` to install our `npm` dependencies and also need it when running our app. 
+Note: `nodejs` is installed BOTH in the build stage and in the final image. This is because we need `nodejs` to install our `npm` dependencies and also need it when running our app.
 
 3. Launch your app with the Fly.io CLI:
 
@@ -714,7 +714,7 @@ This will launch a new window where you can tweak your launch settings. In the d
 
 Deployment will continue once you hit confirm.
 
-5. Once the deployment completes, run the following command to see your deployed app! 
+5. Once the deployment completes, run the following command to see your deployed app!
 
 ```bash
 fly apps open
