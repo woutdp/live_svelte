@@ -102,9 +102,9 @@ end
 ```elixir
 defp aliases do
   [
-    setup: ["deps.get", "ecto.setup", "cmd --cd assets npm install"],
+    setup: ["deps.get", "ecto.setup", "npm install --prefix assets"],
     ...,
-    "assets.deploy": ["tailwind default --minify", "cmd --cd assets node build.js --deploy", "phx.digest"]
+    "assets.deploy": ["tailwind default --minify", "node build.js --deploy --prefix assets", "phx.digest"]
   ]
 end
 ```
