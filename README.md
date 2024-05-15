@@ -726,6 +726,10 @@ fly apps open
 -   [Svonix](https://github.com/nikokozak/svonix)
 -   [Sveltex](https://github.com/virkillz/sveltex)
 
+## Vue Alternative
+
+Prefer Vue? There's [LiveVue](https://github.com/Valian/live_vue) which does exactly the same as LiveSvelte, but with Vue.
+
 ## LiveSvelte Projects
 
 -   [Territoriez.io](https://territoriez.io)
