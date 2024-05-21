@@ -122,7 +122,9 @@ export function getHooks(components) {
         },
 
         destroyed() {
-            this._instance.$destroy()
+            if (this._instance) {
+                window.addEventListener("phx:page-loading-stop", () => this._instance.$destroy(), {once: true})
+            }
         },
     }
 
