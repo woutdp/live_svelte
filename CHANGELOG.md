@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## UNRELEASED
 
+## [0.13.2] - 2024-05-21
+
+### Fixed
+
+-   Fixed an issue where the Svelte component would flicker on navigation: [Issue 125](https://github.com/woutdp/live_svelte/issues/125)
+
 ## [0.13.1] - 2024-04-12
 
 ### Changed
