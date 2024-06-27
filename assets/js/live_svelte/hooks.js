@@ -1,4 +1,4 @@
-import {normalizeComponents} from "./utils"
+import {normalizeComponents, getLive} from "./utils"
 
 function getAttributeJson(ref, attributeName) {
     const data = ref.el.getAttribute(attributeName)
@@ -71,7 +71,6 @@ function getProps(ref) {
     return {
         ...getAttributeJson(ref, "data-props"),
         ...getLiveJsonProps(ref),
-        live: ref,
         $$slots: getSlots(ref),
         $$scope: {},
     }
@@ -83,7 +82,7 @@ function findSlotCtx(component) {
     return component.$$.ctx.find(ctxElement => ctxElement?.default)
 }
 
-export function getHooks(components) {
+export function getHooks(components, options) {
     components = normalizeComponents(components)
 
     const SvelteHook = {
@@ -106,6 +105,7 @@ export function getHooks(components) {
             this._instance = new Component({
                 target: this.el,
                 props: getProps(this),
+                context: new Map([[getLive, this]]),
                 hydrate: this.el.hasAttribute("data-ssr"),
             })
         },

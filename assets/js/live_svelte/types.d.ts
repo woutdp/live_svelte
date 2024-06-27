@@ -11,3 +11,5 @@ export type Live = {
 
 export declare const getHooks: (components: object) => object
 export declare const getRender: (components: object) => (name: string, props: object, slots: object) => any
+export declare const setupLive: (getContext: (key: string) => any) => Live
+export declare const getLive: () => Live

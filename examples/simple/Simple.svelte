@@ -1,6 +1,9 @@
 <script>
+    import {getLive} from "live_svelte"
+
+    const live = getLive()
+
     export let number
-    export let live
 
     function increase() {
         live.pushEvent("set_number", {number: number + 1})
