@@ -106,7 +106,7 @@ defp aliases do
   [
     setup: ["deps.get", "ecto.setup", "cmd --cd assets npm install"],
     ...,
-    "assets.deploy": ["tailwind default --minify", "cmd --cd assets node build.js --deploy", "phx.digest"]
+    "assets.deploy": ["tailwind <app_name> --minify", "cmd --cd assets node build.js --deploy", "phx.digest"]
   ]
 end
 ```
@@ -118,12 +118,12 @@ defp aliases do
   [
     setup: ["deps.get", "ecto.setup", "npm install --prefix assets"],
     ...,
-    "assets.deploy": ["tailwind default --minify", "node build.js --deploy --prefix assets", "phx.digest"]
+    "assets.deploy": ["tailwind <app_name> --minify", "node build.js --deploy --prefix assets", "phx.digest"]
   ]
 end
 ```
 
-Note: `tailwind default --minify` is only required in the `assets.deploy` alias if you're using Tailwind. If you are not using Tailwind, you can remove it from the list.
+Note: `tailwind <app_name> --minify` is only required in the `assets.deploy` alias if you're using Tailwind. If you are not using Tailwind, you can remove it from the list.
 
 3. Run the following in your terminal
 
