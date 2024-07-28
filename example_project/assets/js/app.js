@@ -20,10 +20,13 @@ import "phoenix_html"
 // Establish Phoenix Socket and LiveView configuration.
 import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
+import {getContext} from "svelte"
 import topbar from "../vendor/topbar"
 import {createLiveJsonHooks} from "live_json"
-import {getHooks} from "live_svelte"
+import {getHooks, setupLive} from "live_svelte"
 import * as Components from "../svelte/**/*.svelte"
+
+setupLive(getContext)
 
 const Hooks = {
     ...createLiveJsonHooks(),
