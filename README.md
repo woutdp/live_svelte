@@ -99,26 +99,12 @@ end
 
 2. Adjust the `setup` and `assets.deploy` aliases in `mix.exs`:
 
--   For Windows
-
 ```elixir
 defp aliases do
   [
     setup: ["deps.get", "ecto.setup", "cmd --cd assets npm install"],
     ...,
     "assets.deploy": ["tailwind <app_name> --minify", "cmd --cd assets node build.js --deploy", "phx.digest"]
-  ]
-end
-```
-
--   For Linux/MacOS
-
-```elixir
-defp aliases do
-  [
-    setup: ["deps.get", "ecto.setup", "npm install --prefix assets"],
-    ...,
-    "assets.deploy": ["tailwind <app_name> --minify", "node build.js --deploy --prefix assets", "phx.digest"]
   ]
 end
 ```
