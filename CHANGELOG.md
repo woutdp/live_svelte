@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## UNRELEASED
 
+## [0.13.3] - 2024-08-15
+
+### Fixed
+
+-  Fixed an issue where the `SvelteHook` wasn't updated when pulling in `0.13.2`
+
 ## [0.13.2] - 2024-05-21
 
 ### Fixed
