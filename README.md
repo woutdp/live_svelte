@@ -639,6 +639,7 @@ mix assets.build --watch
 
 ### Releasing
 
+-   Make sure you've built the latest assets
 -   Update the version in `README.md`
 -   Update the version in `package.json`
 -   Update the version in `mix.exs`
@@ -649,6 +650,8 @@ Run:
 ```bash
 mix hex.publish
 ```
+
+-   Publish a tag for the latest version
 
 ## Deployment
 
