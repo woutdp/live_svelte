@@ -756,9 +756,10 @@ fly apps open
 -   [Svonix](https://github.com/nikokozak/svonix)
 -   [Sveltex](https://github.com/virkillz/sveltex)
 
-## Vue Alternative
+## Alternatives for other frontend frameworks
 
-Prefer Vue? There's [LiveVue](https://github.com/Valian/live_vue) which does exactly the same as LiveSvelte, but with Vue.
+-   Vue: [LiveVue](https://github.com/Valian/live_vue)
+-   React: [LiveReact](https://github.com/mrdotb/live_react)
 
 ## LiveSvelte Projects
 
