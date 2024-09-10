@@ -398,6 +398,19 @@ To enable syntax highlighting in Neovim with Treesitter, create the following fi
 ; Svelte
 (sigil
   (sigil_name) @_sigil_name
+  (quoted_content) @injection.content
+ (#eq? @_sigil_name "V")
+ (#set! injection.language "svelte"))
+```
+
+For Neovim Treesitter version below v0.9:
+
+```
+; extends
+
+; Svelte
+(sigil
+  (sigil_name) @_sigil_name
   (quoted_content) @svelte
 (#eq? @_sigil_name "V"))
 ```
