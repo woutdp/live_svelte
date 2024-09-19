@@ -18,7 +18,10 @@ defmodule Mix.Tasks.LiveSvelte.ConfigurePhoenix do
       configure_application()
       configure_gitignore()
     rescue
-      err -> log_error(err.message)
+      err ->
+        err
+        |> Exception.message()
+        |> log_error()
     end
 
     Mix.Task.run("format")
