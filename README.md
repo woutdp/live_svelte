@@ -99,7 +99,7 @@ end
 
 2. Adjust the `setup` and `assets.deploy` aliases in `mix.exs`:
 
-- For Windows
+-   For Windows
 
 ```elixir
 defp aliases do
@@ -111,7 +111,7 @@ defp aliases do
 end
 ```
 
-- For Linux/MacOS
+-   For Linux/MacOS
 
 ```elixir
 defp aliases do
