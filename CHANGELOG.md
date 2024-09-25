@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## UNRELEASED
 
+## [0.14.0] - 2024-09-25
+
+### Added
+
+-   Added the option to disable SSR through a config variable [Issue 144](https://github.com/woutdp/live_svelte/issues/144)
+
 ### Changed
 
 -   Updated :nodejs to `3.1`

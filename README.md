@@ -472,12 +472,21 @@ In theses cases you can turn off SSR.
 
 #### Disabling SSR
 
-SSR is enabled by default when you install LiveSvelte. If you don't want to use Server-Side Rendering for Svelte, you have 2 options:
+SSR is enabled by default when you install LiveSvelte. If you don't want to use Server-Side Rendering for Svelte, you can disable it in the following ways:
 
 ##### Globally
 
 If you don't want to use SSR on any component you can disable it globally.
-This will automatically be the case if you don't include the `NodeJS` supervisor in the `application.ex` file
+
+There are 2 ways of doing this
+- Don't include the `NodeJS` supervisor in the `application.ex` file
+or
+- Add `ssr: false` to the `live_svelte` config in your `config.exs` file like so:
+
+```elixir
+config :live_svelte,
+  ssr: false
+```
 
 ##### Component
 

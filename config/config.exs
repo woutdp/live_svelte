@@ -1,7 +1,8 @@
 import Config
 
 config :live_svelte,
-  ssr_module: LiveSvelte.SSR.NodeJS
+  ssr_module: LiveSvelte.SSR.NodeJS,
+  ssr: true
 
 if Mix.env() == :dev do
   esbuild = fn args ->

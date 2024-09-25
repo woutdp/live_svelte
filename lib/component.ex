@@ -64,6 +64,7 @@ defmodule LiveSvelte do
   def svelte(assigns) do
     init = assigns.__changed__ == nil
     dead = assigns.socket == nil or not LiveView.connected?(assigns.socket)
+    ssr_active = Application.get_env(:live_svelte, :ssr, true)
 
     slots =
       assigns
@@ -71,7 +72,7 @@ defmodule LiveSvelte do
       |> Slots.js_process()
 
     ssr_code =
-      if init and dead and assigns.ssr do
+      if init and dead and ssr_active and assigns.ssr do
         try do
           props =
             Map.merge(
