@@ -2,10 +2,12 @@
     import {fly} from "svelte/transition"
     import {elasticOut} from "svelte/easing"
     import {afterUpdate} from "svelte"
+    import {getLive} from "live_svelte"
+
+    const live = getLive()
 
     export let messages
     export let name
-    export let live
 
     let body = ""
     let messagesElement

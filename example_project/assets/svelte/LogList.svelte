@@ -1,7 +1,9 @@
 <script>
     import {slide, fly} from "svelte/transition"
+    import {getLive} from "live_svelte"
 
-    export let live
+    const live = getLive()
+
     export let items = []
     let body
     let i = 1

@@ -22,9 +22,11 @@ defmodule ExampleWeb.LiveExample5 do
         import {slide, fly} from "svelte/transition"
         import {Marquee} from "dynamic-marquee"
         import {onMount} from "svelte"
+        import {getLive} from "live_svelte"
+
+        const live = getLive()
 
         export let news = []
-        export let live
 
         let newItem = ""
         let marquee
