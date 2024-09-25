@@ -55,6 +55,7 @@ defmodule LiveSvelte.MixProject do
 
   defp deps do
     [
+      {:bun, "~> 1.3"},
       {:esbuild, "~> 0.5", only: :dev},
       {:ex_doc, "~> 0.19", only: :dev, runtime: false},
       {:jason, "~> 1.2"},

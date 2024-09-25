@@ -32,6 +32,7 @@ defmodule Example.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:bun, "~> 1.3"},
       {:ecto_sql, "~> 3.6"},
       {:finch, "~> 0.13"},
       {:gettext, "~> 0.20"},

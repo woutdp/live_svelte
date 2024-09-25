@@ -40,7 +40,7 @@ defmodule LiveSvelte.SSR do
 
   @spec render(component_name, props, slots) :: render_response | no_return
   def render(name, props, slots) do
-    mod = Application.get_env(:live_svelte, :ssr_module, LiveSvelte.SSR.NodeJS)
+    mod = Application.get_env(:live_svelte, :ssr_module, LiveSvelte.SSR.Bun)
 
     mod.render(name, props, slots)
   end

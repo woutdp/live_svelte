@@ -41,6 +41,15 @@ config :tailwind,
     cd: Path.expand("../assets", __DIR__)
   ]
 
+# config :bun,
+#   version: "1.1.22",
+#   default: [
+#     args:
+#       ~w(build js/app.js --outdir=../priv/static/assets --external /fonts/* --external /images/*),
+#     cd: Path.expand("../assets", __DIR__),
+#     env: %{}
+#   ]
+
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",

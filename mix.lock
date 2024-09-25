@@ -1,4 +1,5 @@
 %{
+  "bun": {:hex, :bun, "1.3.1", "baf6a8c7631a7437cf92dc164ba37f40263bf9a80c3a8edacfb9c20da3c6bd34", [:mix], [{:castore, ">= 0.0.0", [hex: :castore, repo: "hexpm", optional: false]}], "hexpm", "18d52accb8c7de1cb60dac9e92ea13bd2c3813698cd5985064dfcff2bbf10ead"},
   "castore": {:hex, :castore, "1.0.0", "c25cd0794c054ebe6908a86820c8b92b5695814479ec95eeff35192720b71eec", [:mix], [], "hexpm", "577d0e855983a97ca1dfa33cbb8a3b6ece6767397ffb4861514343b078fc284b"},
   "earmark_parser": {:hex, :earmark_parser, "1.4.30", "0b938aa5b9bafd455056440cdaa2a79197ca5e693830b4a982beada840513c5f", [:mix], [], "hexpm", "3b5385c2d36b0473d0b206927b841343d25adb14f95f0110062506b300cd5a1b"},
   "esbuild": {:hex, :esbuild, "0.6.1", "a774bfa7b4512a1211bf15880b462be12a4c48ed753a170c68c63b2c95888150", [:mix], [{:castore, ">= 0.0.0", [hex: :castore, repo: "hexpm", optional: false]}], "hexpm", "569f7409fb5a932211573fc20e2a930a0d5cf3377c5b4f6506c651b1783a1678"},
