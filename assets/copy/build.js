@@ -16,7 +16,6 @@ let optsClient = {
     outdir: "../priv/static/assets",
     logLevel: "info",
     sourcemap: watch ? "inline" : false,
-    watch,
     tsconfig: "./tsconfig.json",
     plugins: [
         importGlobPlugin(),
@@ -37,7 +36,6 @@ let optsServer = {
     outdir: "../priv/svelte",
     logLevel: "info",
     sourcemap: watch ? "inline" : false,
-    watch,
     tsconfig: "./tsconfig.json",
     plugins: [
         importGlobPlugin(),
@@ -48,17 +46,17 @@ let optsServer = {
     ],
 }
 
-const client = esbuild.build(optsClient)
-const server = esbuild.build(optsServer)
-
 if (watch) {
-    client.then(_result => {
-        process.stdin.on("close", () => process.exit(0))
-        process.stdin.resume()
-    })
+    esbuild
+        .context(optsClient)
+        .then(ctx => ctx.watch())
+        .catch(_error => process.exit(1))
 
-    server.then(_result => {
-        process.stdin.on("close", () => process.exit(0))
-        process.stdin.resume()
-    })
+    esbuild
+        .context(optsServer)
+        .then(ctx => ctx.watch())
+        .catch(_error => process.exit(1))
+} else {
+    esbuild.build(optsClient)
+    esbuild.build(optsServer)
 }

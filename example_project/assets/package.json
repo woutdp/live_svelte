@@ -2,7 +2,7 @@
     "devDependencies": {
         "@types/lodash": "^4.14.192",
         "dynamic-marquee": "^2.6.2",
-        "esbuild": "^0.16.17",
+        "esbuild": "^0.24.0",
         "esbuild-plugin-import-glob": "^0.1.1",
         "esbuild-svelte": "^0.7.4",
         "lodash": "^4.17.21",
