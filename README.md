@@ -746,6 +746,11 @@ Deployment will continue once you hit confirm.
 fly apps open
 ```
 
+## Svelte 5
+
+LiveSvelte currently only supports Svelte 4.
+Svelte 5 support is in the works, keep track of it in [Issue 124](https://github.com/woutdp/live_svelte/issues/124).
+
 ## Credits
 
 -   [Ryan Cooke](https://dev.to/debussyman) - [E2E Reactivity using Svelte with Phoenix LiveView](https://dev.to/debussyman/e2e-reactivity-using-svelte-with-phoenix-liveview-38mf)
