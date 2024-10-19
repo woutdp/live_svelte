@@ -4,17 +4,18 @@ defmodule ExampleWeb.LiveSigil do
   def render(assigns) do
     ~V"""
     <script>
-      export let number
-      let number2 = 5
+      /** @type {{number: any}} */
+      let { number } = $props();
+      let number2 = $state(5)
 
-      $: combined = number + number2
+      let combined = $derived(number + number2)
     </script>
 
     <h1 class="text-lg mb-4">Svelte template</h1>
     {number} + {number2} = {combined}
 
     <button phx-click="increment">+server</button>
-    <button on:click={() => number2 += 1}>+client</button>
+    <button onclick={() => number2 += 1}>+client</button>
 
     <style lang="stylus">
       button

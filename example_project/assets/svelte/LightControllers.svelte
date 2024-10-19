@@ -1,6 +1,6 @@
 <script>
-    export let live
-    export let isOn = false
+    /** @type {{live: any, isOn?: boolean}} */
+    let { live, isOn = $bindable(false) } = $props();
     const toggleLight = () => {
         isOn = !isOn
         live.pushEvent(isOn ? "on" : "off")
@@ -15,7 +15,7 @@
         } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2`}
         role="switch"
         aria-checked="false"
-        on:click={toggleLight}
+        onclick={toggleLight}
     >
         <span class="sr-only">Use setting</span>
         <span
@@ -23,7 +23,8 @@
             class={`${
                 isOn ? "translate-x-5" : "translate-x-0"
             } pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out`}
-        />
+        >
+        </span>
     </button>
     <div class="flex gap-2">
         <button

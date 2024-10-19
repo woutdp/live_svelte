@@ -1,7 +1,11 @@
 <script lang="ts">
     import * as _ from "lodash"
 
-    export let unordered: number[]
+    interface Props {
+        unordered: number[];
+    }
+
+    let { unordered }: Props = $props();
     let ordered = _.sortBy(unordered)
 </script>
 
