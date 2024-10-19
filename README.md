@@ -479,9 +479,10 @@ SSR is enabled by default when you install LiveSvelte. If you don't want to use 
 If you don't want to use SSR on any component you can disable it globally.
 
 There are 2 ways of doing this
-- Don't include the `NodeJS` supervisor in the `application.ex` file
-or
-- Add `ssr: false` to the `live_svelte` config in your `config.exs` file like so:
+
+-   Don't include the `NodeJS` supervisor in the `application.ex` file
+    or
+-   Add `ssr: false` to the `live_svelte` config in your `config.exs` file like so:
 
 ```elixir
 config :live_svelte,
