@@ -1,4 +1,6 @@
 import {normalizeComponents} from "./utils"
+import {mount} from "svelte"
+import {createClassComponent} from "svelte/legacy"
 
 function getAttributeJson(ref, attributeName) {
     const data = ref.el.getAttribute(attributeName)

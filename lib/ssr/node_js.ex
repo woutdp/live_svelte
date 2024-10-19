@@ -5,6 +5,7 @@ defmodule LiveSvelte.SSR.NodeJS do
   def render(name, props, slots) do
     try do
       NodeJS.call!({"server", "render"}, [name, props, slots], binary: true)
+      |> IO.inspect()
     catch
       :exit, {:noproc, _} ->
         message = """
