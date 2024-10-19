@@ -15,6 +15,7 @@
         } relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2`}
         role="switch"
         aria-checked="false"
+        aria-label="Use setting"
         on:click={toggleLight}
     >
         <span class="sr-only">Use setting</span>
@@ -29,6 +30,7 @@
         <button
             phx-click="down"
             class="flex items-center justify-center text-xl font-bold w-10 h-10 p-2 rounded bg-slate-100 hover:bg-brand active:bg-brand shadow-md hover:shadow-xl"
+            aria-label="down"
         >
             <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -44,6 +46,7 @@
         <button
             phx-click="up"
             class="flex items-center justify-center text-xl font-bold w-10 h-10 p-2 rounded bg-slate-100 hover:bg-brand active:bg-brand shadow-md hover:shadow-xl"
+            aria-label="up"
         >
             <svg
                 xmlns="http://www.w3.org/2000/svg"
