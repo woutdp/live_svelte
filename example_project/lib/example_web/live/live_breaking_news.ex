@@ -108,7 +108,8 @@ defmodule ExampleWeb.LiveExample5 do
     <div
         bind:this={marqueeEl}
         class="fixed bottom-0 w-screen text-white font-bold text-xl py-2 bg-gradient-to-b from-[#f00] via-[#f77] to-[#f00]"
-    />
+    >
+    </div>
     """
   end
 
