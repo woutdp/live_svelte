@@ -1,6 +1,7 @@
 <script>
-    export let number = 1
-    let amount = 1
+    /** @type {{number?: number}} */
+    let {number = 1} = $props()
+    let amount = $state(1)
 </script>
 
 <div class="flex flex-col justify-center items-center gap-4">

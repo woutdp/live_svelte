@@ -1,11 +1,13 @@
 <script>
+    import {preventDefault} from "svelte/legacy"
+
     import {slide} from "svelte/transition"
 
-    export let messages
-    export let live
+    /** @type {{messages: any, live: any}} */
+    let {messages, live} = $props()
 
-    let message = ""
-    let name = ""
+    let message = $state("")
+    let name = $state("")
 
     function submitMessage() {
         if (message === "" || name === "") return
@@ -24,7 +26,7 @@
         {/each}
     </ul>
 
-    <form on:submit|preventDefault={submitMessage}>
+    <form onsubmit={preventDefault(submitMessage)}>
         <input type="text" name="name" class="rounded" bind:value={name} placeholder="Your Name" />
         <input type="text" name="message" class="rounded" bind:value={message} placeholder="Message..." />
         <button class="bg-black text-white rounded px-4 py-2">Send</button>

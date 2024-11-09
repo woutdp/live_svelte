@@ -1,7 +1,10 @@
 <script>
+    import {run} from "svelte/legacy"
+
     import {tweened} from "svelte/motion"
     import {cubicOut} from "svelte/easing"
-    export let brightness = 0
+    /** @type {{brightness?: number}} */
+    let {brightness = 0} = $props()
 
     const progress = tweened(0, {
         duration: 400,
@@ -10,7 +13,9 @@
 
     const updateProgress = b => progress.set(b / 100)
 
-    $: updateProgress(brightness)
+    run(() => {
+        updateProgress(brightness)
+    })
 </script>
 
 <progress class="border-none w-full rounded-lg h-12" value={$progress}></progress>

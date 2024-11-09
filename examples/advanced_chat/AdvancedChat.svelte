@@ -1,16 +1,15 @@
 <script>
+    import {preventDefault} from "svelte/legacy"
     import {slide, fly, fade} from "svelte/transition"
     import {elasticOut} from "svelte/easing"
-    import {afterUpdate} from "svelte"
 
-    export let messages
-    export let name
-    export let live
+    /** @type {{messages: any, name: any, live: any}} */
+    let {messages, name, live} = $props()
 
-    let body = ""
-    let messagesElement
+    let body = $state("")
+    let messagesElement = $state()
 
-    afterUpdate(() => {
+    $effect(() => {
         scrollToBottom(messagesElement)
     })
 
@@ -42,8 +41,8 @@
         {/each}
     </ul>
 
-    <form on:submit|preventDefault={submitMessage} class="bg-gray-100 p-2 flex gap-2">
-        <!-- svelte-ignore a11y-autofocus -->
+    <form onsubmit={preventDefault(submitMessage)} class="bg-gray-100 p-2 flex gap-2">
+        <!-- svelte-ignore a11y_autofocus -->
         <input
             type="text"
             name="message"

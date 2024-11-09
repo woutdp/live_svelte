@@ -1,5 +1,6 @@
 <script>
-    export let big_data_set
+    /** @type {{big_data_set: any}} */
+    let {big_data_set} = $props()
 </script>
 
 <h1 class="text-lg">LiveJson demo</h1>

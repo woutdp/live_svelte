@@ -1,6 +1,6 @@
 <script>
-    export let number
-    export let live
+    /** @type {{number: any, live: any}} */
+    let {number, live} = $props()
 
     function increase() {
         live.pushEvent("set_number", {number: number + 1})
@@ -14,5 +14,5 @@
 <h1>Component is working</h1>
 <p>The number is {number}</p>
 
-<button on:click={increase}>+</button>
-<button on:click={decrease}>-</button>
+<button onclick={increase}>+</button>
+<button onclick={decrease}>-</button>

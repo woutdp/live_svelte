@@ -1,8 +1,8 @@
 <script>
     import {fly} from "svelte/transition"
 
-    export let number = 1
-    export let live
+    /** @type {{number?: number, live: any}} */
+    let {number = 1, live} = $props()
 
     function increase() {
         live.pushEvent("set_number", {number: number + 1})
@@ -15,8 +15,8 @@
 
 <h1 class="text-lg mb-6">Component is working, and the number should be animated</h1>
 
-<button on:click={increase} class="bg-black text-white px-4 py-2 rounded-lg font-bold">+</button>
-<button on:click={decrease} class="bg-black text-white px-4 py-2 rounded-lg font-bold">-</button>
+<button onclick={increase} class="bg-black text-white px-4 py-2 rounded-lg font-bold">+</button>
+<button onclick={decrease} class="bg-black text-white px-4 py-2 rounded-lg font-bold">-</button>
 
 {#key number}
     <p class="mt-1">

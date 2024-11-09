@@ -1,6 +1,6 @@
 <script>
-    export let live
-    export let isOn = false
+    /** @type {{live: any, isOn?: boolean}} */
+    let {live, isOn = $bindable(false)} = $props()
     const toggleLight = () => {
         isOn = !isOn
         live.pushEvent(isOn ? "on" : "off")
@@ -16,7 +16,7 @@
         role="switch"
         aria-checked="false"
         aria-label="Use setting"
-        on:click={toggleLight}
+        onclick={toggleLight}
     >
         <span class="sr-only">Use setting</span>
         <span
