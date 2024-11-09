@@ -1,5 +1,6 @@
 <script>
-    export let struct
+    /** @type {{struct: any}} */
+    let {struct} = $props()
 </script>
 
 {JSON.stringify(struct)}

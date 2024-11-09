@@ -1,18 +1,18 @@
 <script>
+    import {preventDefault} from "svelte/legacy"
+
     import {fly} from "svelte/transition"
     import {elasticOut} from "svelte/easing"
-    import {afterUpdate} from "svelte"
 
-    export let messages
-    export let name
-    export let live
+    /** @type {{messages: any, name: any, live: any}} */
+    let {messages, name, live} = $props()
 
-    let body = ""
-    let messagesElement
+    let body = $state("")
+    let messagesElement = $state()
 
-    $: charCount = body.length
+    let charCount = $derived(body.length)
 
-    afterUpdate(() => messagesElement.scroll({top: messagesElement.scrollHeight, behavior: "smooth"}))
+    $effect(() => messagesElement.scroll({top: messagesElement.scrollHeight, behavior: "smooth"}))
 
     function submitMessage() {
         if (body === "") return
@@ -38,9 +38,9 @@
         {/each}
     </ul>
 
-    <form on:submit|preventDefault={submitMessage} class="bg-gray-100 p-2 flex gap-2 justify-center items-center">
+    <form onsubmit={preventDefault(submitMessage)} class="bg-gray-100 p-2 flex gap-2 justify-center items-center">
         <div class="relative flex justify-center items-center">
-            <!-- svelte-ignore a11y-autofocus -->
+            <!-- svelte-ignore a11y_autofocus -->
             <input
                 type="text"
                 name="message"

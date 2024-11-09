@@ -1,15 +1,16 @@
 <script>
-    export let number = 1
-    let amount = 1
+    /** @type {{number?: number}} */
+    let {number = $bindable(1)} = $props()
+    let amount = $state(1)
 </script>
 
 <h1 class="flex justify-center mb-10 font-bold">Svelte</h1>
 
 <div class="flex flex-col justify-center items-center gap-4">
     <div class="flex flex-row items-center justify-center gap-10">
-        <button class="minus" on:click={() => (number -= amount)}>-{amount}</button>
+        <button class="minus" onclick={() => (number -= amount)}>-{amount}</button>
         <span class="text-xl">{number}</span>
-        <button class="plus" on:click={() => (number += amount)}>+{amount}</button>
+        <button class="plus" onclick={() => (number += amount)}>+{amount}</button>
     </div>
     <label>
         Amount:

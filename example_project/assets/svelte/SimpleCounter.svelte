@@ -1,6 +1,7 @@
 <script>
-    export let number
-    let other = 1
+    /** @type {{number: any}} */
+    let {number} = $props()
+    let other = $state(1)
 </script>
 
 <svelte:head>
@@ -18,7 +19,7 @@
         <div class="flex flex-col justify-center items-center">
             Client
             <span class="text-xl">{other}</span>
-            <button class="plus" on:click={() => (other += 1)}>+1</button>
+            <button class="plus" onclick={() => (other += 1)}>+1</button>
         </div>
     </div>
 </div>

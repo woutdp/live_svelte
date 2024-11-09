@@ -1,7 +1,11 @@
 <script lang="ts">
     import * as _ from "lodash"
 
-    export let unordered: number[]
+    interface Props {
+        unordered: number[]
+    }
+
+    let {unordered}: Props = $props()
     let ordered = _.sortBy(unordered)
 </script>
 
@@ -10,8 +14,8 @@
 <p>Ordered: <code>{ordered}</code></p>
 
 <style lang="stylus">
-    h1
-        color red
-        font-weight bold
-        font-size 1.5em
+     h1 
+         color red 
+         font-weight bold 
+         font-size 1.5em
 </style>
