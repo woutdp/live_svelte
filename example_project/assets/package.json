@@ -4,7 +4,7 @@
         "dynamic-marquee": "^2.6.2",
         "esbuild": "^0.24.0",
         "esbuild-plugin-import-glob": "^0.1.1",
-        "esbuild-svelte": "^0.7.4",
+        "esbuild-svelte": "^0.9.0",
         "lodash": "^4.17.21",
         "stylus": "^0.55.0",
         "svelte": "^4.2.19",
