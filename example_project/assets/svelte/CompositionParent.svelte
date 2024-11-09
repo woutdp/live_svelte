@@ -1,12 +1,12 @@
 <script lang="ts">
-    import TextInput from "./TextInput.svelte";
-    
-    export let live;
+    import TextInput from "./TextInput.svelte"
 
-    let textInput = "Content";
+    export let live
+
+    let textInput = "Content"
 
     function handleForm() {
-        live.pushEvent("validate-item", { name: textInput });
+        live.pushEvent("validate-item", {name: textInput})
     }
 </script>
 
@@ -14,4 +14,3 @@
     <TextInput value={textInput} name="element" id="123456" />
     <button type="submit">Submit</button>
 </form>
-

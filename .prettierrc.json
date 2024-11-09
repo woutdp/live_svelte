@@ -1,4 +1,5 @@
 {
+    "plugins": ["prettier-plugin-svelte"],
     "arrowParens": "avoid",
     "bracketSameLine": false,
     "bracketSpacing": false,
@@ -6,5 +7,6 @@
     "semi": false,
     "singleQuote": false,
     "tabWidth": 4,
-    "trailingComma": "es5"
+    "trailingComma": "es5",
+    "overrides": [{"files": "*.svelte", "options": {"parser": "svelte"}}]
 }

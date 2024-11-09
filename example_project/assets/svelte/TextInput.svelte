@@ -1,7 +1,7 @@
 <script lang="ts">
-    export let value: string;
-    export let name: string;
-    export let id: string;
+    export let value: string
+    export let name: string
+    export let id: string
 </script>
 
 <div>

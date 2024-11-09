@@ -13,9 +13,9 @@
         "format": "npx prettier --write ."
     },
     "devDependencies": {
-        "svelte": "^3.55.1",
-        "prettier": "2.8.7",
-        "prettier-plugin-svelte": "^2.10.0"
+        "prettier": "3.3.3",
+        "prettier-plugin-svelte": "^3.2.7",
+        "svelte": "^5.1.13"
     },
     "exports": {
         "types": "./assets/js/live_svelte/types.d.ts",
