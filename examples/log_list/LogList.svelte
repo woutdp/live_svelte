@@ -1,12 +1,14 @@
 <script>
+    import {preventDefault} from "svelte/legacy"
+
     import {slide, fly} from "svelte/transition"
 
-    export let live
-    export let items = []
+    /** @type {{live: any, items?: any}} */
+    let {live, items = []} = $props()
 
-    let newItemName
-    let i = 1
-    let showItems = true
+    let newItemName = $state()
+    let i = $state(1)
+    let showItems = $state(true)
 
     function addItem() {
         if (!newItemName) return
@@ -29,7 +31,7 @@
     <div class="mb-2">
         <form>
             <input type="test" bind:value={newItemName} class="border rounded px-2 py-1" />
-            <button type="submit" on:click|preventDefault={addItem} class="bg-black rounded text-white px-2 py-1 font-bold">Add item</button
+            <button type="submit" onclick={preventDefault(addItem)} class="bg-black rounded text-white px-2 py-1 font-bold">Add item</button
             >
         </form>
     </div>

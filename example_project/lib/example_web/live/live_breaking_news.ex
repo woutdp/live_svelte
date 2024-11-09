@@ -19,18 +19,20 @@ defmodule ExampleWeb.LiveExample5 do
   def render(assigns) do
     ~V"""
     <script>
+        import { run, preventDefault } from 'svelte/legacy';
+
         import {slide, fly} from "svelte/transition"
         import {Marquee} from "dynamic-marquee"
         import {onMount} from "svelte"
 
-        export let news = []
-        export let live
+        /** @type {{news?: any, live: any}} */
+        let { news = [], live } = $props();
 
-        let newItem = ""
-        let marquee
-        let marqueeEl
+        let newItem = $state("")
+        let marquee = $state()
+        let marqueeEl = $state()
         let index = 0
-        let speed = -150
+        let speed = $state(-150)
 
         // Function to add a new item to the news feed
         function addItem() {
@@ -75,7 +77,9 @@ defmodule ExampleWeb.LiveExample5 do
         }
 
         // Set the Marquee speed whenever it is changed
-        $: marquee && marquee.setRate(speed)
+        run(() => {
+            marquee && marquee.setRate(speed)
+        });
     </script>
 
     <div class="flex flex-col w-full justify-center items-center h-[50vh]">
@@ -83,18 +87,18 @@ defmodule ExampleWeb.LiveExample5 do
             <div class="flex items-center">
                 <form>
                     <input class="rounded" type="text" bind:value={newItem} />
-                    <button class="bg-black text-white rounded px-2 py-1" on:click|preventDefault={addItem} type="submit">Add Item</button>
+                    <button class="bg-black text-white rounded px-2 py-1" onclick={preventDefault(addItem)} type="submit">Add Item</button>
                 </form>
                 <div class="ml-4">
-                    <button class="bg-black text-white rounded px-2 py-1 active:opacity-95" on:click={() => (speed -= 20)}>← Faster</button>
-                    <button class="bg-black text-white rounded px-2 py-1 active:opacity-95" on:click={() => (speed += 20)}>Slower →</button>
+                    <button class="bg-black text-white rounded px-2 py-1 active:opacity-95" onclick={() => (speed -= 20)}>← Faster</button>
+                    <button class="bg-black text-white rounded px-2 py-1 active:opacity-95" onclick={() => (speed += 20)}>Slower →</button>
                 </div>
             </div>
 
             <div class="flex flex-col gap-1 mt-2">
                 {#each news as item (item.id)}
                     <div in:fly={{y: 20}} out:slide={{y: -20}} class="mb-1">
-                        <button class="bg-[#F00] px-2 py-1 rounded" on:click={() => removeItem(item.id)}>Remove</button>
+                        <button class="bg-[#F00] px-2 py-1 rounded" onclick={() => removeItem(item.id)}>Remove</button>
                         {item.body}
                     </div>
                 {/each}

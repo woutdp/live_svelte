@@ -1,7 +1,9 @@
 <script lang="ts">
+    import {preventDefault} from "svelte/legacy"
+
     import TextInput from "./TextInput.svelte"
 
-    export let live
+    let {live} = $props()
 
     let textInput = "Content"
 
@@ -10,7 +12,7 @@
     }
 </script>
 
-<form on:submit|preventDefault={handleForm}>
+<form onsubmit={preventDefault(handleForm)}>
     <TextInput value={textInput} name="element" id="123456" />
     <button type="submit">Submit</button>
 </form>
