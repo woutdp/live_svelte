@@ -7,12 +7,20 @@ const args = process.argv.slice(2)
 const watch = args.includes("--watch")
 const deploy = args.includes("--deploy")
 
+let clientConditions = ["svelte", "browser"]
+let serverConditions = ["svelte"]
+
+if (!deploy) {
+    clientConditions.push("development")
+    serverConditions.push("development")
+}
+
 let optsClient = {
     entryPoints: ["js/app.js"],
     bundle: true,
     minify: deploy,
-    target: "es2017",
-    conditions: ["svelte", "browser"],
+    conditions: clientConditions,
+    alias: {svelte: "svelte"},
     outdir: "../priv/static/assets",
     logLevel: "info",
     sourcemap: watch ? "inline" : false,
@@ -21,7 +29,7 @@ let optsClient = {
         importGlobPlugin(),
         sveltePlugin({
             preprocess: sveltePreprocess(),
-            compilerOptions: {dev: !deploy, hydratable: true, css: "injected"},
+            compilerOptions: {dev: !deploy, css: "injected", generate: "client"},
         }),
     ],
 }
@@ -32,7 +40,8 @@ let optsServer = {
     bundle: true,
     minify: false,
     target: "node19.6.1",
-    conditions: ["svelte"],
+    conditions: serverConditions,
+    alias: {svelte: "svelte"},
     outdir: "../priv/svelte",
     logLevel: "info",
     sourcemap: watch ? "inline" : false,
@@ -41,7 +50,7 @@ let optsServer = {
         importGlobPlugin(),
         sveltePlugin({
             preprocess: sveltePreprocess(),
-            compilerOptions: {dev: !deploy, hydratable: true, generate: "ssr"},
+            compilerOptions: {dev: !deploy, css: "injected", generate: "server"},
         }),
     ],
 }

@@ -27,7 +27,7 @@ Svelte inside Phoenix LiveView with seamless end-to-end reactivity
 -   🦄 **Tailwind** Support
 -   💀 **Dead View** Support
 -   🤏 **live_json** Support
--   🦥 **Slot Interoperability** _(Experimental)_
+-   🦥 **Slot Interoperability**
 
 ## Resources
 
