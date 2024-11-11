@@ -18,4 +18,8 @@ defmodule ExampleWeb.LiveStruct do
   def mount(_session, _params, socket) do
     {:ok, assign(socket, :struct, @example_struct)}
   end
+
+  def handle_event("randomize", _, socket) do
+    {:noreply, assign(socket, :struct, %User{name: "Bob", age: Enum.random(0..100)})}
+  end
 end
