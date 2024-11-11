@@ -55,7 +55,6 @@ defmodule LiveSvelte.MixProject do
 
   defp deps do
     [
-      {:esbuild, "~> 0.5", only: :dev},
       {:ex_doc, "~> 0.19", only: :dev, runtime: false},
       {:jason, "~> 1.2"},
       {:nodejs, "~> 3.1"},
@@ -67,13 +66,8 @@ defmodule LiveSvelte.MixProject do
 
   defp aliases do
     [
-      "assets.build": ["esbuild module", "esbuild cdn", "esbuild cdn_min", "esbuild main"],
-      "assets.watch": [
-        "esbuild module --watch",
-        "esbuild cdn --watch",
-        "esbuild cdn_min --watch",
-        "esbuild main --watch"
-      ]
+      "assets.build": ["cmd --cd assets node build.js"],
+      "assets.watch": ["cmd --cd assets node build.js --watch"]
     ]
   end
 end
