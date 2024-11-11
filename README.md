@@ -648,7 +648,7 @@ mix assets.build --watch
 
 ### Releasing
 
--   Make sure you've built the latest assets
+-   Make sure you've built the latest assets with `mix assets.build`
 -   Update the version in `README.md`
 -   Update the version in `package.json`
 -   Update the version in `mix.exs`
