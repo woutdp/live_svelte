@@ -43,7 +43,7 @@ defmodule LiveSvelte.MixProject do
         GitHub: @repo_url
       },
       files:
-        ~w(priv assets lib mix.exs package.json .formatter.exs LICENSE.md README.md CHANGELOG.md)
+        ~w(priv assets/copy assets/js lib mix.exs package.json .formatter.exs LICENSE.md README.md CHANGELOG.md)
     ]
   end
 
