@@ -1,9 +1,9 @@
-defmodule ExampleWeb.LiveSlotsExperiment do
+defmodule ExampleWeb.LiveSlotsSimple do
   use ExampleWeb, :live_view
 
   def render(assigns) do
     ~H"""
-    <.svelte name="SlotsExperiment" socket={@socket}>
+    <.svelte name="Slots" socket={@socket}>
       Inside Slot
     </.svelte>
     """

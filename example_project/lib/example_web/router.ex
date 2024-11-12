@@ -31,7 +31,8 @@ defmodule ExampleWeb.Router do
     live "/struct", LiveStruct
     live "/sigil", LiveSigil
     live "/live-json", LiveJson
-    live "/slots-experiment", LiveSlotsExperiment
+    live "/slots-simple", LiveSlotsSimple
+    live "/slots-dynamic", LiveSlotsDynamic
     live "/composition", LiveComposition
   end
 
