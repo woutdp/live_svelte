@@ -101,7 +101,7 @@ defmodule LiveSvelte do
         data-props={json(@props)}
         data-ssr={@ssr_render != nil}
         data-live-json={if @init, do: json(@live_json_props), else: @live_json_props |> Map.keys() |> json()}
-        data-slots={Slots.base_encode_64(@slots) |> json}
+        data-slots={@slots |> Slots.base_encode_64() |> json}
         phx-update="ignore"
         phx-hook="SvelteHook"
         class={@class}
