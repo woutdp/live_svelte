@@ -781,10 +781,30 @@ Deployment will continue once you hit confirm.
 fly apps open
 ```
 
-## Svelte 5
+## Svelte 4 -> Svelte 5 migration guide
 
-LiveSvelte currently only supports Svelte 4.
-Svelte 5 support is in the works, keep track of it in [Issue 124](https://github.com/woutdp/live_svelte/issues/124).
+Since version `0.15.0`, LiveSvelte supports Svelte 5. If you want to use Svelte 4, use version `0.14.0`. Note that Svelte 5 is backwards compatible with Svelte 4 for the most part, so even if you're using Svelte 4 syntax, with the latest version it should still work, and so there should be few reasons why to stay on version `0.14.0`.
+
+To migrate your project from `0.14.0` to `0.15.0` you need to follow the following 3 steps:
+
+1. Update `mix.exs`` and run `mix deps.get`
+
+```elixir
+# `mix.exs`
+{:live_svelte, "0.15.0"}`
+```
+
+2. Update to the latest Svelte 5 and `esbuild-svelte` version in your package.json
+
+```javascript
+  // package.json
+ "esbuild-svelte": "^0.9.0",
+ "svelte": "^5",
+```
+
+3. Update your build.js file.
+Which you can find [here](https://github.com/woutdp/live_svelte/blob/svelte-5/assets/copy/build.js)
+
 
 ## Credits
 
