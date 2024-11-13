@@ -4,11 +4,13 @@ defmodule ExampleWeb.LiveSlotsDynamic do
   def render(assigns) do
     ~H"""
     <.svelte name="Slots" socket={@socket}>
-      <button phx-click="increase" class="bg-black text-white rounded p-2">Increment the number</button>
+      <button phx-click="increase" class="bg-black text-white rounded p-2">
+        Increment the number
+      </button>
       <b><%= @number %></b>
 
       <:subtitle>
-          <%= @number %>
+        <%= @number %>
       </:subtitle>
     </.svelte>
     """
