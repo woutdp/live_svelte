@@ -584,19 +584,54 @@ More documentation on the topic:
 -   [HexDocs](https://hexdocs.pm/jason/Jason.Encoder.html)
 -   [GitHub](https://github.com/michalmuskala/jason#encoders)
 
+### Slots
+
+You can slot Elixir inside a LiveSvelte component like so:
+
+```elixir
+<.svelte name="Example">
+  <p>Slot content</p>
+</.svelte>
+```
+
+And in the Svelte file it will look like this:
+
+```svelte
+<script>
+    let {children}: = $props()
+</script>
+
+<i>Opening</i>
+  {@render children?.()}
+<i>Closing</i>
+```
+
+Named slots also work:
+
+```elixir
+<.svelte name="Example">
+  Main content
+  <:subtitle>
+    <p>Slot content</p>
+  </:subtitle>
+</.svelte>
+```
+
+```svelte
+<script>
+    let {children, subtitle}: = $props()
+</script>
+
+<i>Opening</i>
+  {@render children()}
+  <h2>{@render subtitle()}</h2>
+<i>Closing</i>
+```
+
+This works because of the Snippet API provided by Svelte. Be careful though, it's a new feature that might not be working 100% of the time, I'd love to see what limitations you hit with it. One limitation is that you can't slot other Svelte components.
+
+
 ## Caveats
-
-### Slot Interoperability
-
-Slot interoperability is still experimental, **so use with caution!**
-
-Svelte doesn't have an official way of setting the slot on mounting the Svelte object or updating it on subsequent changes, unlike props. This makes using slots from within Liveview on a Svelte component fragile.
-
-The server side rendered initial Svelte rendering does have support for slots so that should work as expected.
-
-Slots may eventually reach a state where it is stable, any help in getting there is appreciated. If you know a lot about the internals of Svelte your help may be invaluable here!
-
-Any bugs related to this are welcome to be logged, PR's are especially welcome!
 
 ### "Secret State"
 
