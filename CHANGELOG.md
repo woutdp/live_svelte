@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## UNRELEASED
 
+## 0.14.1 - 2024-11-19
+
 ### Changed
 
 -   Upgraded to esbuild 0.24.0. This requires you to reconfigure the `build.js` file. An example can be found in `example_project/assets/build.js`.

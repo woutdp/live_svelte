@@ -92,7 +92,7 @@ _If you're updating from an older version, make sure to check the `CHANGELOG.md`
 ```elixir
 defp deps do
   [
-    {:live_svelte, "~> 0.14.0"}
+    {:live_svelte, "~> 0.14.1"}
   ]
 end
 ```
