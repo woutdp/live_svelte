@@ -803,7 +803,7 @@ To migrate your project from `0.14.0` to `0.15.0` you need to follow the followi
 ```
 
 3. Update your build.js file.
-Which you can find [here](https://github.com/woutdp/live_svelte/blob/svelte-5/assets/copy/build.js)
+Which you can find [here](https://github.com/woutdp/live_svelte/blob/master/assets/copy/build.js)
 
 
 ## Credits
