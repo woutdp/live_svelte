@@ -822,5 +822,6 @@ Which you can find [here](https://github.com/woutdp/live_svelte/blob/master/asse
 -   [Territoriez.io](https://territoriez.io)
 -   [ash-svelte-flowbite](https://github.com/dev-guy/ash-svelte-flowbite)
 -   [Local-First Todo App](https://github.com/tonydangblog/liveview-svelte-pwa)
+-   [Beacon LiveAdmin](https://github.com/BeaconCMS/beacon_live_admin)
 
 _Using LiveSvelte in a public project? Let me know and I'll add it to this list!_
