@@ -1,13 +1,11 @@
 <div align="center">
 
-# LiveSvelte
+<img src="https://github.com/woutdp/live_svelte/blob/master/logo_3.png?raw=true" height="250" width="250" >
 
 [![GitHub](https://img.shields.io/github/stars/woutdp/live_svelte?style=social)](https://github.com/woutdp/live_svelte)
 [![Hex.pm](https://img.shields.io/hexpm/v/live_svelte.svg)](https://hex.pm/packages/live_svelte)
 
 Svelte inside Phoenix LiveView with seamless end-to-end reactivity
-
-![logo](https://github.com/woutdp/live_svelte/blob/master/logo.png?raw=true)
 
 [Features](#features) •
 [Resources](#resources) •
