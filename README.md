@@ -785,7 +785,7 @@ Since version `0.15.0`, LiveSvelte supports Svelte 5. If you want to use Svelte 
 
 To migrate your project from `0.14.0` to `0.15.0` you need to follow the following 3 steps:
 
-1. Update `mix.exs`` and run `mix deps.get`
+1. Update `mix.exs` and run `mix deps.get`
 
 ```elixir
 # `mix.exs`
