@@ -639,7 +639,7 @@ Use the `:loading` slot to render a placeholder during that gap:
 ```elixir
 <.svelte name="Example" ssr={false}>
   <:loading>
-    <p>This will show up while the Svelte component is being loaded</p>
+    <p>Until your LiveSvelte component renders client-side, this will be displayed</p>
   </:loading>
 </.svelte>
 ```
