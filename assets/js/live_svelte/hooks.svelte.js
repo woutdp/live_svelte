@@ -81,6 +81,11 @@ export function getHooks(components) {
                 window.addEventListener(`${liveJsonElement}_patched`, _event => update_state(this), false)
             }
 
+            // This is required for the loading slot to be cleared once we mount the component
+            if (!this.el.hasAttribute("data-ssr")) {
+                this.el.innerHTML = ""
+            }
+
             const hydrateOrMount = this.el.hasAttribute("data-ssr") ? hydrate : mount
 
             this._instance = hydrateOrMount(Component, {

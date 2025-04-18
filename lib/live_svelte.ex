@@ -44,6 +44,10 @@ defmodule LiveSvelte do
 
   slot :inner_block, doc: "Inner block of the Svelte component"
 
+  slot(:loading,
+    doc: "LiveView rendered markup to show while the component is loading client-side"
+  )
+
   @doc """
   Renders a Svelte component on the server.
   """
@@ -101,6 +105,7 @@ defmodule LiveSvelte do
           <%= raw(@ssr_render["css"]["code"]) %>
         </style>
         <%= raw(@ssr_render["html"]) %>
+        <%= render_slot(@loading) %>
       </div>
     </.live_json>
     """
