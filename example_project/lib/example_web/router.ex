@@ -34,6 +34,7 @@ defmodule ExampleWeb.Router do
     live "/slots-simple", LiveSlotsSimple
     live "/slots-dynamic", LiveSlotsDynamic
     live "/composition", LiveComposition
+    live "/client-side-loading", LiveClientSideLoading
   end
 
   # Other scopes may use custom stacks.
