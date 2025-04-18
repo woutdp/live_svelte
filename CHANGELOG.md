@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## UNRELEASED
 
+### Added
+-   Added support for [fallback content](https://github.com/woutdp/live_svelte?tab=readme-ov-file#showing-fallback-content-with-loading) while the component is rendering
+
+### Fixed
+-   Documentation tweaks that refer to adding the socket when not using SSR
+
 ## 0.15.0 - 2025-02-05
 
 ### Changed
