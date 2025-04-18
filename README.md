@@ -16,6 +16,8 @@ Svelte inside Phoenix LiveView with seamless end-to-end reactivity
 
 </div>
 
+<!-- MDOC !-->
+
 ## Features
 
 -   ⚡ **End-To-End Reactivity** with LiveView

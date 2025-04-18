@@ -24,8 +24,7 @@ defmodule LiveSvelte.MixProject do
         source_ref: "v#{@version}",
         source_url: @repo_url,
         homepage_url: @repo_url,
-        main: "readme",
-        extras: ["README.md"],
+        main: "LiveSvelte",
         links: %{
           "GitHub" => @repo_url,
           "Sponsor" => "https://github.com/sponsors/woutdp"
