@@ -58,7 +58,7 @@ defmodule LiveSvelte do
 
     if init and ssr_active and assigns.ssr and assigns.loading != [] do
       IO.warn(
-        "The loading slot is incompatible with server-side rendering (ssr). Either remove the loading slot or disable ssr",
+        "The <:loading /> slot is incompatible with server-side rendering (ssr). Either remove the <:loading /> slot or set ssr={false}",
         Macro.Env.stacktrace(__ENV__)
       )
     end
