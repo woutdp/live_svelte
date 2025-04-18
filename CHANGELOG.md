@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## UNRELEASED
 
+## 0.16.0 - 2025-04-18
+
 ### Added
 -   Added support for [fallback content](https://github.com/woutdp/live_svelte?tab=readme-ov-file#showing-fallback-content-with-loading) while the component is rendering
 
