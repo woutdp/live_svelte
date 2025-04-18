@@ -54,7 +54,7 @@ defmodule LiveSvelte.MixProject do
 
   defp deps do
     [
-      {:ex_doc, "~> 0.19", only: :dev, runtime: false},
+      {:ex_doc, "~> 0.37.3", only: :dev, runtime: false},
       {:jason, "~> 1.2"},
       {:nodejs, "~> 3.1"},
       {:phoenix, ">= 1.7.0"},
