@@ -25,6 +25,7 @@ defmodule LiveSvelte.MixProject do
         source_url: @repo_url,
         homepage_url: @repo_url,
         main: "LiveSvelte",
+        logo: "logo_3.png",
         links: %{
           "GitHub" => @repo_url,
           "Sponsor" => "https://github.com/sponsors/woutdp"
