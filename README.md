@@ -631,6 +631,20 @@ Named slots also work:
 This works because of the Snippet API provided by Svelte. Be careful though, it's a new feature that might not be working 100% of the time, I'd love to see what limitations you hit with it. One limitation is that you can't slot other Svelte components.
 
 
+### Showing fallback content with :loading
+
+When SSR is disabled, a full‑page refresh briefly shows a blank content before Svelte finishes loading.
+Use the `:loading` slot to render a placeholder during that gap:
+
+```elixir
+<.svelte name="Example" ssr={false}>
+  <:loading>
+    <p>This will show up while the Svelte component is being loaded</p>
+  </:loading>
+</.svelte>
+```
+
+
 ## Caveats
 
 ### "Secret State"
