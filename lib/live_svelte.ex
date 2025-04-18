@@ -1,4 +1,10 @@
 defmodule LiveSvelte do
+  @external_resource "README.md"
+  @moduledoc @external_resource
+             |> File.read!()
+             |> String.split("<!-- MDOC !-->")
+             |> Enum.fetch!(1)
+
   use Phoenix.Component
   import Phoenix.HTML
   import LiveSvelte.LiveJson
