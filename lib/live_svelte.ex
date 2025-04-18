@@ -56,6 +56,13 @@ defmodule LiveSvelte do
     dead = assigns.socket == nil or not LiveView.connected?(assigns.socket)
     ssr_active = Application.get_env(:live_svelte, :ssr, true)
 
+    if init and ssr_active and assigns.ssr and assigns.loading != [] do
+      IO.warn(
+        "The loading slot is incompatible with server-side rendering (ssr). Either remove the loading slot or disable ssr",
+        Macro.Env.stacktrace(__ENV__)
+      )
+    end
+
     slots =
       assigns
       |> Slots.rendered_slot_map()
