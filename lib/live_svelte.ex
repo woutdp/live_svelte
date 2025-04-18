@@ -30,12 +30,12 @@ defmodule LiveSvelte do
 
   attr :ssr, :boolean,
     default: true,
-    doc: "Whether to render the component on the server",
+    doc: "Whether to render the component via NodeJS on the server",
     examples: [true, false]
 
   attr :socket, :map,
     default: nil,
-    doc: "LiveView socket, should be provided when rendering inside LiveView"
+    doc: "LiveView socket, only needed when ssr: true"
 
   attr :live_json_props, :map,
     default: %{},
