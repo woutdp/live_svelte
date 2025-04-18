@@ -13,56 +13,36 @@ defmodule LiveSvelte do
   alias LiveSvelte.Slots
   alias LiveSvelte.SSR
 
-  attr(
-    :props,
-    :map,
+  attr :props, :map,
     default: %{},
     doc: "Props to pass to the Svelte component",
     examples: [%{foo: "bar"}, %{foo: "bar", baz: 1}, %{list: [], baz: 1, qux: %{a: 1, b: 2}}]
-  )
 
-  attr(
-    :name,
-    :string,
+  attr :name, :string,
     required: true,
     doc: "Name of the Svelte component",
     examples: ["YourComponent", "directory/Example"]
-  )
 
-  attr(
-    :class,
-    :string,
+  attr :class, :string,
     default: nil,
     doc: "Class to apply to the Svelte component",
     examples: ["my-class", "my-class another-class"]
-  )
 
-  attr(
-    :ssr,
-    :boolean,
+  attr :ssr, :boolean,
     default: true,
     doc: "Whether to render the component on the server",
     examples: [true, false]
-  )
 
-  attr(
-    :socket,
-    :map,
+  attr :socket, :map,
     default: nil,
     doc: "LiveView socket, should be provided when rendering inside LiveView"
-  )
 
-  attr(
-    :live_json_props,
-    :map,
+  attr :live_json_props, :map,
     default: %{},
     doc: "LiveJson props to pass to the Svelte component",
-    examples: [
-      %{my_big_data_set: %{some_data: 1}}
-    ]
-  )
+    examples: [%{my_big_data_set: %{some_data: 1}}]
 
-  slot(:inner_block, doc: "Inner block of the Svelte component")
+  slot :inner_block, doc: "Inner block of the Svelte component"
 
   @doc """
   Renders a Svelte component on the server.
@@ -100,19 +80,26 @@ defmodule LiveSvelte do
 
     ~H"""
     <.live_json live_json_props={@live_json_props}>
-      <script><%= raw(@ssr_render["head"]) %></script>
+      <script>
+        <%= raw(@ssr_render["head"]) %>
+      </script>
       <div
         id={id(@name)}
         data-name={@name}
         data-props={json(@props)}
         data-ssr={@ssr_render != nil}
-        data-live-json={if @init, do: json(@live_json_props), else: @live_json_props |> Map.keys() |> json()}
+        data-live-json={
+          if @init, do: json(@live_json_props), else: @live_json_props |> Map.keys() |> json()
+        }
         data-slots={@slots |> Slots.base_encode_64() |> json}
         phx-update="ignore"
         phx-hook="SvelteHook"
         class={@class}
       >
         <%= raw(@ssr_render["head"]) %>
+        <style>
+          <%= raw(@ssr_render["css"]["code"]) %>
+        </style>
         <%= raw(@ssr_render["html"]) %>
       </div>
     </.live_json>
