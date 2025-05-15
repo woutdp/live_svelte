@@ -630,6 +630,10 @@ Named slots also work:
 
 This works because of the Snippet API provided by Svelte. Be careful though, it's a new feature that might not be working 100% of the time, I'd love to see what limitations you hit with it. One limitation is that you can't slot other Svelte components.
 
+> ℹ️ **Note: Slotted Content is wrapped with a `div`**
+>
+> LiveSvelte wraps all slotted content in a `<div>` element.
+> This is a limitation to how `createRawSnippet` works in Svelte, which is used under the hood in LiveSvelte to make this feature work.
 
 ### Showing fallback content with :loading
 
