@@ -1,4 +1,4 @@
-defmodule ExampleWeb.LiveExample2 do
+defmodule ExampleWeb.LiveSimpleCounter do
   use ExampleWeb, :live_view
 
   def render(assigns) do

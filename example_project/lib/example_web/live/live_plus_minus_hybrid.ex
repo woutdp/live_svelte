@@ -1,4 +1,4 @@
-defmodule ExampleWeb.LiveExample3 do
+defmodule ExampleWeb.LivePlusMinusHybrid do
   use ExampleWeb, :live_view
   use LiveSvelte.Components
 

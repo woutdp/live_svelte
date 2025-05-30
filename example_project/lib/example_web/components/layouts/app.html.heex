@@ -16,115 +16,28 @@
     </div>
 
     <div class="flex">
-      <a
-        href={~p"/simple"}
-        class="font-semibold leading-6 text-zinc-900 hover:text-zinc-700 hover:underline p-2"
-      >
-        1
-      </a>
-
-      <a
-        href={~p"/lodash"}
-        class="font-semibold leading-6 text-zinc-900 hover:text-zinc-700 hover:underline p-2"
-      >
-        2
-      </a>
-
-      <a
-        href={~p"/struct"}
-        class="font-semibold leading-6 text-zinc-900 hover:text-zinc-700 hover:underline p-2"
-      >
-        3
-      </a>
-
-      <a
-        href={~p"/counter"}
-        class="font-semibold leading-6 text-zinc-900 hover:text-zinc-700 hover:underline p-2"
-      >
-        4
-      </a>
-
-      <a
-        href={~p"/lights"}
-        class="font-semibold leading-6 text-zinc-900 hover:text-zinc-700 hover:underline p-2"
-      >
-        5
-      </a>
-
-      <a
-        href={~p"/sigil"}
-        class="font-semibold leading-6 text-zinc-900 hover:text-zinc-700 hover:underline p-2"
-      >
-        6
-      </a>
-
-      <a
-        href={~p"/plus-minus-svelte"}
-        class="font-semibold leading-6 text-zinc-900 hover:text-zinc-700 hover:underline p-2"
-      >
-        7
-      </a>
-
-      <a
-        href={~p"/plus-minus-liveview"}
-        class="font-semibold leading-6 text-zinc-900 hover:text-zinc-700 hover:underline p-2"
-      >
-        8
-      </a>
-
-      <a
-        href={~p"/plus-minus-hybrid"}
-        class="font-semibold leading-6 text-zinc-900 hover:text-zinc-700 hover:underline p-2"
-      >
-        9
-      </a>
-
-      <a
-        href={~p"/log-list"}
-        class="font-semibold leading-6 text-zinc-900 hover:text-zinc-700 hover:underline p-2"
-      >
-        10
-      </a>
-
-      <a
-        href={~p"/breaking-news"}
-        class="font-semibold leading-6 text-zinc-900 hover:text-zinc-700 hover:underline p-2"
-      >
-        11
-      </a>
-
-      <a
-        href={~p"/chat"}
-        class="font-semibold leading-6 text-zinc-900 hover:text-zinc-700 hover:underline p-2"
-      >
-        12
-      </a>
-
-      <a
-        href={~p"/live-json"}
-        class="font-semibold leading-6 text-zinc-900 hover:text-zinc-700 hover:underline p-2"
-      >
-        13
-      </a>
-
-      <a
-        href={~p"/slots-simple"}
-        class="font-semibold leading-6 text-zinc-900 hover:text-zinc-700 hover:underline p-2"
-      >
-        14
-      </a>
-      <a
-        href={~p"/slots-dynamic"}
-        class="font-semibold leading-6 text-zinc-900 hover:text-zinc-700 hover:underline p-2"
-      >
-        15
-      </a>
-      <a
-        href={~p"/client-side-loading"}
-        class="font-semibold leading-6 text-zinc-900 hover:text-zinc-700 hover:underline p-2"
-      >
-        16
-      </a>
+      <%= for {path, text} <- [
+        {~p"/hello-world", "1"},
+        {~p"/lodash", "2"},
+        {~p"/live-struct", "3"},
+        {~p"/live-simple-counter", "4"},
+        {~p"/live-lights", "5"},
+        {~p"/live-sigil", "6"},
+        {~p"/plus-minus-svelte", "7"},
+        {~p"/live-plus-minus", "8"},
+        {~p"/live-plus-minus-hybrid", "9"},
+        {~p"/live-log-list", "10"},
+        {~p"/live-breaking-news", "11"},
+        {~p"/live-chat", "12"},
+        {~p"/live-json", "13"},
+        {~p"/live-slots-simple", "14"},
+        {~p"/live-slots-dynamic", "15"},
+        {~p"/live-client-side-loading", "16"}
+      ] do %>
+        <a href={path} class="font-semibold leading-6 text-zinc-900 hover:text-zinc-700 hover:underline p-2">
+          <%= text %>
+        </a>
+      <% end %>
     </div>
 
     <div class="flex items-center gap-4">

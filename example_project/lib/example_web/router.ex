@@ -18,23 +18,25 @@ defmodule ExampleWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
-    get "/simple", PageController, :svelte_1
-    get "/plus-minus-svelte", PageController, :svelte_2
-    get "/lodash", PageController, :svelte_3
-    live "/plus-minus-liveview", LiveExample1
-    live "/counter", LiveExample2
-    live "/plus-minus-hybrid", LiveExample3
-    live "/log-list", LiveExample4
-    live "/breaking-news", LiveExample5
-    live "/chat", LiveExample6
-    live "/lights", LiveLights
-    live "/struct", LiveStruct
-    live "/sigil", LiveSigil
+    # same order as in app.html.heex:
+    get "/hello-world", PageController, :hello_world
+    get "/lodash", PageController, :lodash
+    live "/live-struct", LiveStruct
+    live "/live-simple-counter", LiveSimpleCounter
+    live "/live-lights", LiveLights
+    live "/live-sigil", LiveSigil
+    get "/plus-minus-svelte", PageController, :plus_minus_svelte
+    live "/live-plus-minus", LivePlusMinus
+    live "/live-plus-minus-hybrid", LivePlusMinusHybrid
+    live "/live-log-list", LiveLogList
+    live "/live-breaking-news", LiveBreakingNews
+    live "/live-chat", LiveChat
     live "/live-json", LiveJson
-    live "/slots-simple", LiveSlotsSimple
-    live "/slots-dynamic", LiveSlotsDynamic
-    live "/composition", LiveComposition
-    live "/client-side-loading", LiveClientSideLoading
+    live "/live-slots-simple", LiveSlotsSimple
+    live "/live-slots-dynamic", LiveSlotsDynamic
+    live "/live-client-side-loading", LiveClientSideLoading
+    # not referenced in app.html.heex:
+    live "/live-composition", LiveComposition
   end
 
   # Other scopes may use custom stacks.
