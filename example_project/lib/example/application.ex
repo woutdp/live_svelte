@@ -11,8 +11,8 @@ defmodule Example.Application do
       {NodeJS.Supervisor, [path: LiveSvelte.SSR.NodeJS.server_path(), pool_size: 4]},
       # Start the Telemetry supervisor
       ExampleWeb.Telemetry,
-      # Start the Ecto repository
-      Example.Repo,
+      # Start the Ecto repository (actually not used in this example, so skip it)
+      # Example.Repo,
       # Start the PubSub system
       {Phoenix.PubSub, name: Example.PubSub},
       # Start Finch
