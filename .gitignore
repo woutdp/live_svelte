@@ -39,3 +39,6 @@ priv/static/
 .nix-hex
 .nix-mix
 .erlang-history
+
+# macOS
+.DS_Store
