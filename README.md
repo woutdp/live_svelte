@@ -214,14 +214,19 @@ I recommend cloning `live_svelte` and running the example project in `/example_p
 
 ```
 git clone https://github.com/woutdp/live_svelte.git
-mix assets.build
-cd ./live_svelte/example_project
-npm install --prefix assets
+# compile live_svelte
+cd live_svelte
 mix deps.get
+npm install --prefix assets
+mix assets.build
+# set up and run the example project
+cd example_project
+mix deps.get
+npm install --prefix assets
 mix phx.server
 ```
 
-Server should be running on `localhost:4000`
+Server will be running on `localhost:4000`. If you want to change the port, edit `example_project/config/dev.exs` and change the `http` config.
 
 If you have examples you want to add, feel free to create a PR, I'd be happy to add them.
 
