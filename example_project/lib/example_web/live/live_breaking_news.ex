@@ -1,4 +1,4 @@
-defmodule ExampleWeb.LiveExample5 do
+defmodule ExampleWeb.LiveBreakingNews do
   use ExampleWeb, :live_view
 
   @initial_news [

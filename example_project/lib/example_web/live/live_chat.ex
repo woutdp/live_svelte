@@ -1,4 +1,4 @@
-defmodule ExampleWeb.LiveExample6 do
+defmodule ExampleWeb.LiveChat do
   use ExampleWeb, :live_view
   use LiveSvelte.Components
 
