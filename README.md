@@ -461,6 +461,14 @@ Like mentioned, without SSR you'd see a brief flash of un-rendered content. Some
 
 In theses cases you can turn off SSR.
 
+**Important: Set NODE_ENV to production in production deployments**
+
+When deploying your application to production, you must set the `NODE_ENV` environment variable to `production`. If this is not done, your application may experience a memory leak and significantly reduced performance during SSR. For Docker deployments, you can add the following line to your production Dockerfile as an example:
+
+```
+ENV NODE_ENV production
+```
+
 #### Disabling SSR
 
 SSR is enabled by default when you install LiveSvelte. If you don't want to use Server-Side Rendering for Svelte, you can disable it in the following ways:
@@ -487,6 +495,7 @@ To disable SSR on a specific component, set the `ssr` property to false. Like so
 ```
 <.svelte name="Example" ssr={false} />
 ```
+
 
 ### live_json
 
@@ -726,6 +735,8 @@ Deploying a LiveSvelte app is the same as deploying a regular Phoenix app, excep
 
 The below guide shows how to deploy a LiveSvelte app to [Fly.io](https://fly.io/), but similar steps can be taken to deploy to other hosting providers.
 You can find more information on how to deploy a Phoenix app [here](https://hexdocs.pm/phoenix/deployment.html).
+
+> **Note:** For best performance and to avoid memory leaks, always set the `NODE_ENV` environment variable to `production` in your production environment.
 
 ### Deploying on Fly.io
 
