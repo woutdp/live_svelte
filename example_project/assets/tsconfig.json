@@ -1,5 +1,7 @@
 {
     "compilerOptions": {
+        "target": "es2022",
+        "isolatedModules": true,
         "verbatimModuleSyntax": true,
         "types": ["node"],
         "baseUrl": ".",
