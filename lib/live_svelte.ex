@@ -42,6 +42,10 @@ defmodule LiveSvelte do
     doc: "LiveJson props to pass to the Svelte component",
     examples: [%{my_big_data_set: %{some_data: 1}}]
 
+  attr :nonce, :string,
+    default: nil,
+    doc: "Nonce value for Content Security Policy"
+
   slot :inner_block, doc: "Inner block of the Svelte component"
 
   slot(:loading,
@@ -91,7 +95,7 @@ defmodule LiveSvelte do
 
     ~H"""
     <.live_json live_json_props={@live_json_props}>
-      <script>
+      <script nonce={@nonce}>
         <%= raw(@ssr_render["head"]) %>
       </script>
       <div
@@ -108,7 +112,7 @@ defmodule LiveSvelte do
         class={@class}
       >
         <%= raw(@ssr_render["head"]) %>
-        <style>
+        <style nonce={@nonce}>
           <%= raw(@ssr_render["css"]["code"]) %>
         </style>
         <%= raw(@ssr_render["html"]) %>
