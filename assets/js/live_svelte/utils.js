@@ -9,3 +9,8 @@ export function normalizeComponents(components) {
     }
     return normalized
 }
+
+export function decodeB64ToUTF8(b64) {
+    const chars = Uint8Array.from(atob(b64), c => c.charCodeAt(0))
+    return new TextDecoder().decode(chars)
+}
