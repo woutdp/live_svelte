@@ -1,4 +1,4 @@
-import {normalizeComponents} from "./utils"
+import {decodeB64ToUTF8, normalizeComponents} from "./utils"
 import {mount, hydrate, unmount, createRawSnippet} from "svelte"
 
 function getAttributeJson(ref, attributeName) {
@@ -12,7 +12,7 @@ function getSlots(ref) {
     for (const slotName in getAttributeJson(ref, "data-slots")) {
         const base64 = getAttributeJson(ref, "data-slots")[slotName]
         const element = document.createElement("div")
-        element.innerHTML = atob(base64).trim()
+        element.innerHTML = decodeB64ToUTF8(base64).trim()
 
         const snippet = createRawSnippet(name => {
             return {
