@@ -30,7 +30,15 @@ defmodule LiveSvelte do
 
   attr :csp_nonce, :string,
     default: nil,
-    doc: "A Content-Security-Policy nonce for the <script> and <style> tags"
+    doc: "A Content-Security-Policy nonce for the generated <script> and <style> tags"
+
+  attr :csp_script_nonce, :string,
+    default: nil,
+    doc: "A Content-Security-Policy nonce for the generated <script> tag"
+
+  attr :csp_style_nonce, :string,
+    default: nil,
+    doc: "A Content-Security-Policy nonce for the generated <style> tag"
 
   attr :ssr, :boolean,
     default: true,
@@ -87,9 +95,14 @@ defmodule LiveSvelte do
         end
       end
 
+    csp_attrs = if(nonce = assigns.csp_nonce, do: [nonce: nonce])
+
     assigns =
       assign(assigns,
-        csp_attrs: if(nonce = assigns[:csp_nonce], do: [nonce: nonce]),
+        csp_script_attrs:
+          csp_attrs || if(nonce = assigns.csp_script_nonce, do: [nonce: nonce], else: []),
+        csp_style_attrs:
+          csp_attrs || if(nonce = assigns.csp_style_nonce, do: [nonce: nonce], else: []),
         init: init,
         slots: slots,
         ssr_render: ssr_code
@@ -97,7 +110,7 @@ defmodule LiveSvelte do
 
     ~H"""
     <.live_json live_json_props={@live_json_props}>
-      <script {@csp_attrs}>
+      <script {@csp_script_attrs}>
         <%= raw(@ssr_render["head"]) %>
       </script>
       <div
@@ -114,7 +127,7 @@ defmodule LiveSvelte do
         class={@class}
       >
         <%= raw(@ssr_render["head"]) %>
-        <style {@csp_attrs}>
+        <style {@csp_style_attrs}>
           <%= raw(@ssr_render["css"]["code"]) %>
         </style>
         <%= raw(@ssr_render["html"]) %>
