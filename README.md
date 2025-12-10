@@ -136,16 +136,7 @@ defp html_helpers do
 end
 ```
 
-5. For tailwind support, add `"./svelte/**/*.svelte"` to `content` in the `tailwind.config.js` file
-
-```javascript
-...
-content: [
-  ...
-  "./svelte/**/*.svelte"
-],
-...
-```
+5. For tailwind support, add `@source "../svelte";` in the `app.css` file
 
 6. Finally, remove the `esbuild` configuration from `config/config.exs` and remove the dependency from the `deps` function in your `mix.exs`, and you are done!
 
