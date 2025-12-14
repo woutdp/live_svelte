@@ -21,7 +21,7 @@ let optsClient = {
     minify: deploy,
     conditions: clientConditions,
     alias: {svelte: "svelte"},
-    outdir: "../priv/static/assets",
+    outdir: "../priv/static/assets/js",
     logLevel: "info",
     sourcemap: watch ? "inline" : false,
     tsconfig: "./tsconfig.json",
