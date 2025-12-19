@@ -13,6 +13,11 @@ defmodule LiveSvelte do
   alias LiveSvelte.Slots
   alias LiveSvelte.SSR
 
+  # Override Phoenix's slot validation to accept arbitrary slot names.
+  # This allows users to pass any named slot to Svelte components without
+  # getting "undefined slot" warnings during compilation.
+  @before_compile LiveSvelte.DynamicSlots
+
   attr :props, :map,
     default: %{},
     doc: "Props to pass to the Svelte component",
