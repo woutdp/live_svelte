@@ -27,12 +27,21 @@ defmodule LiveSvelte.Slots do
     |> Enum.into(%{})
   end
 
-  @doc false
-  defp filter_slots_from_assigns(assigns) do
+  @doc """
+  Filters assigns to return only slot entries.
+  Slots are identified by having a list value containing maps with `__slot__` key.
+  """
+  def filter_slots_from_assigns(assigns) do
     assigns
     |> Enum.filter(fn
-      {_key, [%{__slot__: _}]} -> true
-      _ -> false
+      {_key, value} when is_list(value) ->
+        Enum.any?(value, fn
+          %{__slot__: _} -> true
+          _ -> false
+        end)
+
+      _ ->
+        false
     end)
     |> Enum.into(%{})
   end
