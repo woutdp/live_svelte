@@ -2,7 +2,8 @@ import Config
 
 config :live_svelte,
   ssr_module: LiveSvelte.SSR.NodeJS,
-  ssr: true
+  ssr: true,
+  json_library: Jason
 
 # if Mix.env() == :dev do
 #   esbuild = fn args ->

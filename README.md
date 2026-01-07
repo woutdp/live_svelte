@@ -487,6 +487,36 @@ To disable SSR on a specific component, set the `ssr` property to false. Like so
 <.svelte name="Example" ssr={false} />
 ```
 
+### Custom JSON Library
+
+By default, LiveSvelte uses Jason for JSON encoding. You can configure an alternative JSON library in your `config.exs`:
+
+```elixir
+# config/config.exs
+config :live_svelte, json_library: Poison
+```
+
+The custom JSON library must implement `encode!/1` that accepts any Elixir term and returns a JSON string.
+
+Example using a custom library:
+
+```elixir
+# mix.exs
+defp deps do
+  [
+    {:live_svelte, "~> 0.16"},
+    {:poison, "~> 5.0"}
+  ]
+end
+
+# config/config.exs
+config :live_svelte,
+  ssr_module: LiveSvelte.SSR.NodeJS,
+  ssr: true,
+  json_library: Poison
+```
+
+This can be useful if you need to use a specific JSON library for compatibility with other parts of your application.
 
 ### live_json
 

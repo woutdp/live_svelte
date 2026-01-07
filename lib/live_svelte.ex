@@ -128,7 +128,8 @@ defmodule LiveSvelte do
   end
 
   defp json(props) do
-    Jason.encode!(props)
+    json_library = Application.get_env(:live_svelte, :json_library, Jason)
+    json_library.encode!(props)
   end
 
   defp id(name), do: "#{name}-#{System.unique_integer([:positive])}"
