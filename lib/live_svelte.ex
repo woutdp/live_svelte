@@ -128,7 +128,7 @@ defmodule LiveSvelte do
   end
 
   defp json(props) do
-    json_library = Application.get_env(:live_svelte, :json_library, Jason)
+    json_library = Application.get_env(:live_svelte, :json_library, LiveSvelte.JSON)
     json_library.encode!(props)
   end
 

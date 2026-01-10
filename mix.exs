@@ -8,7 +8,7 @@ defmodule LiveSvelte.MixProject do
     [
       app: :live_svelte,
       version: @version,
-      elixir: "~> 1.12",
+      elixir: "~> 1.17",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
@@ -60,7 +60,7 @@ defmodule LiveSvelte.MixProject do
   defp deps do
     [
       {:ex_doc, "~> 0.37.3", only: :dev, runtime: false},
-      {:jason, "~> 1.2"},
+      {:jason, "~> 1.2", optional: true},
       {:nodejs, "~> 3.1"},
       {:phoenix, ">= 1.7.0"},
       {:phoenix_html, ">= 3.3.1"},

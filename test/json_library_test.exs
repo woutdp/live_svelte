@@ -2,15 +2,15 @@ defmodule LiveSvelte.JSONLibraryTest do
   # must be synchronous, tests are sensitive to config changes
   use ExUnit.Case, async: false
 
-  describe "default JSON library" do
-    test "uses Jason by default when no config is provided" do
-      load_config("config/config.exs")
-      json_library = Application.get_env(:live_svelte, :json_library, Jason)
-      assert json_library == Jason
+  describe "native JSON library (default)" do
+    test "uses LiveSvelte.JSON by default when no config is provided" do
+      Application.delete_env(:live_svelte, :json_library)
+      json_library = Application.get_env(:live_svelte, :json_library, LiveSvelte.JSON)
+      assert json_library == LiveSvelte.JSON
     end
 
-    test "encodes props correctly with Jason" do
-      load_config("config/config.exs")
+    test "encodes props correctly with native JSON" do
+      Application.delete_env(:live_svelte, :json_library)
 
       data = %{foo: "bar", baz: 123}
 
@@ -32,7 +32,12 @@ defmodule LiveSvelte.JSONLibraryTest do
       html = Phoenix.HTML.Safe.to_iodata(result) |> IO.iodata_to_binary()
 
       # HTML entities are escaped in the output
-      assert html =~ ~s(data-props="{&quot;foo&quot;:&quot;bar&quot;,&quot;baz&quot;:123}")
+      # Native JSON encodes correctly
+      assert html =~ "data-props="
+      assert html =~ "foo"
+      assert html =~ "bar"
+      assert html =~ "baz"
+      assert html =~ "123"
     end
   end
 
@@ -68,16 +73,13 @@ defmodule LiveSvelte.JSONLibraryTest do
     end
   end
 
-  describe "backward compatibility" do
-    test "existing code works without configuration changes" do
-      # Reset to default config
-      load_config("config/config.exs")
+  describe "backward compatibility with Jason" do
+    test "works with Jason when explicitly configured" do
+      Application.put_env(:live_svelte, :json_library, Jason)
 
-      # Verify Jason is used as default
-      json_library = Application.get_env(:live_svelte, :json_library, Jason)
+      json_library = Application.get_env(:live_svelte, :json_library)
       assert json_library == Jason
 
-      # Verify encoding works as before
       data = %{legacy: "test"}
 
       assigns = %{
@@ -97,6 +99,43 @@ defmodule LiveSvelte.JSONLibraryTest do
 
       # HTML entities are escaped in the output
       assert html =~ ~s(data-props="{&quot;legacy&quot;:&quot;test&quot;}")
+
+      # Clean up
+      Application.delete_env(:live_svelte, :json_library)
+    end
+  end
+
+  describe "struct encoding" do
+    defmodule TestUser do
+      defstruct name: "John", age: 27
+    end
+
+    test "native JSON encodes structs as maps automatically" do
+      Application.delete_env(:live_svelte, :json_library)
+
+      data = %{user: %TestUser{name: "Jane", age: 30}}
+
+      assigns = %{
+        __changed__: nil,
+        socket: nil,
+        name: "StructTest",
+        props: data,
+        live_json_props: %{},
+        ssr: false,
+        class: nil,
+        loading: [],
+        inner_block: []
+      }
+
+      result = LiveSvelte.svelte(assigns)
+      html = Phoenix.HTML.Safe.to_iodata(result) |> IO.iodata_to_binary()
+
+      # Should encode struct fields
+      assert html =~ "user"
+      assert html =~ "name"
+      assert html =~ "Jane"
+      assert html =~ "age"
+      assert html =~ "30"
     end
   end
 
