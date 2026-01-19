@@ -94,19 +94,20 @@ defmodule LiveSvelte do
       <script>
         <%= raw(@ssr_render["head"]) %>
       </script>
-      <div
-        id={id(@name)}
-        data-name={@name}
-        data-props={json(@props)}
-        data-ssr={@ssr_render != nil}
-        data-live-json={
-          if @init, do: json(@live_json_props), else: @live_json_props |> Map.keys() |> json()
-        }
-        data-slots={@slots |> Slots.base_encode_64() |> json}
-        phx-update="ignore"
-        phx-hook="SvelteHook"
-        class={@class}
-      >
+    <% svelte_id = id(@name) %>
+    <div
+      id={svelte_id}
+      data-name={@name}
+      data-props={json(@props)}
+      data-ssr={@ssr_render != nil}
+      data-live-json={
+        if @init, do: json(@live_json_props), else: @live_json_props |> Map.keys() |> json()
+      }
+      data-slots={@slots |> Slots.base_encode_64() |> json}
+      phx-hook="SvelteHook"
+      class={@class}
+    >
+      <div id={"#{svelte_id}-target"} data-svelte-target phx-update="ignore">
         <%= raw(@ssr_render["head"]) %>
         <style>
           <%= raw(@ssr_render["css"]["code"]) %>
@@ -114,6 +115,7 @@ defmodule LiveSvelte do
         <%= raw(@ssr_render["html"]) %>
         <%= render_slot(@loading) %>
       </div>
+    </div>
     </.live_json>
     """
   end

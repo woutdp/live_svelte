@@ -134,4 +134,75 @@ defmodule LiveSvelte.JSONTest do
       assert get_in(decoded, ["a", "b", "c", "d"]) |> Enum.at(2) |> Map.get("e") == "f"
     end
   end
+
+  describe "integer key handling" do
+    test "encodes maps with integer keys as string keys" do
+      result = JSON.encode!(%{1 => "a", 2 => "b"})
+      decoded = :json.decode(result)
+      assert Map.has_key?(decoded, "1")
+      assert Map.has_key?(decoded, "2")
+      assert decoded["1"] == "a"
+      assert decoded["2"] == "b"
+    end
+
+    test "encodes large maps with integer keys (LiveJson scenario)" do
+      data = for i <- 1..100, into: %{}, do: {i, i * 2}
+      result = JSON.encode!(data)
+      decoded = :json.decode(result)
+      assert decoded["1"] == 2
+      assert decoded["50"] == 100
+      assert decoded["100"] == 200
+    end
+
+    test "encodes nested maps with integer keys" do
+      data = %{1 => %{2 => "nested"}}
+      result = JSON.encode!(data)
+      decoded = :json.decode(result)
+      assert decoded["1"]["2"] == "nested"
+    end
+
+    test "encodes mixed key types" do
+      data = %{1 => "int", :atom => "atom", "string" => "string"}
+      result = JSON.encode!(data)
+      decoded = :json.decode(result)
+      assert decoded["1"] == "int"
+      assert decoded["atom"] == "atom"
+      assert decoded["string"] == "string"
+    end
+  end
+
+  describe "atom value handling" do
+    test "encodes atom values as strings" do
+      result = JSON.encode!(%{status: :active})
+      decoded = :json.decode(result)
+      assert decoded["status"] == "active"
+    end
+
+    test "preserves boolean atoms" do
+      assert JSON.encode!(true) == "true"
+      assert JSON.encode!(false) == "false"
+    end
+
+    test "encodes atom values in lists" do
+      result = JSON.encode!([:one, :two, :three])
+      assert result == ~s(["one","two","three"])
+    end
+
+    test "encodes mixed atom and string values" do
+      result = JSON.encode!(%{atom_val: :test, string_val: "test"})
+      decoded = :json.decode(result)
+      assert decoded["atom_val"] == "test"
+      assert decoded["string_val"] == "test"
+    end
+  end
+
+  describe "float key handling" do
+    test "encodes maps with float keys as string keys" do
+      result = JSON.encode!(%{1.5 => "float"})
+      decoded = :json.decode(result)
+      # Float.to_string may produce different representations
+      assert map_size(decoded) == 1
+      assert Enum.at(Map.values(decoded), 0) == "float"
+    end
+  end
 end
