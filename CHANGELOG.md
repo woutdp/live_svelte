@@ -5,7 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## UNRELEASED
+## 0.17.0 - 2026-01-22
+
+### Breaking Changes
+
+-   **Minimum OTP version is now 27** - LiveSvelte now uses Erlang's native `:json` module by default
+-   **Minimum Elixir version is now 1.17** - Required for OTP 27 support
+-   **Jason is now optional** - Add `{:jason, "~> 1.2"}` to your deps if you want to use Jason instead of native JSON
+
+### Changed
+
+-   Default JSON library changed from Jason to native Erlang `:json` module (`LiveSvelte.JSON`)
+-   Structs are automatically converted to maps by the native JSON encoder (no `@derive` needed)
+
+### Added
+
+-   New `LiveSvelte.JSON` module that wraps Erlang's native `:json` module with a Jason-compatible interface
 
 ## 0.16.0 - 2025-04-18
 
