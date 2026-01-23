@@ -92,7 +92,7 @@ _If you're updating from an older version, make sure to check the `CHANGELOG.md`
 ```elixir
 defp deps do
   [
-    {:live_svelte, "~> 0.16.0"}
+    {:live_svelte, "~> 0.17.0"}
   ]
 end
 ```
@@ -487,6 +487,43 @@ To disable SSR on a specific component, set the `ssr` property to false. Like so
 <.svelte name="Example" ssr={false} />
 ```
 
+### JSON Library
+
+LiveSvelte uses Erlang/OTP 27's native `:json` module by default for JSON encoding.
+This provides excellent performance without requiring external dependencies.
+
+**Note:** LiveSvelte requires Elixir 1.17+ and OTP 27+ for the native JSON module.
+
+#### Using Jason or Poison
+
+If you prefer to use Jason, Poison, or another JSON library, configure it in your `config.exs`:
+
+```elixir
+# config/config.exs
+config :live_svelte, json_library: Jason
+```
+
+Add the dependency to your `mix.exs`:
+
+```elixir
+# mix.exs
+defp deps do
+  [
+    {:live_svelte, "~> 0.17"},
+    {:jason, "~> 1.2"}  # or {:poison, "~> 5.0"}
+  ]
+end
+```
+
+The JSON library must implement `encode!/1` that accepts any Elixir term and returns a JSON string.
+
+#### Struct Encoding
+
+The native JSON encoder automatically converts structs to maps before encoding. This means
+you don't need `@derive Jason.Encoder` when using the default native JSON encoder.
+
+If you're using Jason and need custom struct encoding behavior, see the
+[Structs and Ecto](#structs-and-ecto) section for details on `@derive Jason.Encoder`.
 
 ### live_json
 
@@ -527,12 +564,15 @@ You can find an example [here](https://github.com/woutdp/live_svelte/blob/master
 
 ### Structs and Ecto
 
-We use [Jason](https://github.com/michalmuskala/jason) to serialize any data you pass in the props so it can be handled by Javascript.
-Jason doesn't know how to handle structs by default, so you need to define it yourself.
+LiveSvelte serializes data passed in props to JSON so it can be handled by JavaScript.
 
-#### Structs
+**With native JSON (default):** Structs are automatically converted to maps. No additional configuration needed.
 
-For example, if you have a regular struct like this:
+**With Jason:** Jason doesn't know how to handle structs by default, so you need to define it yourself using `@derive`.
+
+#### Structs (Jason only)
+
+If you're using Jason and have a struct like this:
 
 ```elixir
 defmodule User do
@@ -558,9 +598,9 @@ defmodule User do
 end
 ```
 
-#### Ecto
+#### Ecto (Jason only)
 
-In ecto's case it's important to _also_ omit the `__meta__` field as it's not serializable.
+When using Jason with Ecto schemas, it's important to _also_ omit the `__meta__` field as it's not serializable.
 
 Check out the following example:
 

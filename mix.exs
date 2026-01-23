@@ -1,14 +1,15 @@
 defmodule LiveSvelte.MixProject do
   use Mix.Project
 
-  @version "0.16.0"
+  @version "0.17.0"
   @repo_url "https://github.com/woutdp/live_svelte"
 
   def project do
     [
       app: :live_svelte,
       version: @version,
-      elixir: "~> 1.12",
+      elixir: "~> 1.17",
+      elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
@@ -53,10 +54,13 @@ defmodule LiveSvelte.MixProject do
     ]
   end
 
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
+
   defp deps do
     [
       {:ex_doc, "~> 0.37.3", only: :dev, runtime: false},
-      {:jason, "~> 1.2"},
+      {:jason, "~> 1.2", optional: true},
       {:nodejs, "~> 3.1"},
       {:phoenix, ">= 1.7.0"},
       {:phoenix_html, ">= 3.3.1"},
