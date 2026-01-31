@@ -40,3 +40,8 @@ npm-debug.log
 
 # Ignore ssr build for svelte.
 /priv/svelte/
+
+# SQLite databases
+*.db
+*.db-shm
+*.db-wal

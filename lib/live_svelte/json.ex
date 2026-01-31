@@ -11,6 +11,8 @@ defmodule LiveSvelte.JSON do
   - Automatically converts structs to maps
   - Converts all map keys to strings (matching Jason behavior)
   - Handles nested data structures
+  - Converts DateTime/NaiveDateTime/Date/Time to ISO 8601 strings
+  - Strips Ecto schema metadata (`__meta__` field) automatically
 
   ## Usage
 
@@ -22,9 +24,9 @@ defmodule LiveSvelte.JSON do
   ## SSR Compatibility Note
 
   When using server-side rendering, the NodeJS worker uses Jason internally
-  to serialize data to the Node.js process. This module is designed to produce
-  Jason-compatible output, ensuring consistency between SSR and client-side
-  hydration.
+  to serialize data to the Node.js process. The `prepare/1` function is used
+  to convert Elixir terms to JSON-compatible values before passing to NodeJS,
+  ensuring consistency between SSR and client-side hydration.
 
   """
 
@@ -51,6 +53,31 @@ defmodule LiveSvelte.JSON do
     |> IO.iodata_to_binary()
   end
 
+  @doc """
+  Prepares an Elixir term for JSON serialization.
+
+  This function recursively converts Elixir terms to JSON-compatible values:
+  - Structs become maps (with `__struct__` key stripped)
+  - Ecto schemas have `__meta__` field stripped
+  - DateTime/NaiveDateTime/Date/Time become ISO 8601 strings
+  - Atoms become strings
+  - nil becomes :null (for Erlang's :json module)
+
+  This is useful for preparing data before passing to external JSON encoders
+  (like the NodeJS worker which uses Jason internally).
+
+  ## Examples
+
+      iex> LiveSvelte.JSON.prepare(%DateTime{} = dt)
+      "2026-01-31T20:31:10Z"
+
+      iex> LiveSvelte.JSON.prepare(%{notes: [%MyApp.Note{title: "Hello"}]})
+      %{"notes" => [%{"title" => "Hello"}]}
+
+  """
+  @spec prepare(term()) :: term()
+  def prepare(term), do: prepare_term(term)
+
   # Recursively prepare terms for JSON encoding.
   # Converts structs to maps, nil to null, and handles nested structures.
 
@@ -64,6 +91,22 @@ defmodule LiveSvelte.JSON do
   # Other atoms become strings (matches Jason behavior)
   defp prepare_term(atom) when is_atom(atom) do
     Atom.to_string(atom)
+  end
+
+  # DateTime/NaiveDateTime/Date/Time become ISO 8601 strings
+  # These must come before the generic struct handler
+  defp prepare_term(%DateTime{} = dt), do: DateTime.to_iso8601(dt)
+  defp prepare_term(%NaiveDateTime{} = dt), do: NaiveDateTime.to_iso8601(dt)
+  defp prepare_term(%Date{} = d), do: Date.to_iso8601(d)
+  defp prepare_term(%Time{} = t), do: Time.to_iso8601(t)
+
+  # Ecto schema structs - strip __meta__ field
+  # Must come before the generic struct handler
+  defp prepare_term(%{__struct__: _, __meta__: _} = struct) do
+    struct
+    |> Map.from_struct()
+    |> Map.delete(:__meta__)
+    |> prepare_term()
   end
 
   # Structs become maps (strip __struct__ key)

@@ -3,8 +3,14 @@ defmodule LiveSvelte.SSR.NodeJS do
   @behaviour LiveSvelte.SSR
 
   def render(name, props, slots) do
+    # Prepare props and slots for JSON serialization before passing to NodeJS.
+    # This converts structs to maps, DateTime to ISO 8601 strings, and strips
+    # Ecto metadata (__meta__). Required because NodeJS.call! uses Jason internally.
+    prepared_props = LiveSvelte.JSON.prepare(props)
+    prepared_slots = LiveSvelte.JSON.prepare(slots)
+
     try do
-      NodeJS.call!({"server", "render"}, [name, props, slots], binary: true)
+      NodeJS.call!({"server", "render"}, [name, prepared_props, prepared_slots], binary: true)
     catch
       :exit, {:noproc, _} ->
         message = """
