@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.17.1 - 2026-02-01
+
+### Added
+
+-   DateTime, NaiveDateTime, Date, and Time are now automatically converted to ISO 8601 strings
+-   Ecto schema `__meta__` field is automatically stripped during JSON encoding
+-   New `LiveSvelte.JSON.prepare/1` function for preparing data before external JSON encoders
+
+### Fixed
+
+-   SSR now properly serializes DateTime and Ecto schemas when passing to NodeJS
+
 ## 0.17.0 - 2026-01-22
 
 ### Breaking Changes
