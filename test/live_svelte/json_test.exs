@@ -205,4 +205,236 @@ defmodule LiveSvelte.JSONTest do
       assert Enum.at(Map.values(decoded), 0) == "float"
     end
   end
+
+  describe "prepare/1" do
+    defmodule PrepareTestStruct do
+      defstruct name: "test", count: 42
+    end
+
+    defmodule ListTestStruct do
+      defstruct value: 0
+    end
+
+    test "converts DateTime to ISO 8601 string" do
+      {:ok, dt, _} = DateTime.from_iso8601("2026-01-31T14:30:00Z")
+      assert JSON.prepare(dt) == "2026-01-31T14:30:00Z"
+    end
+
+    test "converts NaiveDateTime to ISO 8601 string" do
+      {:ok, ndt} = NaiveDateTime.new(2026, 1, 31, 14, 30, 0)
+      assert JSON.prepare(ndt) == "2026-01-31T14:30:00"
+    end
+
+    test "converts Date to ISO 8601 string" do
+      {:ok, date} = Date.new(2026, 1, 31)
+      assert JSON.prepare(date) == "2026-01-31"
+    end
+
+    test "converts Time to ISO 8601 string" do
+      {:ok, time} = Time.new(14, 30, 0)
+      assert JSON.prepare(time) == "14:30:00"
+    end
+
+    test "converts DateTime with microseconds" do
+      {:ok, dt, _} = DateTime.from_iso8601("2026-01-31T14:30:00.123456Z")
+      assert JSON.prepare(dt) == "2026-01-31T14:30:00.123456Z"
+    end
+
+    test "converts nil to :null" do
+      assert JSON.prepare(nil) == :null
+    end
+
+    test "preserves booleans" do
+      assert JSON.prepare(true) == true
+      assert JSON.prepare(false) == false
+    end
+
+    test "converts atoms to strings" do
+      assert JSON.prepare(:hello) == "hello"
+      assert JSON.prepare(:active) == "active"
+    end
+
+    test "converts struct to map with string keys" do
+      result = JSON.prepare(%PrepareTestStruct{name: "hello", count: 10})
+      assert result == %{"name" => "hello", "count" => 10}
+    end
+
+    test "converts nested maps with atom keys to string keys" do
+      input = %{outer: %{inner: "value"}}
+      assert JSON.prepare(input) == %{"outer" => %{"inner" => "value"}}
+    end
+
+    test "converts lists of structs" do
+      input = [%ListTestStruct{value: 1}, %ListTestStruct{value: 2}]
+      result = JSON.prepare(input)
+      assert result == [%{"value" => 1}, %{"value" => 2}]
+    end
+
+    test "converts tuples to lists" do
+      assert JSON.prepare({1, 2, 3}) == [1, 2, 3]
+      assert JSON.prepare({"a", :b, 3}) == ["a", "b", 3]
+    end
+
+    test "handles nested DateTime in maps" do
+      {:ok, dt, _} = DateTime.from_iso8601("2026-01-31T10:00:00Z")
+      input = %{created_at: dt, name: "test"}
+      result = JSON.prepare(input)
+      assert result == %{"created_at" => "2026-01-31T10:00:00Z", "name" => "test"}
+    end
+
+    test "handles DateTime in lists" do
+      {:ok, dt1, _} = DateTime.from_iso8601("2026-01-31T10:00:00Z")
+      {:ok, dt2, _} = DateTime.from_iso8601("2026-01-31T11:00:00Z")
+      input = [dt1, dt2]
+      result = JSON.prepare(input)
+      assert result == ["2026-01-31T10:00:00Z", "2026-01-31T11:00:00Z"]
+    end
+
+    test "handles deeply nested structures with dates" do
+      {:ok, date} = Date.new(2026, 1, 31)
+
+      input = %{
+        user: %{
+          profile: %{
+            birthday: date,
+            tags: [:admin, :active]
+          }
+        }
+      }
+
+      result = JSON.prepare(input)
+
+      assert result == %{
+               "user" => %{
+                 "profile" => %{
+                   "birthday" => "2026-01-31",
+                   "tags" => ["admin", "active"]
+                 }
+               }
+             }
+    end
+  end
+
+  describe "prepare/1 with Ecto-like schemas" do
+    # Simulates an Ecto schema struct with __meta__ field
+    defmodule FakeEctoSchema do
+      defstruct [:__meta__, :id, :title, :inserted_at]
+    end
+
+    defmodule FakeMeta do
+      defstruct [:source, :state]
+    end
+
+    defmodule RegularStruct do
+      defstruct [:name, :value]
+    end
+
+    test "strips __meta__ field from Ecto-like structs" do
+      {:ok, dt, _} = DateTime.from_iso8601("2026-01-31T10:00:00Z")
+
+      schema = %FakeEctoSchema{
+        __meta__: %FakeMeta{source: "notes", state: :loaded},
+        id: 1,
+        title: "Hello",
+        inserted_at: dt
+      }
+
+      result = JSON.prepare(schema)
+
+      assert result == %{
+               "id" => 1,
+               "title" => "Hello",
+               "inserted_at" => "2026-01-31T10:00:00Z"
+             }
+
+      refute Map.has_key?(result, "__meta__")
+      refute Map.has_key?(result, :__meta__)
+    end
+
+    test "strips __meta__ from nested Ecto-like structs" do
+      schema1 = %FakeEctoSchema{
+        __meta__: %FakeMeta{source: "posts", state: :loaded},
+        id: 1,
+        title: "Post 1",
+        inserted_at: nil
+      }
+
+      schema2 = %FakeEctoSchema{
+        __meta__: %FakeMeta{source: "posts", state: :loaded},
+        id: 2,
+        title: "Post 2",
+        inserted_at: nil
+      }
+
+      input = %{posts: [schema1, schema2]}
+      result = JSON.prepare(input)
+
+      assert result == %{
+               "posts" => [
+                 %{"id" => 1, "title" => "Post 1", "inserted_at" => :null},
+                 %{"id" => 2, "title" => "Post 2", "inserted_at" => :null}
+               ]
+             }
+    end
+
+    test "handles regular structs without __meta__" do
+      input = %RegularStruct{name: "test", value: 123}
+      result = JSON.prepare(input)
+
+      assert result == %{"name" => "test", "value" => 123}
+    end
+  end
+
+  describe "encode!/1 with DateTime types" do
+    defmodule EncodeEctoSchema do
+      defstruct [:__meta__, :id, :name]
+    end
+
+    defmodule EncodeMeta do
+      defstruct [:source]
+    end
+
+    test "encodes DateTime to ISO 8601 string in JSON" do
+      {:ok, dt, _} = DateTime.from_iso8601("2026-01-31T14:30:00Z")
+      result = JSON.encode!(%{timestamp: dt})
+      decoded = :json.decode(result)
+      assert decoded["timestamp"] == "2026-01-31T14:30:00Z"
+    end
+
+    test "encodes NaiveDateTime to ISO 8601 string in JSON" do
+      {:ok, ndt} = NaiveDateTime.new(2026, 1, 31, 14, 30, 0)
+      result = JSON.encode!(%{timestamp: ndt})
+      decoded = :json.decode(result)
+      assert decoded["timestamp"] == "2026-01-31T14:30:00"
+    end
+
+    test "encodes Date to ISO 8601 string in JSON" do
+      {:ok, date} = Date.new(2026, 1, 31)
+      result = JSON.encode!(%{date: date})
+      decoded = :json.decode(result)
+      assert decoded["date"] == "2026-01-31"
+    end
+
+    test "encodes Time to ISO 8601 string in JSON" do
+      {:ok, time} = Time.new(14, 30, 0)
+      result = JSON.encode!(%{time: time})
+      decoded = :json.decode(result)
+      assert decoded["time"] == "14:30:00"
+    end
+
+    test "encodes Ecto-like schema without __meta__ in JSON" do
+      schema = %EncodeEctoSchema{
+        __meta__: %EncodeMeta{source: "users"},
+        id: 42,
+        name: "Alice"
+      }
+
+      result = JSON.encode!(schema)
+      decoded = :json.decode(result)
+
+      assert decoded["id"] == 42
+      assert decoded["name"] == "Alice"
+      refute Map.has_key?(decoded, "__meta__")
+    end
+  end
 end
