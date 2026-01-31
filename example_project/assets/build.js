@@ -2,6 +2,11 @@ const esbuild = require("esbuild")
 const sveltePlugin = require("esbuild-svelte")
 const importGlobPlugin = require("esbuild-plugin-import-glob").default
 const sveltePreprocess = require("svelte-preprocess")
+const path = require("path")
+
+const assetsDir = __dirname
+const liveSvelteRoot = path.resolve(assetsDir, "../..")
+const depsDir = path.resolve(assetsDir, "../deps")
 
 const args = process.argv.slice(2)
 const watch = args.includes("--watch")
@@ -19,10 +24,16 @@ let optsClient = {
     entryPoints: ["js/app.js"],
     bundle: true,
     minify: deploy,
+    platform: "browser",
     conditions: clientConditions,
-    alias: {svelte: "svelte"},
-    outdir: "../priv/static/assets",
-    logLevel: "info",
+    external: ["node:crypto", "node:async_hooks"],
+    alias: {
+        live_svelte: liveSvelteRoot,
+        $lib: path.resolve(assetsDir, "svelte"),
+        svelte: "svelte",
+    },
+    outdir: "../priv/static/assets/js",
+    logLevel: "debug",
     sourcemap: watch ? "inline" : false,
     tsconfig: "./tsconfig.json",
     plugins: [
@@ -41,9 +52,13 @@ let optsServer = {
     minify: false,
     target: "node19.6.1",
     conditions: serverConditions,
-    alias: {svelte: "svelte"},
+    alias: {
+        live_svelte: liveSvelteRoot,
+        $lib: path.resolve(assetsDir, "svelte"),
+        svelte: "svelte",
+    },
     outdir: "../priv/svelte",
-    logLevel: "info",
+    logLevel: "debug",
     sourcemap: watch ? "inline" : false,
     tsconfig: "./tsconfig.json",
     plugins: [
@@ -60,7 +75,6 @@ if (watch) {
         .context(optsClient)
         .then(ctx => ctx.watch())
         .catch(_error => process.exit(1))
-
     esbuild
         .context(optsServer)
         .then(ctx => ctx.watch())

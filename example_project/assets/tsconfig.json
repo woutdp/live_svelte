@@ -24,6 +24,7 @@
         "baseUrl": ".",
         "paths": {
             "*": ["../deps/*"],
+            "live_svelte": ["../.."],
             "$lib": ["svelte"],
             "$lib/*": ["svelte/*"]
         },

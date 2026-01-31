@@ -1,5 +1,7 @@
 <script lang="ts">
-    let {children, subtitle}: Props = $props()
+    import type {Snippet} from "svelte"
+
+    let {children, subtitle}: {children?: Snippet; subtitle?: Snippet} = $props()
 </script>
 
 <i>Opening</i>

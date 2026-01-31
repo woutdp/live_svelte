@@ -84,7 +84,7 @@ defmodule Example.MixProject do
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.setup": ["tailwind.install --if-missing", "cmd --cd assets npm install"],
-      "assets.build": ["compile", "tailwind example"],
+      "assets.build": ["compile", "tailwind example", "cmd --cd assets node build.js"],
       "assets.deploy": [
         "tailwind example --minify",
         "cmd --cd assets node build.js --deploy",

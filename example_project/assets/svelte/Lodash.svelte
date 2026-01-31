@@ -6,7 +6,7 @@
     }
 
     let {unordered}: Props = $props()
-    let ordered = _.sortBy(unordered)
+    let ordered = $derived(_.sortBy(unordered))
 </script>
 
 <h1>Lodash, TypeScript and Stylus Preprocessor</h1>

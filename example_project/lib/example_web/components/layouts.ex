@@ -45,8 +45,8 @@ defmodule ExampleWeb.Layouts do
           LiveSvelte Examples
         </p>
       </div>
-      <div class="flex-none">
 
+      <div class="flex-none">
     <ul class="flex flex-column px-1 space-x-8 items-center">
       <%= for {path, text} <- [
         {~p"/hello-world", "1"},
@@ -94,9 +94,7 @@ defmodule ExampleWeb.Layouts do
     </header>
 
     <main class="px-4 py-20 sm:px-6 lg:px-8">
-      <div class="mx-auto max-w-2xl space-y-4">
-        {render_slot(@inner_block)}
-      </div>
+      {render_slot(@inner_block)}
     </main>
 
     <.flash_group flash={@flash} />

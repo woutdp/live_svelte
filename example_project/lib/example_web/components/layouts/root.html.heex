@@ -31,6 +31,8 @@
     </script>
   </head>
   <body>
-    {@inner_content}
+    <Layouts.app flash={@flash}>
+      {@inner_content}
+    </Layouts.app>
   </body>
 </html>
