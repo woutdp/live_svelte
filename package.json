@@ -15,7 +15,7 @@
     "devDependencies": {
         "prettier": "3.3.3",
         "prettier-plugin-svelte": "^3.2.7",
-        "svelte": "^5.1.13"
+        "svelte": "^5.49.1"
     },
     "exports": {
         "types": "./assets/js/live_svelte/types.d.ts",

@@ -1,7 +1,7 @@
 {
     "devDependencies": {
-        "esbuild": "^0.24.0",
-        "esbuild-svelte": "^0.9.0"
+        "esbuild": "^0.27.2",
+        "esbuild-svelte": "^0.9.4"
     },
     "dependencies": {
         "phoenix": "file:../deps/phoenix",
