@@ -35,3 +35,8 @@ example-*.tar
 npm-debug.log
 /assets/node_modules/
 
+
+
+/priv/svelte
+
+/assets/svelte/_build
