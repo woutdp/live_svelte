@@ -32,10 +32,9 @@ defmodule Example.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:ecto_sql, "~> 3.6"},
+      {:ecto_sql, "~> 3.12"},
       {:finch, "~> 0.13"},
       {:gettext, "~> 0.20"},
-      {:jason, "~> 1.2"},
       {:json_diff_ex, "~> 0.6", override: true},
       {:live_json, "~> 0.4.5"},
       {:live_svelte, path: ".."},
@@ -45,7 +44,7 @@ defmodule Example.MixProject do
       {:phoenix_live_dashboard, "~> 0.8"},
       {:phoenix_live_view, "~> 0.19"},
       {:plug_cowboy, "~> 2.5"},
-      {:postgrex, ">= 0.0.0"},
+      {:ecto_sqlite3, "~> 0.17"},
       {:swoosh, "~> 1.3"},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},

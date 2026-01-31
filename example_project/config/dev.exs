@@ -2,13 +2,10 @@ import Config
 
 # Configure your database
 config :example, Example.Repo,
-  username: "postgres",
-  password: "postgres",
-  hostname: "localhost",
-  database: "example_dev",
+  database: Path.expand("../example_dev.db", __DIR__),
+  pool_size: 5,
   stacktrace: true,
-  show_sensitive_data_on_connection_error: true,
-  pool_size: 10
+  show_sensitive_data_on_connection_error: true
 
 # For development, we disable any cache and enable
 # debugging and code reloading.
