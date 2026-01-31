@@ -5,7 +5,7 @@ defmodule ExampleWeb.Router do
     plug :accepts, ["html"]
     plug :fetch_session
     plug :fetch_live_flash
-    plug :put_root_layout, {ExampleWeb.Layouts, :root}
+    plug :put_root_layout, html: {ExampleWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
   end
@@ -18,25 +18,6 @@ defmodule ExampleWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
-    # same order as in app.html.heex:
-    get "/hello-world", PageController, :hello_world
-    get "/lodash", PageController, :lodash
-    live "/live-struct", LiveStruct
-    live "/live-simple-counter", LiveSimpleCounter
-    live "/live-lights", LiveLights
-    live "/live-sigil", LiveSigil
-    get "/plus-minus-svelte", PageController, :plus_minus_svelte
-    live "/live-plus-minus", LivePlusMinus
-    live "/live-plus-minus-hybrid", LivePlusMinusHybrid
-    live "/live-log-list", LiveLogList
-    live "/live-breaking-news", LiveBreakingNews
-    live "/live-chat", LiveChat
-    live "/live-json", LiveJson
-    live "/live-slots-simple", LiveSlotsSimple
-    live "/live-slots-dynamic", LiveSlotsDynamic
-    live "/live-client-side-loading", LiveClientSideLoading
-    # not referenced in app.html.heex:
-    live "/live-composition", LiveComposition
   end
 
   # Other scopes may use custom stacks.

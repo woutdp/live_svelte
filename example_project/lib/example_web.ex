@@ -38,12 +38,11 @@ defmodule ExampleWeb do
 
   def controller do
     quote do
-      use Phoenix.Controller,
-        formats: [:html, :json],
-        layouts: [html: ExampleWeb.Layouts]
+      use Phoenix.Controller, formats: [:html, :json]
+
+      use Gettext, backend: ExampleWeb.Gettext
 
       import Plug.Conn
-      import ExampleWeb.Gettext
 
       unquote(verified_routes())
     end
@@ -51,8 +50,7 @@ defmodule ExampleWeb do
 
   def live_view do
     quote do
-      use Phoenix.LiveView,
-        layout: {ExampleWeb.Layouts, :app}
+      use Phoenix.LiveView
 
       unquote(html_helpers())
     end
@@ -81,16 +79,19 @@ defmodule ExampleWeb do
 
   defp html_helpers do
     quote do
+      # Translation
+      use Gettext, backend: ExampleWeb.Gettext
+
       # HTML escaping functionality
       import Phoenix.HTML
-      # Core UI components and translation
+      # Core UI components
       import ExampleWeb.CoreComponents
-      import ExampleWeb.Gettext
 
       import LiveSvelte
 
-      # Shortcut for generating JS commands
+      # Common modules used in templates
       alias Phoenix.LiveView.JS
+      alias ExampleWeb.Layouts
 
       # Routes generation with the ~p sigil
       unquote(verified_routes())
@@ -107,7 +108,7 @@ defmodule ExampleWeb do
   end
 
   @doc """
-  When used, dispatch to the appropriate controller/view/etc.
+  When used, dispatch to the appropriate controller/live_view/etc.
   """
   defmacro __using__(which) when is_atom(which) do
     apply(__MODULE__, which, [])

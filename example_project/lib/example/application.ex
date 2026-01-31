@@ -8,19 +8,14 @@ defmodule Example.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      {NodeJS.Supervisor, [path: LiveSvelte.SSR.NodeJS.server_path(), pool_size: 4]},
-      # Start the Telemetry supervisor
       ExampleWeb.Telemetry,
-      # Start the Ecto repository (actually not used in this example, so skip it)
       # Example.Repo,
-      # Start the PubSub system
+      {DNSCluster, query: Application.get_env(:example, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Example.PubSub},
-      # Start Finch
-      {Finch, name: Example.Finch},
-      # Start the Endpoint (http/https)
-      ExampleWeb.Endpoint
       # Start a worker by calling: Example.Worker.start_link(arg)
-      # {Example.Worker, arg}
+      # {Example.Worker, arg},
+      # Start to serve requests, typically the last entry
+      ExampleWeb.Endpoint
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
