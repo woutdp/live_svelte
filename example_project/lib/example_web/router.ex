@@ -37,7 +37,6 @@ defmodule ExampleWeb.Router do
     live "/live-client-side-loading", LiveClientSideLoading
     # Ecto Examples
     live "/live-notes-otp", LiveNotesOtp
-    live "/live-notes-jason", LiveNotesJason
     # not referenced in app.html.heex:
     live "/live-composition", LiveComposition
   end
