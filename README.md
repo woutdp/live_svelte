@@ -871,6 +871,165 @@ To migrate your project from `0.14.0` to `0.15.0` you need to follow the followi
 Which you can find [here](https://github.com/woutdp/live_svelte/blob/master/assets/copy/build.js)
 
 
+## Using shadcn-svelte with LiveSvelte (Tailwind v4)
+
+[shadcn-svelte](https://next.shadcn-svelte.com/) provides beautifully designed, accessible UI components for Svelte. This guide walks through integrating shadcn-svelte with LiveSvelte and upgrading to Tailwind CSS v4.
+
+A working example can be found in the `/example_project` directory.
+
+### 1. Install shadcn-svelte Dependencies
+
+Add the following to your `assets/package.json`:
+
+```json
+{
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.4.0",
+    "tailwind-variants": "^3.2.2",
+    "@lucide/svelte": "^0.563.1"
+  },
+  "devDependencies": {
+    "tw-animate-css": "^1.4.0"
+  }
+}
+```
+
+Then run:
+
+```bash
+cd assets && npm install
+```
+
+### 2. Create the Utility Function
+
+Create `assets/svelte/lib/utils.ts`:
+
+```typescript
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+    return twMerge(clsx(inputs));
+}
+```
+
+### 3. Add the `$lib` Path Alias
+
+Update `assets/tsconfig.json` to add the `$lib` path alias:
+
+```json
+{
+  "compilerOptions": {
+    "paths": {
+      "$lib": ["./svelte/lib"],
+      "$lib/*": ["./svelte/lib/*"]
+    }
+  }
+}
+```
+
+Also ensure your `assets/build.js` has the `$lib` alias configured for both client and server builds:
+
+```javascript
+// Inside the esbuild plugin options
+alias: {
+    "$lib": path.resolve(__dirname, "svelte/lib"),
+}
+```
+
+### 4. Upgrade to Tailwind CSS v4
+
+Update the Tailwind version in `config/config.exs`:
+
+```elixir
+config :tailwind,
+  version: "4.1.12",
+  # ...
+```
+
+Replace your `assets/css/app.css` with the Tailwind v4 syntax:
+
+```css
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@plugin "@tailwindcss/forms";
+@config "../tailwind.config.js";
+
+@source "../svelte/**/*.svelte";
+@source "../../lib/**/*.ex";
+@source "../../lib/**/*.heex";
+
+@custom-variant phx-click-loading (.phx-click-loading&);
+@custom-variant phx-submit-loading (.phx-submit-loading&);
+@custom-variant phx-change-loading (.phx-change-loading&);
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  /* Add more shadcn theme tokens as needed */
+}
+```
+
+Define your color CSS variables using the oklch color space in the same file or a separate CSS file:
+
+```css
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0.012 285.885);
+  --primary-foreground: oklch(0.985 0 0);
+  /* ... */
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0.012 285.885);
+  /* ... */
+}
+```
+
+Key Tailwind v4 changes from v3:
+- `@import "tailwindcss"` replaces `@tailwind base/components/utilities`
+- `@source` replaces the `content` array in tailwind.config.js
+- `@plugin` replaces the `plugins` array for simple plugins
+- `@custom-variant` replaces `addVariant` plugin calls
+- `@theme` replaces `theme.extend` in tailwind.config.js
+
+### 5. Add shadcn-svelte Components
+
+Components follow the shadcn pattern and go in `assets/svelte/lib/components/ui/`. For example, a Button component:
+
+```
+assets/svelte/lib/components/ui/button/
+├── button.svelte
+└── index.ts
+```
+
+You can copy components from the [shadcn-svelte docs](https://next.shadcn-svelte.com/docs/components) or use the CLI if available. Components use `tailwind-variants` for type-safe styling and the `cn()` utility for class merging.
+
+### 6. Use Components in Svelte
+
+```svelte
+<script lang="ts">
+    import { Button } from "$lib/components/ui/button";
+
+    let count = $state(0);
+</script>
+
+<Button onclick={() => count++}>
+    Clicked {count} times
+</Button>
+
+<Button variant="destructive">Delete</Button>
+<Button variant="outline" size="lg">Large Outline</Button>
+```
+
 ## Credits
 
 -   [Ryan Cooke](https://dev.to/debussyman) - [E2E Reactivity using Svelte with Phoenix LiveView](https://dev.to/debussyman/e2e-reactivity-using-svelte-with-phoenix-liveview-38mf)
