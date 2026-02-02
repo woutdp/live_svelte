@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.17.2 - 2026-02-02
+
+### Fixed
+
+-   Fixed "undefined slot" compiler warnings when using named slots with `LiveSvelte.svelte` ([#196](https://github.com/woutdp/live_svelte/pull/196))
+-   Fixed `Jason.Encoder` protocol error when using slots with `LiveSvelte.Components` macro
+
+### Changed
+
+-   `LiveSvelte.Slots.filter_slots_from_assigns/1` now handles slots with multiple entries
+-   Named slots are now properly forwarded through the Components macro
+
 ## 0.17.1 - 2026-02-01
 
 ### Added
