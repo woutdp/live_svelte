@@ -12,6 +12,7 @@ config :example,
 
 # Configures the endpoint
 config :example, ExampleWeb.Endpoint,
+  adapter: Bandit.PhoenixAdapter,
   url: [host: "localhost"],
   render_errors: [
     formats: [html: ExampleWeb.ErrorHTML, json: ExampleWeb.ErrorJSON],
@@ -31,10 +32,9 @@ config :example, Example.Mailer, adapter: Swoosh.Adapters.Local
 
 # Configure tailwind (the version is required)
 config :tailwind,
-  version: "3.2.4",
+  version: "4.1.10",
   default: [
     args: ~w(
-      --config=tailwind.config.js
       --input=css/app.css
       --output=../priv/static/assets/app.css
     ),

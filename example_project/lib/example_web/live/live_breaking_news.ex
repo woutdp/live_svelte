@@ -82,36 +82,63 @@ defmodule ExampleWeb.LiveBreakingNews do
         });
     </script>
 
-    <div class="flex flex-col w-full justify-center items-center h-[50vh]">
-        <div>
-            <div class="flex items-center">
-                <form>
-                    <input class="rounded" type="text" bind:value={newItem} />
-                    <button class="bg-black text-white rounded px-2 py-1" onclick={preventDefault(addItem)} type="submit">Add Item</button>
-                </form>
-                <div class="ml-4">
-                    <button class="bg-black text-white rounded px-2 py-1 active:opacity-95" onclick={() => (speed -= 20)}>← Faster</button>
-                    <button class="bg-black text-white rounded px-2 py-1 active:opacity-95" onclick={() => (speed += 20)}>Slower →</button>
-                </div>
-            </div>
+    <div class="flex flex-col justify-center items-center gap-4 p-6 pb-40">
+        <h2 class="text-center text-2xl font-light my-4">
+            Breaking News
+        </h2>
+        <p class="text-sm text-base-content/50 text-center max-w-sm">
+            Add headlines and control the ticker speed; remove items from the list.
+        </p>
 
-            <div class="flex flex-col gap-1 mt-2">
-                {#each news as item (item.id)}
-                    <div in:fly={{y: 20}} out:slide={{y: -20}} class="mb-1">
-                        <button class="bg-[#F00] px-2 py-1 rounded" onclick={() => removeItem(item.id)}>Remove</button>
-                        {item.body}
-                    </div>
-                {/each}
+        <div class="card bg-base-100 shadow-md border border-base-300/50 overflow-hidden w-full max-w-lg">
+            <div class="card-body gap-4 p-5">
+                <span class="badge badge-ghost badge-sm font-medium text-base-content/70 w-fit">
+                    Headlines
+                </span>
+
+                <form class="flex flex-wrap gap-2">
+                    <input
+                        class="input input-bordered input-sm flex-1 min-w-0 bg-base-200/50 border-base-300"
+                        type="text"
+                        bind:value={newItem}
+                        placeholder="New headline…"
+                        aria-label="New headline"
+                    />
+                    <button class="btn btn-sm bg-brand text-white border-0 hover:opacity-90" onclick={preventDefault(addItem)} type="submit">
+                        Add
+                    </button>
+                </form>
+
+                <div class="flex items-center gap-2 flex-wrap">
+                    <span class="text-xs font-medium text-base-content/50">Speed</span>
+                    <button class="btn btn-sm btn-outline border-base-300 hover:border-brand hover:text-brand" onclick={() => (speed -= 20)}>← Faster</button>
+                    <button class="btn btn-sm btn-outline border-base-300 hover:border-brand hover:text-brand" onclick={() => (speed += 20)}>Slower →</button>
+                </div>
+
+                <div class="border border-base-300/50 rounded-lg bg-base-200/30 overflow-hidden">
+                    <ul class="max-h-48 overflow-auto divide-y divide-base-300/50">
+                        {#each news as item (item.id)}
+                            <li in:fly={{y: 20}} out:slide={{y: -20}} class="flex items-center justify-between gap-2 px-3 py-2 text-sm">
+                                <span class="min-w-0 flex-1 truncate">{item.body}</span>
+                                <button class="btn btn-sm btn-error btn-ghost hover:btn-error shrink-0" onclick={() => removeItem(item.id)} aria-label={"Remove #{item.body}"}>Remove</button>
+                            </li>
+                        {/each}
+                    </ul>
+                    {#if news.length === 0}
+                        <div class="px-3 py-6 text-center text-sm text-base-content/50">No headlines yet.</div>
+                    {/if}
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="fixed bottom-0 left-0 text-white font-bold text-4xl z-20 p-4 rounded-r-lg bg-gradient-to-b from-[#f00] via-[#f77] to-[#f00]">
+    <div class="fixed bottom-0 left-0 text-white font-bold text-2xl sm:text-3xl z-20 px-4 py-3 rounded-r-lg bg-error shadow-lg" aria-hidden="true">
         BREAKING NEWS
     </div>
     <div
         bind:this={marqueeEl}
-        class="fixed bottom-0 w-screen text-white font-bold text-xl py-2 bg-gradient-to-b from-[#f00] via-[#f77] to-[#f00]"
+        class="fixed bottom-0 w-screen text-white font-bold text-lg py-2 bg-error/90 shadow-inner"
+        aria-hidden="true"
     >
     </div>
     """

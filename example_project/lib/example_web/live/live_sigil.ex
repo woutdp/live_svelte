@@ -6,23 +6,42 @@ defmodule ExampleWeb.LiveSigil do
     <script>
       /** @type {{number: any}} */
       let { number } = $props();
-      let number2 = $state(5)
+      let number2 = $state(5);
 
-      let combined = $derived(number + number2)
+      let combined = $derived(number + number2);
     </script>
 
-    <h1 class="text-lg mb-4">Svelte template</h1>
-    {number} + {number2} = {combined}
+    <div class="min-h-[50vh] flex flex-col justify-center items-center p-6 bg-base-200/40">
+      <h1 class="text-2xl font-semibold text-base-content/80 mb-2 tracking-tight">
+        Svelte template (~V sigil)
+      </h1>
+      <p class="text-sm text-base-content/50 mb-8 max-w-md text-center">
+        Inline Svelte in LiveView: server state and client state in one template.
+      </p>
 
-    <button phx-click="increment">+server</button>
-    <button onclick={() => number2 += 1}>+client</button>
-
-    <style lang="stylus">
-      button
-        background-color black
-        color white
-        padding 0.5rem 1rem
-    </style>
+      <div class="card bg-base-100 shadow-lg border border-base-300/50 w-full max-w-sm">
+        <div class="card-body gap-4 p-6">
+          <span class="badge badge-outline badge-sm font-medium text-base-content/70 w-fit">
+            Server + Client
+          </span>
+          <div class="font-mono text-center text-lg tabular-nums">
+            <span class="text-brand">{number}</span>
+            <span class="text-base-content/60"> + </span>
+            <span class="text-success">{number2}</span>
+            <span class="text-base-content/60"> = </span>
+            <span class="font-bold text-brand">{combined}</span>
+          </div>
+          <div class="flex gap-2 justify-center pt-2">
+            <button class="btn btn-sm bg-brand text-white border-0 hover:opacity-90" phx-click="increment">
+              +server
+            </button>
+            <button class="btn btn-sm btn-success border-0" onclick={() => number2 += 1}>
+              +client
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
     """
   end
 

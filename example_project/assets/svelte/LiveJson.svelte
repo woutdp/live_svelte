@@ -1,18 +1,29 @@
 <script>
-    /** @type {{big_data_set: any}} */
-    let {big_data_set} = $props()
+    /** @type {{ big_data_set: any }} */
+    let { big_data_set } = $props();
+
+    let keyCount = $derived(Object.keys(big_data_set).length);
+    let byteSize = $derived(JSON.stringify(big_data_set).length);
 </script>
 
-<h1 class="text-lg">LiveJson demo</h1>
-<p class="mb-2">Check the websocket to see how much data is being transferred.</p>
-
-<ul>
-    <li>
-        Key Length: {Object.keys(big_data_set).length}
-    </li>
-    <li>
-        Rough byte size: {JSON.stringify(big_data_set).length}
-    </li>
-</ul>
-
-<button phx-click="remove_element" class="bg-black text-white px-4 py-2 rounded">Remove Element</button>
+<div class="flex flex-col gap-3">
+    <p class="text-xs text-base-content/50">
+        Check the WebSocket to see how much data is transferred.
+    </p>
+    <dl class="flex flex-col gap-2">
+        <div class="flex justify-between items-center gap-4 text-sm">
+            <dt class="text-base-content/60">Key length</dt>
+            <dd class="font-mono font-semibold tabular-nums text-brand">{keyCount.toLocaleString()}</dd>
+        </div>
+        <div class="flex justify-between items-center gap-4 text-sm">
+            <dt class="text-base-content/60">Rough byte size</dt>
+            <dd class="font-mono font-semibold tabular-nums text-brand">{byteSize.toLocaleString()}</dd>
+        </div>
+    </dl>
+    <button
+        phx-click="remove_element"
+        class="btn btn-sm bg-brand text-white border-0 hover:opacity-90 w-fit mt-1"
+    >
+        Remove element
+    </button>
+</div>

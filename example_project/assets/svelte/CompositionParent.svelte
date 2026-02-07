@@ -14,5 +14,5 @@
 
 <form onsubmit={preventDefault(handleForm)}>
     <TextInput value={textInput} name="element" id="123456" />
-    <button type="submit">Submit</button>
+    <button type="submit" class="btn btn-neutral btn-sm">Submit</button>
 </form>

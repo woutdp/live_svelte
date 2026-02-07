@@ -7,24 +7,33 @@
 # This file is based on these images:
 #
 #   - https://hub.docker.com/r/hexpm/elixir/tags - for the build image
-#   - https://hub.docker.com/_/debian?tab=tags&page=1&name=bullseye-20221004-slim - for the release image
+#   - https://hub.docker.com/_/debian?tab=tags&page=1&name=bookworm-slim - for the release image
 #   - https://pkgs.org/ - resource for finding needed packages
-#   - Ex: hexpm/elixir:1.14.0-erlang-25.2-debian-bullseye-20221004-slim
+#   - Ex: hexpm/elixir:1.18.2-erlang-27.2.1-debian-bookworm-20250113-slim
 #
 
-ARG ELIXIR_VERSION=1.14.0
-ARG OTP_VERSION=25.2
-ARG DEBIAN_VERSION=bullseye-20221004-slim
+ARG ELIXIR_VERSION=1.18.2
+ARG OTP_VERSION=27.2.1
+ARG DEBIAN_VERSION=bookworm-20250113-slim
+ARG NODE_VERSION=20
 
 ARG BUILDER_IMAGE="hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-debian-${DEBIAN_VERSION}"
 ARG RUNNER_IMAGE="debian:${DEBIAN_VERSION}"
 
-FROM ${BUILDER_IMAGE} as builder
+# Stage to provide Node.js
+FROM node:${NODE_VERSION}-slim AS node
+
+FROM ${BUILDER_IMAGE} AS builder
+
+# Copy Node.js from official image
+COPY --from=node /usr/local/bin/node /usr/local/bin/
+COPY --from=node /usr/local/lib/node_modules /usr/local/lib/node_modules
+RUN ln -sf /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm \
+    && ln -sf /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx
 
 # install build dependencies
-RUN apt-get update -y && apt-get install -y build-essential git npm curl nodejs \
+RUN apt-get update -y && apt-get install -y build-essential git \
     && apt-get clean && rm -f /var/lib/apt/lists/*_*
-RUN curl -fsSL https://deb.nodesource.com/setup_19.x | bash - && apt-get install -y nodejs
 
 # prepare build dir
 WORKDIR /app
@@ -54,11 +63,14 @@ COPY lib lib
 COPY assets assets
 
 # Install all npm packages
-WORKDIR assets
+WORKDIR /app/assets
 RUN node --version
 RUN npm install
 
-WORKDIR ../
+WORKDIR /app
+
+# install the tailwind CLI
+RUN mix tailwind.install --if-missing
 
 # compile assets
 RUN mix assets.deploy
@@ -69,16 +81,17 @@ RUN mix compile
 # Changes to config/runtime.exs don't require recompiling the code
 COPY config/runtime.exs config/
 
-COPY rel rel
 RUN mix release
 
 # start a new build stage so that the final image will only contain
 # the compiled release and other runtime necessities
 FROM ${RUNNER_IMAGE}
 
-RUN apt-get update -y && apt-get install -y libstdc++6 openssl libncurses5 locales curl nodejs \
+# Copy Node.js binary for SSR support
+COPY --from=node /usr/local/bin/node /usr/local/bin/
+
+RUN apt-get update -y && apt-get install -y libstdc++6 openssl libncurses5 locales \
   && apt-get clean && rm -f /var/lib/apt/lists/*_*
-RUN curl -fsSL https://deb.nodesource.com/setup_19.x | bash - && apt-get install -y nodejs
 
 # Set the locale
 RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
