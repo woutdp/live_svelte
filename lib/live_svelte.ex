@@ -33,6 +33,18 @@ defmodule LiveSvelte do
     doc: "Class to apply to the Svelte component",
     examples: ["my-class", "my-class another-class"]
 
+  attr :csp_nonce, :string,
+    default: nil,
+    doc: "A Content-Security-Policy nonce for the generated <script> and <style> tags"
+
+  attr :csp_script_nonce, :string,
+    default: nil,
+    doc: "A Content-Security-Policy nonce for the generated <script> tag"
+
+  attr :csp_style_nonce, :string,
+    default: nil,
+    doc: "A Content-Security-Policy nonce for the generated <style> tag"
+
   attr :ssr, :boolean,
     default: true,
     doc: "Whether to render the component via NodeJS on the server",
@@ -88,15 +100,22 @@ defmodule LiveSvelte do
         end
       end
 
+    csp_attrs = if(nonce = assigns.csp_nonce, do: [nonce: nonce])
+
     assigns =
-      assigns
-      |> assign(:init, init)
-      |> assign(:slots, slots)
-      |> assign(:ssr_render, ssr_code)
+      assign(assigns,
+        csp_script_attrs:
+          csp_attrs || if(nonce = assigns.csp_script_nonce, do: [nonce: nonce], else: []),
+        csp_style_attrs:
+          csp_attrs || if(nonce = assigns.csp_style_nonce, do: [nonce: nonce], else: []),
+        init: init,
+        slots: slots,
+        ssr_render: ssr_code
+      )
 
     ~H"""
     <.live_json live_json_props={@live_json_props}>
-      <script>
+      <script {@csp_script_attrs}>
         <%= raw(@ssr_render["head"]) %>
       </script>
     <% svelte_id = id(@name) %>
@@ -114,7 +133,7 @@ defmodule LiveSvelte do
     >
       <div id={"#{svelte_id}-target"} data-svelte-target phx-update="ignore">
         <%= raw(@ssr_render["head"]) %>
-        <style>
+        <style {@csp_style_attrs}>
           <%= raw(@ssr_render["css"]["code"]) %>
         </style>
         <%= raw(@ssr_render["html"]) %>
