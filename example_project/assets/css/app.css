@@ -1,5 +1,23 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+@import "tailwindcss";
 
-/* This file is for your main application CSS */
+/* Source directives — paths relative to this CSS file */
+@source "../../lib/example_web/**/*.{ex,heex}";
+@source "../svelte/**/*.svelte";
+@source "../js/**/*.js";
+
+/* Phoenix LiveView custom variants */
+@custom-variant phx-no-feedback (&:where(.phx-no-feedback, .phx-no-feedback *));
+@custom-variant phx-click-loading (&:where(.phx-click-loading, .phx-click-loading *));
+@custom-variant phx-submit-loading (&:where(.phx-submit-loading, .phx-submit-loading *));
+@custom-variant phx-change-loading (&:where(.phx-change-loading, .phx-change-loading *));
+
+/* Custom brand color */
+@theme {
+  --color-brand: #FD4F00;
+}
+
+/* DaisyUI plugin */
+@plugin "daisyui";
+
+/* Hero icons plugin */
+@plugin "./hero-icons-plugin.js";

@@ -7,26 +7,45 @@ defmodule ExampleWeb.LiveChat do
 
   def render(assigns) do
     ~H"""
-    <div class="flex justify-center items-center h-full w-full">
-      <form :if={!@name} phx-submit="set_name">
-        <!-- svelte-ignore a11y-autofocus -->
-        <input
-          type="text"
-          placeholder="Name"
-          name="name"
-          class="rounded"
-          autofocus
-          autocomplete="name"
-        />
-        <button class="py-2 px-4 bg-black text-white rounded">Join</button>
+    <div class="flex flex-col justify-center items-center gap-4 p-6">
+      <h2 class="text-center text-2xl font-light my-4">
+        Chat
+      </h2>
+      <p class="text-sm text-base-content/50 text-center max-w-sm">
+        Enter your name to join; then send messages. Your name labels your bubbles.
+      </p>
+
+      <form :if={!@name} phx-submit="set_name" class="w-full max-w-md">
+        <div class="card bg-base-100 shadow-md border border-base-300/50 overflow-hidden">
+          <div class="card-body gap-4 p-5">
+            <span class="badge badge-ghost badge-sm font-medium text-base-content/70 w-fit">
+              Join
+            </span>
+            <div class="flex gap-2 flex-wrap">
+              <!-- svelte-ignore a11y-autofocus -->
+              <input
+                type="text"
+                placeholder="Your name"
+                name="name"
+                class="input input-bordered input-sm flex-1 min-w-0 bg-base-200/50 border-base-300"
+                autofocus
+                autocomplete="name"
+                aria-label="Your name"
+              />
+              <button type="submit" class="btn btn-sm bg-brand text-white border-0 hover:opacity-90 shrink-0">
+                Join
+              </button>
+            </div>
+          </div>
+        </div>
       </form>
-      <.Chat
-        :if={@name}
-        messages={@messages}
-        name={@name}
-        class="w-full h-full flex justify-center items-center"
-        socket={@socket}
-      />
+      <div :if={@name} class="w-full flex justify-center">
+        <.Chat
+          messages={@messages}
+          name={@name}
+          socket={@socket}
+        />
+      </div>
     </div>
     """
   end

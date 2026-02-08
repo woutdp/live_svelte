@@ -8,16 +8,21 @@ defmodule LiveSvelte.LiveJson do
     doc: "LiveJSON props to pass to the svelte component"
   )
 
+  attr(
+    :svelte_id,
+    :string,
+    required: true,
+    doc: "Stable DOM id from the parent svelte component"
+  )
+
   slot(:inner_block)
 
   def live_json(assigns) do
     ~H"""
     <%= if @live_json_props != %{} do %>
-      <div id={id("lj")} phx-hook="LiveJSON" />
+      <div id={"lj-#{@svelte_id}"} phx-hook="LiveJSON" />
     <% end %>
     <%= render_slot(@inner_block) %>
     """
   end
-
-  defp id(name), do: "#{name}-#{System.unique_integer([:positive])}"
 end

@@ -1,9 +1,9 @@
 <script>
     import {run} from "svelte/legacy"
-
     import {tweened} from "svelte/motion"
     import {cubicOut} from "svelte/easing"
-    /** @type {{brightness?: number}} */
+
+    /** @type {{ brightness?: number }} */
     let {brightness = 0} = $props()
 
     const progress = tweened(0, {
@@ -18,40 +18,26 @@
     })
 </script>
 
-<progress class="border-none w-full rounded-lg h-12" value={$progress}></progress>
-<div class="h-12 rounded-md w-full font-mono font-semibold">
-    <div class="text-center w-full flex items-center justify-center h-full">
-        {brightness > 0 ? `${brightness}%` : "OFF"}
+<div class="card bg-base-100 shadow-md border border-base-300/50 overflow-hidden md:min-w-md">
+    <div class="card-body gap-3 p-4">
+        <span class="badge badge-ghost badge-sm font-medium text-base-content/70 w-fit"> Brightness </span>
+        <progress class="progress progress-brand border-0 w-full rounded-full h-3 bg-base-200" value={$progress} max="1"></progress>
+        <div class="flex items-center justify-center min-h-10">
+            <span class="font-mono text-lg font-semibold tabular-nums {brightness > 0 ? 'text-brand' : 'text-base-content/50'}">
+                {brightness > 0 ? `${brightness}%` : "OFF"}
+            </span>
+        </div>
     </div>
 </div>
 
 <style>
-    :root {
-        --progColor: linear-gradient(to right, hsl(6, 100%, 80%), hsl(356, 100%, 65%));
-        --progHeight: 20px;
+    .progress-brand {
+        color: var(--color-brand);
     }
-
-    progress,
-    progress::-webkit-progress-value {
-        width: 100%;
-        border: 0;
-        height: var(--progHeight);
-        border-radius: 20px;
-        background: var(--progColor);
+    .progress-brand::-webkit-progress-value {
+        background-color: var(--color-brand);
     }
-    progress::-webkit-progress-bar {
-        width: 100%;
-        border: 0;
-        height: var(--progHeight);
-        border-radius: 20px;
-        background: white;
-    }
-
-    progress::-moz-progress-bar {
-        width: 100%;
-        border: 0;
-        height: var(--progHeight);
-        border-radius: 20px;
-        background: var(--progColor);
+    .progress-brand::-moz-progress-bar {
+        background-color: var(--color-brand);
     }
 </style>

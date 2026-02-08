@@ -28,6 +28,12 @@ defmodule LiveSvelte do
     doc: "Name of the Svelte component",
     examples: ["YourComponent", "directory/Example"]
 
+  attr :id, :string,
+    default: nil,
+    doc:
+      "Optional stable DOM id override. Auto-generated from the component name by default. " <>
+        "Only needed when the same component appears in a loop or conditionally rendered block."
+
   attr :class, :string,
     default: nil,
     doc: "Class to apply to the Svelte component",
@@ -61,6 +67,8 @@ defmodule LiveSvelte do
     dead = assigns.socket == nil or not LiveView.connected?(assigns.socket)
     ssr_active = Application.get_env(:live_svelte, :ssr, true)
 
+    svelte_id = assigns.id || auto_id(assigns.name)
+
     if init and ssr_active and assigns.ssr and assigns.loading != [] do
       IO.warn(
         "The <:loading /> slot is incompatible with server-side rendering (ssr). Either remove the <:loading /> slot or set ssr={false}",
@@ -93,15 +101,17 @@ defmodule LiveSvelte do
       |> assign(:init, init)
       |> assign(:slots, slots)
       |> assign(:ssr_render, ssr_code)
+      |> assign(:svelte_id, svelte_id)
+
+    Process.put(:live_svelte_last_render_time, System.monotonic_time(:microsecond))
 
     ~H"""
-    <.live_json live_json_props={@live_json_props}>
+    <.live_json live_json_props={@live_json_props} svelte_id={@svelte_id}>
       <script>
         <%= raw(@ssr_render["head"]) %>
       </script>
-    <% svelte_id = id(@name) %>
     <div
-      id={svelte_id}
+      id={@svelte_id}
       data-name={@name}
       data-props={json(@props)}
       data-ssr={@ssr_render != nil}
@@ -110,9 +120,10 @@ defmodule LiveSvelte do
       }
       data-slots={@slots |> Slots.base_encode_64() |> json}
       phx-hook="SvelteHook"
+      phx-update="ignore"
       class={@class}
     >
-      <div id={"#{svelte_id}-target"} data-svelte-target phx-update="ignore">
+      <div id={"#{@svelte_id}-target"} data-svelte-target>
         <%= raw(@ssr_render["head"]) %>
         <style>
           <%= raw(@ssr_render["css"]["code"]) %>
@@ -139,7 +150,26 @@ defmodule LiveSvelte do
     json_library.encode!(props)
   end
 
-  defp id(name), do: "#{name}-#{System.unique_integer([:positive])}"
+  defp auto_id(name) do
+    maybe_reset_counters()
+    key = {:live_svelte_counter, name}
+    count = Process.get(key, 0)
+    Process.put(key, count + 1)
+    if count == 0, do: name, else: "#{name}-#{count}"
+  end
+
+  defp maybe_reset_counters do
+    now = System.monotonic_time(:microsecond)
+    last = Process.get(:live_svelte_last_render_time)
+
+    if last != nil and now - last > 1000 do
+      Process.get_keys()
+      |> Enum.each(fn
+        {:live_svelte_counter, _} = k -> Process.delete(k)
+        _ -> :ok
+      end)
+    end
+  end
 
   @doc false
   def get_props(assigns) do

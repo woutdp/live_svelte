@@ -4,9 +4,7 @@ defmodule ExampleWeb.LivePlusMinusHybrid do
 
   def render(assigns) do
     ~H"""
-    <h1 class="flex justify-center mb-10 font-bold">Hybrid: LiveView + Svelte</h1>
-
-    <.CounterHybrid number={@number} socket={@socket} />
+    <.svelte name="CounterHybrid" props={%{number: @number}} socket={@socket} />
     """
   end
 

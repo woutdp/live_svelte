@@ -1,149 +1,218 @@
 <div class="max-w-4xl mx-auto">
   <div class="text-center mb-12">
-    <h1 class="text-4xl font-bold text-zinc-900 mb-4">LiveSvelte Examples</h1>
-    <p class="text-lg text-zinc-600">
+    <h1 class="text-4xl font-bold text-base-content mb-4">LiveSvelte Examples</h1>
+    <p class="text-lg text-base-content/60">
       Explore these examples to learn how to integrate Svelte components with Phoenix LiveView.
     </p>
   </div>
 
   <div class="grid gap-8 md:grid-cols-2">
     <%!-- Basics --%>
-    <div class="bg-white rounded-lg border border-zinc-200 p-6">
-      <h2 class="text-lg font-semibold text-zinc-900 mb-4 flex items-center gap-2">
-        <span class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-sm">1</span>
-        Basics
-      </h2>
-      <ul class="space-y-2">
-        <li>
-          <a href={~p"/hello-world"} class="text-blue-600 hover:text-blue-800 hover:underline">Hello World</a>
-          <span class="text-zinc-500 text-sm">- Simple component rendering</span>
-        </li>
-        <li>
-          <a href={~p"/lodash"} class="text-blue-600 hover:text-blue-800 hover:underline">Lodash</a>
-          <span class="text-zinc-500 text-sm">- Using npm packages</span>
-        </li>
-        <li>
-          <a href={~p"/live-struct"} class="text-blue-600 hover:text-blue-800 hover:underline">Struct Props</a>
-          <span class="text-zinc-500 text-sm">- Passing Elixir structs as props</span>
-        </li>
-      </ul>
+    <div class="card bg-base-100 border border-base-300">
+      <div class="card-body">
+        <h2 class="text-lg font-semibold text-base-content mb-4 flex items-center gap-2">
+          <span class="badge badge-primary badge-lg">1</span>
+          Basics
+        </h2>
+        <ul class="space-y-2">
+          <li>
+            <a href={~p"/hello-world"} class="link link-primary">
+              Hello World
+            </a>
+            <span class="text-base-content/50 text-sm">- Simple component rendering</span>
+          </li>
+          <li>
+            <a href={~p"/lodash"} class="link link-primary">
+              Lodash
+            </a>
+            <span class="text-base-content/50 text-sm">- Using npm packages</span>
+          </li>
+          <li>
+            <a href={~p"/live-struct"} class="link link-primary">
+              Struct Props
+            </a>
+            <span class="text-base-content/50 text-sm">- Passing Elixir structs as props</span>
+          </li>
+        </ul>
+      </div>
     </div>
 
     <%!-- Interactive --%>
-    <div class="bg-white rounded-lg border border-zinc-200 p-6">
-      <h2 class="text-lg font-semibold text-zinc-900 mb-4 flex items-center gap-2">
-        <span class="w-8 h-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-sm">2</span>
-        Interactive
-      </h2>
-      <ul class="space-y-2">
-        <li>
-          <a href={~p"/live-simple-counter"} class="text-blue-600 hover:text-blue-800 hover:underline">Counter</a>
-          <span class="text-zinc-500 text-sm">- Server + client state</span>
-        </li>
-        <li>
-          <a href={~p"/live-lights"} class="text-blue-600 hover:text-blue-800 hover:underline">Lights</a>
-          <span class="text-zinc-500 text-sm">- Multiple components sharing state</span>
-        </li>
-        <li>
-          <a href={~p"/live-sigil"} class="text-blue-600 hover:text-blue-800 hover:underline">Sigil</a>
-          <span class="text-zinc-500 text-sm">- Inline Svelte with ~V sigil</span>
-        </li>
-        <li>
-          <a href={~p"/plus-minus-svelte"} class="text-blue-600 hover:text-blue-800 hover:underline">Plus/Minus (Static)</a>
-          <span class="text-zinc-500 text-sm">- Dead view integration</span>
-        </li>
-        <li>
-          <a href={~p"/live-plus-minus"} class="text-blue-600 hover:text-blue-800 hover:underline">Plus/Minus (Live)</a>
-          <span class="text-zinc-500 text-sm">- LiveView integration</span>
-        </li>
-        <li>
-          <a href={~p"/live-plus-minus-hybrid"} class="text-blue-600 hover:text-blue-800 hover:underline">Hybrid Counter</a>
-          <span class="text-zinc-500 text-sm">- Client + server events</span>
-        </li>
-      </ul>
+    <div class="card bg-base-100 border border-base-300">
+      <div class="card-body">
+        <h2 class="text-lg font-semibold text-base-content mb-4 flex items-center gap-2">
+          <span class="badge badge-success badge-lg">2</span>
+          Interactive
+        </h2>
+        <ul class="space-y-2">
+          <li>
+            <a
+              href={~p"/live-simple-counter"}
+              class="link link-primary"
+            >
+              Counter
+            </a>
+            <span class="text-base-content/50 text-sm">- Server + client state</span>
+          </li>
+          <li>
+            <a href={~p"/live-lights"} class="link link-primary">
+              Lights
+            </a>
+            <span class="text-base-content/50 text-sm">- Multiple components sharing state</span>
+          </li>
+          <li>
+            <a href={~p"/live-sigil"} class="link link-primary">
+              Sigil
+            </a>
+            <span class="text-base-content/50 text-sm">- Inline Svelte with ~V sigil</span>
+          </li>
+          <li>
+            <a
+              href={~p"/plus-minus-svelte"}
+              class="link link-primary"
+            >
+              Plus/Minus (Static)
+            </a>
+            <span class="text-base-content/50 text-sm">- Dead view integration</span>
+          </li>
+          <li>
+            <a href={~p"/live-plus-minus"} class="link link-primary">
+              Plus/Minus (Live)
+            </a>
+            <span class="text-base-content/50 text-sm">- LiveView integration</span>
+          </li>
+          <li>
+            <a
+              href={~p"/live-plus-minus-hybrid"}
+              class="link link-primary"
+            >
+              Hybrid Counter
+            </a>
+            <span class="text-base-content/50 text-sm">- Client + server events</span>
+          </li>
+        </ul>
+      </div>
     </div>
 
     <%!-- Data --%>
-    <div class="bg-white rounded-lg border border-zinc-200 p-6">
-      <h2 class="text-lg font-semibold text-zinc-900 mb-4 flex items-center gap-2">
-        <span class="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-sm">3</span>
-        Data
-      </h2>
-      <ul class="space-y-2">
-        <li>
-          <a href={~p"/live-log-list"} class="text-blue-600 hover:text-blue-800 hover:underline">Log List</a>
-          <span class="text-zinc-500 text-sm">- Dynamic list updates</span>
-        </li>
-        <li>
-          <a href={~p"/live-breaking-news"} class="text-blue-600 hover:text-blue-800 hover:underline">Breaking News</a>
-          <span class="text-zinc-500 text-sm">- Real-time updates with ~V sigil</span>
-        </li>
-        <li>
-          <a href={~p"/live-chat"} class="text-blue-600 hover:text-blue-800 hover:underline">Chat</a>
-          <span class="text-zinc-500 text-sm">- PubSub + pushEvent</span>
-        </li>
-        <li>
-          <a href={~p"/live-json"} class="text-blue-600 hover:text-blue-800 hover:underline">LiveJSON</a>
-          <span class="text-zinc-500 text-sm">- Efficient JSON diffing</span>
-        </li>
-      </ul>
+    <div class="card bg-base-100 border border-base-300">
+      <div class="card-body">
+        <h2 class="text-lg font-semibold text-base-content mb-4 flex items-center gap-2">
+          <span class="badge badge-secondary badge-lg">3</span>
+          Data
+        </h2>
+        <ul class="space-y-2">
+          <li>
+            <a href={~p"/live-log-list"} class="link link-primary">
+              Log List
+            </a>
+            <span class="text-base-content/50 text-sm">- Dynamic list updates</span>
+          </li>
+          <li>
+            <a
+              href={~p"/live-breaking-news"}
+              class="link link-primary"
+            >
+              Breaking News
+            </a>
+            <span class="text-base-content/50 text-sm">- Real-time updates with ~V sigil</span>
+          </li>
+          <li>
+            <a href={~p"/live-chat"} class="link link-primary">
+              Chat
+            </a>
+            <span class="text-base-content/50 text-sm">- PubSub + pushEvent</span>
+          </li>
+          <li>
+            <a href={~p"/live-json"} class="link link-primary">
+              LiveJSON
+            </a>
+            <span class="text-base-content/50 text-sm">- Efficient JSON diffing</span>
+          </li>
+        </ul>
+      </div>
     </div>
 
     <%!-- Slots --%>
-    <div class="bg-white rounded-lg border border-zinc-200 p-6">
-      <h2 class="text-lg font-semibold text-zinc-900 mb-4 flex items-center gap-2">
-        <span class="w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-sm">4</span>
-        Slots
-      </h2>
-      <ul class="space-y-2">
-        <li>
-          <a href={~p"/live-slots-simple"} class="text-blue-600 hover:text-blue-800 hover:underline">Simple Slots</a>
-          <span class="text-zinc-500 text-sm">- Basic slot usage</span>
-        </li>
-        <li>
-          <a href={~p"/live-slots-dynamic"} class="text-blue-600 hover:text-blue-800 hover:underline">Dynamic Slots</a>
-          <span class="text-zinc-500 text-sm">- Named slots with dynamic content</span>
-        </li>
-      </ul>
+    <div class="card bg-base-100 border border-base-300">
+      <div class="card-body">
+        <h2 class="text-lg font-semibold text-base-content mb-4 flex items-center gap-2">
+          <span class="badge badge-warning badge-lg">4</span>
+          Slots
+        </h2>
+        <ul class="space-y-2">
+          <li>
+            <a
+              href={~p"/live-slots-simple"}
+              class="link link-primary"
+            >
+              Simple Slots
+            </a>
+            <span class="text-base-content/50 text-sm">- Basic slot usage</span>
+          </li>
+          <li>
+            <a
+              href={~p"/live-slots-dynamic"}
+              class="link link-primary"
+            >
+              Dynamic Slots
+            </a>
+            <span class="text-base-content/50 text-sm">- Named slots with dynamic content</span>
+          </li>
+        </ul>
+      </div>
     </div>
 
     <%!-- Advanced --%>
-    <div class="bg-white rounded-lg border border-zinc-200 p-6">
-      <h2 class="text-lg font-semibold text-zinc-900 mb-4 flex items-center gap-2">
-        <span class="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-sm">5</span>
-        Advanced
-      </h2>
-      <ul class="space-y-2">
-        <li>
-          <a href={~p"/live-client-side-loading"} class="text-blue-600 hover:text-blue-800 hover:underline">Client Loading</a>
-          <span class="text-zinc-500 text-sm">- Loading states and SSR</span>
-        </li>
-      </ul>
+    <div class="card bg-base-100 border border-base-300">
+      <div class="card-body">
+        <h2 class="text-lg font-semibold text-base-content mb-4 flex items-center gap-2">
+          <span class="badge badge-error badge-lg">5</span>
+          Advanced
+        </h2>
+        <ul class="space-y-2">
+          <li>
+            <a
+              href={~p"/live-client-side-loading"}
+              class="link link-primary"
+            >
+              Client Loading
+            </a>
+            <span class="text-base-content/50 text-sm">- Loading states and SSR</span>
+          </li>
+        </ul>
+      </div>
     </div>
 
     <%!-- Ecto --%>
-    <div class="bg-white rounded-lg border border-zinc-200 p-6">
-      <h2 class="text-lg font-semibold text-zinc-900 mb-4 flex items-center gap-2">
-        <span class="w-8 h-8 rounded-full bg-teal-100 text-teal-600 flex items-center justify-center text-sm">6</span>
-        Ecto
-      </h2>
-      <ul class="space-y-2">
-        <li>
-          <a href={~p"/live-notes-otp"} class="text-blue-600 hover:text-blue-800 hover:underline">Notes (OTP JSON)</a>
-          <span class="text-zinc-500 text-sm">- Default OTP encoder with SQLite</span>
-        </li>
-        <li>
-          <a href={~p"/live-notes-jason"} class="text-blue-600 hover:text-blue-800 hover:underline">Notes (Jason)</a>
-          <span class="text-zinc-500 text-sm">- Jason-compatible approach</span>
-        </li>
-      </ul>
+    <div class="card bg-base-100 border border-base-300">
+      <div class="card-body">
+        <h2 class="text-lg font-semibold text-base-content mb-4 flex items-center gap-2">
+          <span class="badge badge-info badge-lg">6</span>
+          Ecto
+        </h2>
+        <ul class="space-y-2">
+          <li>
+            <a href={~p"/live-notes-otp"} class="link link-primary">
+              Notes (OTP JSON)
+            </a>
+            <span class="text-base-content/50 text-sm">- Default OTP encoder with SQLite</span>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 
-  <div class="mt-12 text-center text-zinc-500 text-sm">
+  <div class="mt-12 text-center text-base-content/50 text-sm">
     <p>
       View the source code on
-      <a href="https://github.com/woutdp/live_svelte" target="_blank" class="text-blue-600 hover:underline">GitHub</a>
+      <a
+        href="https://github.com/woutdp/live_svelte"
+        target="_blank"
+        class="link link-primary"
+      >
+        GitHub
+      </a>
     </p>
   </div>
 </div>

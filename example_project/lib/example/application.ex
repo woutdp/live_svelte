@@ -15,8 +15,6 @@ defmodule Example.Application do
       Example.Repo,
       # Start the PubSub system
       {Phoenix.PubSub, name: Example.PubSub},
-      # Start Finch
-      {Finch, name: Example.Finch},
       # Start the Endpoint (http/https)
       ExampleWeb.Endpoint
       # Start a worker by calling: Example.Worker.start_link(arg)

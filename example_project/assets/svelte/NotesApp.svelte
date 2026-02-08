@@ -1,5 +1,5 @@
 <script>
-    import { flip } from "svelte/animate"
+    import {flip} from "svelte/animate"
     import {fly, fade} from "svelte/transition"
 
     /**
@@ -20,35 +20,35 @@
     // Sync props to local state using in-place mutations to preserve $state proxy identity.
     // This is critical for animations - replacing the array would cause all items to re-animate.
     $effect(() => {
-        const currentIds = new Set(propNotes.map((p) => p.id));
+        const currentIds = new Set(propNotes.map(p => p.id))
 
         // 1. Remove deleted items (iterate backwards to avoid index shift issues)
         for (let i = notes.length - 1; i >= 0; i--) {
             if (!currentIds.has(notes[i].id)) {
-                notes.splice(i, 1);
+                notes.splice(i, 1)
             }
         }
 
         // 2. Update existing items and add new ones in correct order
         for (let i = 0; i < propNotes.length; i++) {
-            const p = propNotes[i];
-            const existingIndex = notes.findIndex((n) => n.id === p.id);
+            const p = propNotes[i]
+            const existingIndex = notes.findIndex(n => n.id === p.id)
 
             if (existingIndex !== -1) {
                 // Update existing item in place (no animation triggered)
-                notes[existingIndex].title = p.title;
-                notes[existingIndex].content = p.content;
-                notes[existingIndex].color = p.color;
-                notes[existingIndex].inserted_at = p.inserted_at;
+                notes[existingIndex].title = p.title
+                notes[existingIndex].content = p.content
+                notes[existingIndex].color = p.color
+                notes[existingIndex].inserted_at = p.inserted_at
 
                 // Move to correct position if needed (triggers flip animation)
                 if (existingIndex !== i) {
-                    const [item] = notes.splice(existingIndex, 1);
-                    notes.splice(i, 0, item);
+                    const [item] = notes.splice(existingIndex, 1)
+                    notes.splice(i, 0, item)
                 }
             } else {
                 // Insert new item at correct position (triggers enter animation)
-                notes.splice(i, 0, { ...p });
+                notes.splice(i, 0, {...p})
             }
         }
     })
@@ -113,15 +113,15 @@
     <title>Notes ({encoder})</title>
 </svelte:head>
 
-<div class="max-w-4xl mx-auto p-4">
-    <!-- Info Banner -->
-    <div class="mb-6 p-4 rounded-lg bg-blue-50 border border-blue-200">
-        <div class="flex items-center gap-2 mb-2">
-            <span class="px-2 py-1 text-xs font-semibold rounded bg-blue-600 text-white">
-                {encoder} JSON Encoder
+<div class="w-full max-w-4xl mx-auto">
+    <!-- Info -->
+    <div class="card bg-base-100 shadow-md border border-base-300/50 overflow-hidden mb-6 md:min-w-md">
+        <div class="card-body gap-2 p-4">
+            <span class="badge badge-ghost badge-sm font-medium text-base-content/70 w-fit">
+                {encoder} JSON encoder
             </span>
+            <p class="text-sm text-base-content/70">{info}</p>
         </div>
-        <p class="text-sm text-blue-800">{info}</p>
     </div>
 
     <!-- Create Note Form -->
@@ -130,81 +130,74 @@
             e.preventDefault()
             handleSubmit()
         }}
-        class="mb-8 p-4 bg-white rounded-lg shadow-sm border"
+        class="card bg-base-100 shadow-md border border-base-300/50 overflow-hidden mb-8 md:min-w-md"
     >
-        <h2 class="text-lg font-semibold mb-4">Create Note</h2>
+        <div class="card-body gap-4 p-5">
+            <span class="badge badge-ghost badge-sm font-medium text-base-content/70 w-fit"> Create note </span>
 
-        <div class="space-y-4">
-            <div>
-                <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Title *</label>
+            <label for="title" class="flex flex-col gap-1.5">
+                <span class="text-xs font-medium text-base-content/50">Title *</span>
                 <input
                     id="title"
                     type="text"
                     bind:value={title}
                     placeholder="Enter note title"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    class="input input-bordered input-sm w-full bg-base-200/50 border-base-300"
                     required
                 />
-            </div>
+            </label>
 
-            <div>
-                <label for="content" class="block text-sm font-medium text-gray-700 mb-1">Content</label>
+            <label for="content" class="flex flex-col gap-1.5">
+                <span class="text-xs font-medium text-base-content/50">Content</span>
                 <textarea
                     id="content"
                     bind:value={content}
                     placeholder="Enter note content (optional)"
                     rows="3"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    class="textarea textarea-bordered textarea-sm w-full bg-base-200/50 border-base-300"
                 ></textarea>
-            </div>
+            </label>
 
-            <div>
-                <label for="color" class="block text-sm font-medium text-gray-700 mb-2">Color</label>
+            <div class="flex flex-col gap-2">
+                <span class="text-xs font-medium text-base-content/50">Color</span>
                 <div class="flex gap-2 flex-wrap">
                     {#each colors as c}
                         <button
                             aria-label={c.name}
-                            id="color"
                             type="button"
                             onclick={() => (color = c.value)}
                             class="w-8 h-8 rounded-full border-2 transition-transform hover:scale-110"
                             class:ring-2={color === c.value}
                             class:ring-offset-2={color === c.value}
-                            class:ring-blue-500={color === c.value}
-                            style="background-color: {c.value}; border-color: {c.value === '#fff' ? '#e5e7eb' : c.value}"
+                            class:ring-brand={color === c.value}
+                            style="background-color: {c.value}; border-color: {c.value === '#fff' ? 'var(--color-base-300)' : c.value}"
                             title={c.name}
                         ></button>
                     {/each}
                 </div>
             </div>
 
-            <button type="submit" class="px-4 py-2 bg-zinc-900 text-white rounded-md hover:bg-zinc-700 transition-colors">
-                Add Note
-            </button>
+            <button type="submit" class="btn btn-sm bg-brand text-white border-0 hover:opacity-90 w-fit"> Add note </button>
         </div>
     </form>
 
-    <!-- Notes Grid 
-    in:fly|global={{ x: -200, duration: 300 }}
-    out:fade|global={{ duration: 200 }}
-     
-    -->
+    <!-- Notes Grid -->
     <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {#each notes as note, index (note.id)}
             <li
-            animate:flip={{ delay: 500 }}
+                animate:flip={{delay: 100, duration: 500}}
                 role="listitem"
                 id={`note-${note.id}`}
                 aria-label={`Note ${index + 1}`}
-                class="p-4 rounded-lg shadow-sm border transition-shadow hover:shadow-md"
+                class="rounded-lg border border-base-300/50 p-4 transition-shadow hover:shadow-md"
                 style="background-color: {note.color}"
             >
-                <div class="flex justify-between items-start mb-2">
-                    <h3 class="font-semibold text-gray-900 break-words flex-1 mr-2">{note.title}</h3>
+                <div class="flex justify-between items-start gap-2 mb-2">
+                    <h3 class="font-semibold text-base-content break-words flex-1 min-w-0">{note.title}</h3>
                     <button
                         aria-label="Delete note"
                         onclick={() => handleDelete(note.id)}
-                        class="text-gray-500 hover:text-red-600 transition-colors p-1"
+                        class="btn btn-ghost btn-xs hover:bg-error/20 hover:text-error shrink-0"
                         title="Delete note"
                     >
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -214,26 +207,31 @@
                 </div>
 
                 {#if note.content}
-                    <p class="text-sm text-gray-700 mb-3 break-words">{note.content}</p>
+                    <p class="text-sm text-base-content/70 mb-3 break-words">{note.content}</p>
                 {/if}
 
-                <div class="flex justify-between items-center text-xs text-gray-500 pt-2 border-t border-gray-200/50">
-                    <span class="font-mono" title={note.id}>ID: {truncateUUID(note.id)}</span>
-                    <span>{formatDate(note.inserted_at)}</span>
+                <div class="flex justify-between items-center text-xs text-base-content/50 pt-2 border-t border-base-300/50">
+                    <span class="font-mono truncate" title={note.id}>ID: {truncateUUID(note.id)}</span>
+                    <span class="shrink-0">{formatDate(note.inserted_at)}</span>
                 </div>
             </li>
         {:else}
-            <li class="col-span-full text-center py-12 text-gray-500">
-                <p class="text-lg">No notes yet</p>
-                <p class="text-sm">Create your first note above!</p>
+            <li class="col-span-full">
+                <div class="card bg-base-100 shadow-md border border-base-300/50 overflow-hidden">
+                    <div class="card-body py-12 text-center">
+                        <p class="text-base-content/70 font-medium">No notes yet</p>
+                        <p class="text-sm text-base-content/50">Create your first note above.</p>
+                    </div>
+                </div>
             </li>
         {/each}
     </ul>
 
-    <!-- Notes Count -->
     {#if notes.length > 0}
-        <div class="mt-6 text-center text-sm text-gray-500">
-            {notes.length} note{notes.length === 1 ? "" : "s"}
+        <div class="mt-6 text-center">
+            <span class="badge badge-ghost badge-sm font-medium text-base-content/50">
+                {notes.length} note{notes.length === 1 ? "" : "s"}
+            </span>
         </div>
     {/if}
 </div>

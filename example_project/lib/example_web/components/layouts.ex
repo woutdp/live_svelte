@@ -63,12 +63,12 @@ defmodule ExampleWeb.Layouts do
     <nav class="flex flex-1 flex-col">
       <ul role="list" class="flex flex-1 flex-col gap-y-7">
         <li :for={group <- @nav_groups}>
-          <div class="text-xs font-semibold leading-6 text-zinc-400 uppercase tracking-wider">
+          <div class="text-xs font-semibold leading-6 text-base-content/40 uppercase tracking-wider">
             <%= group.label %>
           </div>
           <ul role="list" class="-mx-2 mt-2 space-y-1">
             <li :for={link <- group.links}>
-              <a href={link.to} class="block px-3 py-2 rounded-md text-sm font-medium text-zinc-700 hover:bg-zinc-100">
+              <a href={link.to} class="block px-3 py-2 rounded-md text-sm font-medium text-base-content hover:bg-base-200">
                 <%= link.label %>
               </a>
             </li>
@@ -85,12 +85,12 @@ defmodule ExampleWeb.Layouts do
     ~H"""
     <nav class="hidden lg:flex lg:items-center lg:gap-1">
       <div :for={group <- @nav_groups} class="relative group">
-        <button type="button" class="px-3 py-2 text-sm font-medium text-zinc-700 hover:text-zinc-900 rounded-md hover:bg-zinc-100">
+        <button type="button" class="px-3 py-2 text-sm font-medium text-base-content rounded-md hover:bg-base-200">
           <%= group.label %>
         </button>
-        <div class="absolute left-0 mt-1 w-48 bg-white rounded-md shadow-lg border border-zinc-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 z-50">
+        <div class="absolute left-0 mt-1 w-48 bg-base-100 rounded-box shadow-lg border border-base-300 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 z-50">
           <div class="py-1">
-            <a :for={link <- group.links} href={link.to} class="block px-4 py-2 text-sm text-zinc-700 hover:bg-zinc-100">
+            <a :for={link <- group.links} href={link.to} class="block px-4 py-2 text-sm text-base-content hover:bg-base-200">
               <%= link.label %>
             </a>
           </div>
