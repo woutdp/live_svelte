@@ -120,9 +120,10 @@ defmodule LiveSvelte do
       }
       data-slots={@slots |> Slots.base_encode_64() |> json}
       phx-hook="SvelteHook"
+      phx-update="ignore"
       class={@class}
     >
-      <div id={"#{@svelte_id}-target"} data-svelte-target phx-update="ignore">
+      <div id={"#{@svelte_id}-target"} data-svelte-target>
         <%= raw(@ssr_render["head"]) %>
         <style>
           <%= raw(@ssr_render["css"]["code"]) %>

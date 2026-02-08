@@ -165,4 +165,13 @@ defmodule LiveSvelte.AutoIdTest do
       assert extract_id(html) == "Counter"
     end
   end
+
+  describe "phx-update attribute" do
+    test "outer hook container has phx-update=ignore to prevent DOM morphing" do
+      html = render_html(base_assigns("Counter"))
+      # The outer div with phx-hook="SvelteHook" must have phx-update="ignore"
+      # to prevent LiveView from recreating it during DOM diffs
+      assert html =~ ~r/phx-hook="SvelteHook"[^>]*phx-update="ignore"/
+    end
+  end
 end
