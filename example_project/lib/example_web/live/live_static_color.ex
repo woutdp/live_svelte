@@ -9,33 +9,47 @@ defmodule ExampleWeb.LiveStaticColor do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="border-4 border-green-400 p-5">
-      <div>LIVEVIEW</div>
-      <div class="flex flex-row">
-        <div class="flex flex-row justify-center items-center">
-          <.svelte name="Static" props={%{color: @color}} />
+    <div class="flex flex-col justify-center items-center gap-4 p-6">
+      <h2 class="text-center text-2xl font-light my-4">
+        Static color
+      </h2>
+      <p class="text-sm text-base-content/50 text-center max-w-md">
+        Svelte component receives color from LiveView; list re-renders on server.
+      </p>
+      <div class="w-full max-w-4xl rounded-2xl border border-base-300/50 bg-gradient-to-br from-base-100 to-base-200/40 shadow-xl shadow-base-300/10 overflow-hidden">
+        <div class="px-4 pt-4 pb-1 border-b border-base-300/30 bg-base-200/20">
+          <span class="badge badge-outline badge-sm font-medium text-base-content/60 border-base-300/50">LiveView + LiveSvelte</span>
         </div>
-        <div class="flex flex-col justify-center items-center">
-          <div>
-            <div class="border-4 border-purple-400 p-12 flex flex-row gap-5 justify-center items-center">
-              Live Component
-              <button class="btn btn-primary" phx-click="change_color_to_blue">
-                Change color to blue
-              </button>
-              <button class="btn btn-primary" phx-click="change_color_to_red">
-                Change color to red
-              </button>
-              <button class="btn btn-primary" phx-click="add_element">Add Element</button>
-            </div>
+        <div class="p-6 flex flex-row flex-wrap justify-center items-stretch gap-6">
+          <div class="flex flex-row justify-center items-center">
+            <.svelte name="Static" props={%{color: @color}} />
           </div>
-
-          <%= for {item, index} <- Enum.with_index(@list) do %>
-            <div class="border-4 border-purple-400 flex-row justify-center items-center p-4">
-              <div :if={@color == "red"} class="text-red-400">red</div>
-              <div :if={@color == "blue"} class="text-blue-400">blue</div>
-              <div :if={@color == "white"} class="text-white-400">white</div>
+          <div class="flex flex-col justify-center items-center gap-4">
+            <div>
+              <div class="card bg-base-100 shadow-md border border-base-300/50 overflow-hidden">
+                <div class="card-body gap-4 p-5 flex flex-row flex-wrap gap-3 justify-center items-center">
+                  <span class="badge badge-ghost badge-sm font-medium text-base-content/70 w-fit">
+                    LiveView
+                  </span>
+                  <button class="btn btn-sm bg-blue-500 text-white border-0" phx-click="change_color_to_blue">
+                    Change color to blue
+                  </button>
+                  <button class="btn btn-sm bg-red-500 text-white border-0" phx-click="change_color_to_red">
+                    Change color to red
+                  </button>
+                  <button class="btn btn-sm btn-outline border-base-300" phx-click="add_element">Add Element</button>
+                </div>
+              </div>
             </div>
-          <% end %>
+
+            <%= for {item, index} <- Enum.with_index(@list) do %>
+              <div class="card bg-base-200/50 border border-base-300/50 rounded-lg flex flex-row justify-center items-center p-4 min-w-[8rem]">
+                <div :if={@color == "red"} class="text-red-500 font-medium">red</div>
+                <div :if={@color == "blue"} class="text-blue-500 font-medium">blue</div>
+                <div :if={@color == "white"} class="text-base-content/70 font-medium">white</div>
+              </div>
+            <% end %>
+          </div>
         </div>
       </div>
     </div>
