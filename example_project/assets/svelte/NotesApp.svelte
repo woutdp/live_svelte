@@ -115,7 +115,7 @@
 
 <div class="w-full max-w-4xl mx-auto">
     <!-- Info -->
-    <div class="card bg-base-100 shadow-md border border-base-300/50 overflow-hidden mb-6">
+    <div class="card bg-base-100 shadow-md border border-base-300/50 overflow-hidden mb-6 md:min-w-md">
         <div class="card-body gap-2 p-4">
             <span class="badge badge-ghost badge-sm font-medium text-base-content/70 w-fit">
                 {encoder} JSON encoder
@@ -130,7 +130,7 @@
             e.preventDefault()
             handleSubmit()
         }}
-        class="card bg-base-100 shadow-md border border-base-300/50 overflow-hidden mb-8"
+        class="card bg-base-100 shadow-md border border-base-300/50 overflow-hidden mb-8 md:min-w-md"
     >
         <div class="card-body gap-4 p-5">
             <span class="badge badge-ghost badge-sm font-medium text-base-content/70 w-fit"> Create note </span>

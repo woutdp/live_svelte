@@ -35,11 +35,11 @@ defmodule ExampleWeb.LiveSimpleCounter do
               <div class="flex flex-wrap gap-6 justify-center py-4">
                 <div class="flex flex-col items-center gap-2">
                   <span class="text-xs text-base-content/50">Component 1</span>
-                  <.svelte id="counter-1" name="SimpleCounter" props={%{number: @number}} socket={@socket} />
+                  <.svelte name="SimpleCounter" props={%{number: @number}} socket={@socket} />
                 </div>
                 <div class="flex flex-col items-center gap-2">
                   <span class="text-xs text-base-content/50">Component 2</span>
-                  <.svelte id="counter-2" name="SimpleCounter" props={%{number: @number}} socket={@socket} />
+                  <.svelte name="SimpleCounter" props={%{number: @number}} socket={@socket} />
                 </div>
               </div>
             </div>

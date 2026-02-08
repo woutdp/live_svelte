@@ -7,7 +7,7 @@
     }
 </script>
 
-<div class="card bg-base-100 shadow-md border border-base-300/50 overflow-hidden">
+<div class="card bg-base-100 shadow-md border border-base-300/50 overflow-hidden md:min-w-md">
     <div class="card-body gap-4 p-4">
         <span class="badge badge-ghost badge-sm font-medium text-base-content/70 w-fit"> Light </span>
         <div class="flex justify-between items-center gap-4">

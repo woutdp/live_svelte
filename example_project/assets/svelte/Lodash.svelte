@@ -11,7 +11,7 @@
 
 <h1 class="text-center text-2xl font-light my-4">Lodash Demo</h1>
 <p class="text-sm text-base-content/50 mb-8 text-center">Using npm packages with Svelte in a regular non LiveView page.</p>
-<div class="card bg-base-100 shadow-md border border-base-300/50 overflow-hidden">
+<div class="card bg-base-100 shadow-md border border-base-300/50 overflow-hidden md:min-w-md">
     <div class="card-body gap-4 p-5">
         <span class="badge badge-ghost badge-sm font-medium text-base-content/70 w-fit"> Lodash · TypeScript </span>
         <h2 class="text-lg font-semibold text-brand">Sorted with lodash</h2>

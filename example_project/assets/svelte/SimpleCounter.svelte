@@ -13,7 +13,7 @@
 
     <div class="flex flex-wrap justify-center gap-8">
         <!-- Server counter card -->
-        <div class="card bg-base-100 shadow-lg border border-base-300/50 w-52">
+        <div class="card bg-base-100 shadow-lg border border-base-300/50 w-52 md:min-w-md">
             <div class="card-body items-center text-center gap-4 py-6">
                 <span class="badge badge-outline badge-sm font-medium text-base-content/70">Server</span>
                 <span class="text-4xl font-bold tabular-nums text-brand">{number}</span>
@@ -22,7 +22,7 @@
         </div>
 
         <!-- Client counter card -->
-        <div class="card bg-base-100 shadow-lg border border-base-300/50 w-52">
+        <div class="card bg-base-100 shadow-lg border border-base-300/50 w-52 md:min-w-md">
             <div class="card-body items-center text-center gap-4 py-6">
                 <span class="badge badge-outline badge-sm font-medium text-base-content/70">Client</span>
                 <span class="text-4xl font-bold tabular-nums text-success">{other}</span>

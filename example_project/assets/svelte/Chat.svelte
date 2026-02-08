@@ -24,7 +24,7 @@
 
 <div class="w-full flex flex-col items-center">
     <div
-        class="card bg-base-100 shadow-md border border-base-300/50 overflow-hidden w-full max-w-md flex flex-col sm:w-[360px] sm:max-w-none"
+        class="card bg-base-100 shadow-md border border-base-300/50 overflow-hidden w-full max-w-md flex flex-col sm:w-[360px] sm:max-w-none md:min-w-md"
     >
         <div class="card-body gap-0 p-0 flex flex-col min-h-0 flex-1 sm:h-[520px]">
             <div class="px-4 pt-4 pb-2">

@@ -23,7 +23,7 @@
     <h2 class="text-center text-2xl font-light my-4">Log stream</h2>
     <p class="text-sm text-base-content/50 text-center max-w-sm">Add items or let the timer append entries; limit how many are shown.</p>
 
-    <div class="card bg-base-100 shadow-md border border-base-300/50 overflow-hidden w-full max-w-lg">
+    <div class="card bg-base-100 shadow-md border border-base-300/50 overflow-hidden w-full max-w-lg md:min-w-md">
         <div class="card-body gap-4 p-5">
             <span class="badge badge-ghost badge-sm font-medium text-base-content/70 w-fit"> Log list </span>
 

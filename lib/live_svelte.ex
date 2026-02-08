@@ -30,7 +30,9 @@ defmodule LiveSvelte do
 
   attr :id, :string,
     default: nil,
-    doc: "Stable DOM id for the component. Defaults to the component name. Must be unique on the page."
+    doc:
+      "Optional stable DOM id override. Auto-generated from the component name by default. " <>
+        "Only needed when the same component appears in a loop or conditionally rendered block."
 
   attr :class, :string,
     default: nil,
@@ -65,6 +67,8 @@ defmodule LiveSvelte do
     dead = assigns.socket == nil or not LiveView.connected?(assigns.socket)
     ssr_active = Application.get_env(:live_svelte, :ssr, true)
 
+    svelte_id = assigns.id || auto_id(assigns.name)
+
     if init and ssr_active and assigns.ssr and assigns.loading != [] do
       IO.warn(
         "The <:loading /> slot is incompatible with server-side rendering (ssr). Either remove the <:loading /> slot or set ssr={false}",
@@ -92,14 +96,14 @@ defmodule LiveSvelte do
         end
       end
 
-    svelte_id = assigns.id || assigns.name
-
     assigns =
       assigns
       |> assign(:init, init)
       |> assign(:slots, slots)
       |> assign(:ssr_render, ssr_code)
       |> assign(:svelte_id, svelte_id)
+
+    Process.put(:live_svelte_last_render_time, System.monotonic_time(:microsecond))
 
     ~H"""
     <.live_json live_json_props={@live_json_props} svelte_id={@svelte_id}>
@@ -143,6 +147,27 @@ defmodule LiveSvelte do
   defp json(props) do
     json_library = Application.get_env(:live_svelte, :json_library, LiveSvelte.JSON)
     json_library.encode!(props)
+  end
+
+  defp auto_id(name) do
+    maybe_reset_counters()
+    key = {:live_svelte_counter, name}
+    count = Process.get(key, 0)
+    Process.put(key, count + 1)
+    if count == 0, do: name, else: "#{name}-#{count}"
+  end
+
+  defp maybe_reset_counters do
+    now = System.monotonic_time(:microsecond)
+    last = Process.get(:live_svelte_last_render_time)
+
+    if last != nil and now - last > 1000 do
+      Process.get_keys()
+      |> Enum.each(fn
+        {:live_svelte_counter, _} = k -> Process.delete(k)
+        _ -> :ok
+      end)
+    end
   end
 
   @doc false

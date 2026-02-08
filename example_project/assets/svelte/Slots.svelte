@@ -6,7 +6,7 @@
     let {children, subtitle}: Props = $props()
 </script>
 
-<div class="card bg-base-100 shadow-md border border-base-300/50 overflow-hidden w-full max-w-md min-w-md">
+<div class="card bg-base-100 shadow-md border border-base-300/50 overflow-hidden w-full max-w-md md:min-w-md">
     <div class="card-body gap-4 p-5">
         <span class="badge badge-ghost badge-sm font-medium text-base-content/70 w-fit"> Slots </span>
         <div class="text-sm text-base-content/50 italic">Opening</div>

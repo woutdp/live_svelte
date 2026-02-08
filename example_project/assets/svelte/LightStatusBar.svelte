@@ -18,7 +18,7 @@
     })
 </script>
 
-<div class="card bg-base-100 shadow-md border border-base-300/50 overflow-hidden">
+<div class="card bg-base-100 shadow-md border border-base-300/50 overflow-hidden md:min-w-md">
     <div class="card-body gap-3 p-4">
         <span class="badge badge-ghost badge-sm font-medium text-base-content/70 w-fit"> Brightness </span>
         <progress class="progress progress-brand border-0 w-full rounded-full h-3 bg-base-200" value={$progress} max="1"></progress>
