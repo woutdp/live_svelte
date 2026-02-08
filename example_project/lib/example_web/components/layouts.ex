@@ -22,7 +22,8 @@ defmodule ExampleWeb.Layouts do
           %{label: "Sigil", to: ~p"/live-sigil"},
           %{label: "Plus/Minus (Static)", to: ~p"/plus-minus-svelte"},
           %{label: "Plus/Minus (Live)", to: ~p"/live-plus-minus"},
-          %{label: "Hybrid Counter", to: ~p"/live-plus-minus-hybrid"}
+          %{label: "Hybrid Counter", to: ~p"/live-plus-minus-hybrid"},
+          %{label: "Static + List", to: ~p"/live-static-color"}
         ]
       },
       %{

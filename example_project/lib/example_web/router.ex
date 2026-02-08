@@ -28,6 +28,7 @@ defmodule ExampleWeb.Router do
     get "/plus-minus-svelte", PageController, :plus_minus_svelte
     live "/live-plus-minus", LivePlusMinus
     live "/live-plus-minus-hybrid", LivePlusMinusHybrid
+    live "/live-static-color", LiveStaticColor
     live "/live-log-list", LiveLogList
     live "/live-breaking-news", LiveBreakingNews
     live "/live-chat", LiveChat
