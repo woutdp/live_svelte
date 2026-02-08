@@ -18,7 +18,7 @@ defmodule ExampleWeb.LiveClientSideLoading do
               Client side
             </span>
             <p class="text-xs text-base-content/50">Recommended: no SSR, loading slot shown until hydrated.</p>
-            <.svelte name="ClientSideLoading" ssr={false}>
+            <.svelte id="csl-client" name="ClientSideLoading" ssr={false}>
               <:loading>
                 <div class="flex items-center gap-2 py-4">
                   <span class="loading loading-spinner loading-sm text-brand"></span>
@@ -35,7 +35,7 @@ defmodule ExampleWeb.LiveClientSideLoading do
               Server side (avoid)
             </span>
             <p class="text-xs text-base-content/50 italic">May flicker and log a console warning.</p>
-            <.svelte name="ClientSideLoading" socket={@socket}>
+            <.svelte id="csl-server" name="ClientSideLoading" socket={@socket}>
               <:loading>
                 <div class="flex items-center gap-2 py-4">
                   <span class="loading loading-spinner loading-sm text-brand"></span>

@@ -17,7 +17,7 @@ defmodule ExampleWeb.LiveJson do
             <span class="badge badge-outline badge-sm font-medium text-base-content/70 w-fit">
               SSR
             </span>
-            <.svelte name="LiveJson" live_json_props={%{big_data_set: @ljbig_data_set}} socket={@socket} />
+            <.svelte id="live-json-ssr" name="LiveJson" live_json_props={%{big_data_set: @ljbig_data_set}} socket={@socket} />
           </div>
         </section>
         <section class="card bg-base-100 shadow-md border border-base-300/50 overflow-hidden w-full max-w-sm">
@@ -25,7 +25,7 @@ defmodule ExampleWeb.LiveJson do
             <span class="badge badge-outline badge-sm font-medium text-base-content/70 w-fit">
               No SSR
             </span>
-            <.svelte name="LiveJson" live_json_props={%{big_data_set: @ljbig_data_set}} ssr={false} />
+            <.svelte id="live-json-no-ssr" name="LiveJson" live_json_props={%{big_data_set: @ljbig_data_set}} ssr={false} />
           </div>
         </section>
       </div>

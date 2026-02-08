@@ -28,6 +28,10 @@ defmodule LiveSvelte do
     doc: "Name of the Svelte component",
     examples: ["YourComponent", "directory/Example"]
 
+  attr :id, :string,
+    default: nil,
+    doc: "Stable DOM id for the component. Defaults to the component name. Must be unique on the page."
+
   attr :class, :string,
     default: nil,
     doc: "Class to apply to the Svelte component",
@@ -88,20 +92,22 @@ defmodule LiveSvelte do
         end
       end
 
+    svelte_id = assigns.id || assigns.name
+
     assigns =
       assigns
       |> assign(:init, init)
       |> assign(:slots, slots)
       |> assign(:ssr_render, ssr_code)
+      |> assign(:svelte_id, svelte_id)
 
     ~H"""
-    <.live_json live_json_props={@live_json_props}>
+    <.live_json live_json_props={@live_json_props} svelte_id={@svelte_id}>
       <script>
         <%= raw(@ssr_render["head"]) %>
       </script>
-    <% svelte_id = id(@name) %>
     <div
-      id={svelte_id}
+      id={@svelte_id}
       data-name={@name}
       data-props={json(@props)}
       data-ssr={@ssr_render != nil}
@@ -112,7 +118,7 @@ defmodule LiveSvelte do
       phx-hook="SvelteHook"
       class={@class}
     >
-      <div id={"#{svelte_id}-target"} data-svelte-target phx-update="ignore">
+      <div id={"#{@svelte_id}-target"} data-svelte-target phx-update="ignore">
         <%= raw(@ssr_render["head"]) %>
         <style>
           <%= raw(@ssr_render["css"]["code"]) %>
@@ -138,8 +144,6 @@ defmodule LiveSvelte do
     json_library = Application.get_env(:live_svelte, :json_library, LiveSvelte.JSON)
     json_library.encode!(props)
   end
-
-  defp id(name), do: "#{name}-#{System.unique_integer([:positive])}"
 
   @doc false
   def get_props(assigns) do

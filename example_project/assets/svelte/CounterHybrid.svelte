@@ -1,21 +1,15 @@
 <script>
     /** @type {{ number?: number }} */
-    let { number = 1 } = $props();
-    let amount = $state(1);
+    let {number = 1} = $props()
+    let amount = $state(1)
 </script>
 
 <div class="flex flex-col justify-center items-center gap-4 p-4">
-    <h2 class="text-center text-2xl font-light my-4">
-        Plus / Minus (Hybrid)
-    </h2>
-    <p class="text-sm text-base-content/50 text-center max-w-sm">
-        LiveView-driven value with phx-click; step amount is client state.
-    </p>
+    <h2 class="text-center text-2xl font-light my-4">Plus / Minus (Hybrid)</h2>
+    <p class="text-sm text-base-content/50 text-center max-w-sm">LiveView-driven value with phx-click; step amount is client state.</p>
     <div class="card bg-base-100 shadow-md border border-base-300/50 overflow-hidden w-full max-w-xs">
         <div class="card-body gap-4 p-5">
-            <span class="badge badge-ghost badge-sm font-medium text-base-content/70 w-fit">
-                Value
-            </span>
+            <span class="badge badge-ghost badge-sm font-medium text-base-content/70 w-fit"> Value </span>
             <div class="flex flex-row items-center justify-center gap-6 py-2">
                 <button
                     class="btn btn-square btn-sm btn-outline border-base-300 hover:border-error hover:text-error"

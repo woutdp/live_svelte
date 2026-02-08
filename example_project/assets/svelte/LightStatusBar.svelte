@@ -1,39 +1,29 @@
 <script>
-    import { run } from "svelte/legacy";
-    import { tweened } from "svelte/motion";
-    import { cubicOut } from "svelte/easing";
+    import {run} from "svelte/legacy"
+    import {tweened} from "svelte/motion"
+    import {cubicOut} from "svelte/easing"
 
     /** @type {{ brightness?: number }} */
-    let { brightness = 0 } = $props();
+    let {brightness = 0} = $props()
 
     const progress = tweened(0, {
         duration: 400,
         easing: cubicOut,
-    });
+    })
 
-    const updateProgress = (b) => progress.set(b / 100);
+    const updateProgress = b => progress.set(b / 100)
 
     run(() => {
-        updateProgress(brightness);
-    });
+        updateProgress(brightness)
+    })
 </script>
 
 <div class="card bg-base-100 shadow-md border border-base-300/50 overflow-hidden">
     <div class="card-body gap-3 p-4">
-        <span class="badge badge-ghost badge-sm font-medium text-base-content/70 w-fit">
-            Brightness
-        </span>
-        <progress
-            class="progress progress-brand border-0 w-full rounded-full h-3 bg-base-200"
-            value={$progress}
-            max="1"
-        ></progress>
+        <span class="badge badge-ghost badge-sm font-medium text-base-content/70 w-fit"> Brightness </span>
+        <progress class="progress progress-brand border-0 w-full rounded-full h-3 bg-base-200" value={$progress} max="1"></progress>
         <div class="flex items-center justify-center min-h-10">
-            <span
-                class="font-mono text-lg font-semibold tabular-nums {brightness > 0
-                    ? 'text-brand'
-                    : 'text-base-content/50'}"
-            >
+            <span class="font-mono text-lg font-semibold tabular-nums {brightness > 0 ? 'text-brand' : 'text-base-content/50'}">
                 {brightness > 0 ? `${brightness}%` : "OFF"}
             </span>
         </div>
@@ -41,7 +31,6 @@
 </div>
 
 <style>
-    /* Brand color for progress bar (DaisyUI v5), scoped to this component */
     .progress-brand {
         color: var(--color-brand);
     }

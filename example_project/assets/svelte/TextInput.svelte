@@ -9,11 +9,5 @@
 </script>
 
 <div>
-    <input
-        type="text"
-        {name}
-        {id}
-        bind:value
-        class="input input-bordered w-full mt-2"
-    />
+    <input type="text" {name} {id} bind:value class="input input-bordered w-full mt-2" />
 </div>

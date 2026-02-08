@@ -81,15 +81,18 @@ export function getHooks(components) {
                 window.addEventListener(`${liveJsonElement}_patched`, _event => update_state(this), false)
             }
 
-            // This is required for the loading slot to be cleared once we mount the component
+            // Mount into the inner phx-update="ignore" div so LiveView's DOM
+            // patching won't destroy Svelte's rendered content on server updates.
+            const target = this.el.querySelector("[data-svelte-target]")
+
             if (!this.el.hasAttribute("data-ssr")) {
-                this.el.innerHTML = ""
+                target.innerHTML = ""
             }
 
             const hydrateOrMount = this.el.hasAttribute("data-ssr") ? hydrate : mount
 
             this._instance = hydrateOrMount(Component, {
-                target: this.el,
+                target,
                 props: state,
             })
             this._instance.state = state

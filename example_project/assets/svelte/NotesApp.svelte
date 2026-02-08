@@ -1,5 +1,5 @@
 <script>
-    import { flip } from "svelte/animate"
+    import {flip} from "svelte/animate"
     import {fly, fade} from "svelte/transition"
 
     /**
@@ -20,35 +20,35 @@
     // Sync props to local state using in-place mutations to preserve $state proxy identity.
     // This is critical for animations - replacing the array would cause all items to re-animate.
     $effect(() => {
-        const currentIds = new Set(propNotes.map((p) => p.id));
+        const currentIds = new Set(propNotes.map(p => p.id))
 
         // 1. Remove deleted items (iterate backwards to avoid index shift issues)
         for (let i = notes.length - 1; i >= 0; i--) {
             if (!currentIds.has(notes[i].id)) {
-                notes.splice(i, 1);
+                notes.splice(i, 1)
             }
         }
 
         // 2. Update existing items and add new ones in correct order
         for (let i = 0; i < propNotes.length; i++) {
-            const p = propNotes[i];
-            const existingIndex = notes.findIndex((n) => n.id === p.id);
+            const p = propNotes[i]
+            const existingIndex = notes.findIndex(n => n.id === p.id)
 
             if (existingIndex !== -1) {
                 // Update existing item in place (no animation triggered)
-                notes[existingIndex].title = p.title;
-                notes[existingIndex].content = p.content;
-                notes[existingIndex].color = p.color;
-                notes[existingIndex].inserted_at = p.inserted_at;
+                notes[existingIndex].title = p.title
+                notes[existingIndex].content = p.content
+                notes[existingIndex].color = p.color
+                notes[existingIndex].inserted_at = p.inserted_at
 
                 // Move to correct position if needed (triggers flip animation)
                 if (existingIndex !== i) {
-                    const [item] = notes.splice(existingIndex, 1);
-                    notes.splice(i, 0, item);
+                    const [item] = notes.splice(existingIndex, 1)
+                    notes.splice(i, 0, item)
                 }
             } else {
                 // Insert new item at correct position (triggers enter animation)
-                notes.splice(i, 0, { ...p });
+                notes.splice(i, 0, {...p})
             }
         }
     })
@@ -127,15 +127,13 @@
     <!-- Create Note Form -->
     <form
         onsubmit={e => {
-            e.preventDefault();
-            handleSubmit();
+            e.preventDefault()
+            handleSubmit()
         }}
         class="card bg-base-100 shadow-md border border-base-300/50 overflow-hidden mb-8"
     >
         <div class="card-body gap-4 p-5">
-            <span class="badge badge-ghost badge-sm font-medium text-base-content/70 w-fit">
-                Create note
-            </span>
+            <span class="badge badge-ghost badge-sm font-medium text-base-content/70 w-fit"> Create note </span>
 
             <label for="title" class="flex flex-col gap-1.5">
                 <span class="text-xs font-medium text-base-content/50">Title *</span>
@@ -179,9 +177,7 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-sm bg-brand text-white border-0 hover:opacity-90 w-fit">
-                Add note
-            </button>
+            <button type="submit" class="btn btn-sm bg-brand text-white border-0 hover:opacity-90 w-fit"> Add note </button>
         </div>
     </form>
 
@@ -189,7 +185,7 @@
     <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {#each notes as note, index (note.id)}
             <li
-                animate:flip={{ delay: 500 }}
+                animate:flip={{delay: 100, duration: 500}}
                 role="listitem"
                 id={`note-${note.id}`}
                 aria-label={`Note ${index + 1}`}
