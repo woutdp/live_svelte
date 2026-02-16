@@ -31,8 +31,14 @@ defmodule LiveSvelte do
   attr :id, :string,
     default: nil,
     doc:
-      "Optional stable DOM id override. Auto-generated from the component name by default. " <>
-        "Only needed when the same component appears in a loop or conditionally rendered block."
+      "Optional stable DOM id override. Auto-generated from the component name and props by " <>
+        "default. Only needed when auto-detection is insufficient (e.g. two loops with the same component name)."
+
+  attr :key, :any,
+    default: nil,
+    doc:
+      "Identity key for stable DOM IDs in loops. When set, the DOM id becomes `name-key`. " <>
+        "When not set, LiveSvelte auto-detects identity from props (id, key, index, idx keys)."
 
   attr :class, :string,
     default: nil,
@@ -67,7 +73,7 @@ defmodule LiveSvelte do
     dead = assigns.socket == nil or not LiveView.connected?(assigns.socket)
     ssr_active = Application.get_env(:live_svelte, :ssr, true)
 
-    svelte_id = assigns.id || auto_id(assigns.name)
+    svelte_id = assigns.id || key_based_id(assigns.name, assigns.key, assigns.props)
 
     if init and ssr_active and assigns.ssr and assigns.loading != [] do
       IO.warn(
@@ -103,8 +109,6 @@ defmodule LiveSvelte do
       |> assign(:ssr_render, ssr_code)
       |> assign(:svelte_id, svelte_id)
 
-    Process.put(:live_svelte_last_render_time, System.monotonic_time(:microsecond))
-
     ~H"""
     <.live_json live_json_props={@live_json_props} svelte_id={@svelte_id}>
       <script>
@@ -120,10 +124,9 @@ defmodule LiveSvelte do
       }
       data-slots={@slots |> Slots.base_encode_64() |> json}
       phx-hook="SvelteHook"
-      phx-update="ignore"
       class={@class}
     >
-      <div id={"#{@svelte_id}-target"} data-svelte-target>
+      <div id={"#{@svelte_id}-target"} data-svelte-target phx-update="ignore">
         <%= raw(@ssr_render["head"]) %>
         <style>
           <%= raw(@ssr_render["css"]["code"]) %>
@@ -150,25 +153,38 @@ defmodule LiveSvelte do
     json_library.encode!(props)
   end
 
-  defp auto_id(name) do
-    maybe_reset_counters()
+  # --- Deterministic ID generation ------------------------------------------------
+  #
+  # Priority: explicit `key` attr > auto-detected identity from props > counter fallback.
+  #
+  # The counter fallback is only safe for components that are NOT inside a
+  # comprehension where LiveView may skip rendering unchanged items.
+
+  defp key_based_id(name, key, _props) when not is_nil(key) do
+    "#{name}-#{key}"
+  end
+
+  defp key_based_id(name, nil, props) do
+    case extract_identity(props) do
+      nil -> counter_id(name)
+      identity -> "#{name}-#{identity}"
+    end
+  end
+
+  @identity_keys [:id, "id", :key, "key", :index, "index", :idx, "idx"]
+
+  defp extract_identity(props) when is_map(props) do
+    Enum.find_value(@identity_keys, fn k -> Map.get(props, k) end)
+  end
+
+  defp extract_identity(_), do: nil
+
+  # Simple counter for standalone (non-loop) components that lack identity props.
+  defp counter_id(name) do
     key = {:live_svelte_counter, name}
     count = Process.get(key, 0)
     Process.put(key, count + 1)
     if count == 0, do: name, else: "#{name}-#{count}"
-  end
-
-  defp maybe_reset_counters do
-    now = System.monotonic_time(:microsecond)
-    last = Process.get(:live_svelte_last_render_time)
-
-    if last != nil and now - last > 1000 do
-      Process.get_keys()
-      |> Enum.each(fn
-        {:live_svelte_counter, _} = k -> Process.delete(k)
-        _ -> :ok
-      end)
-    end
   end
 
   @doc false

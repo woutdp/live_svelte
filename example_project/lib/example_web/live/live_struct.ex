@@ -26,6 +26,7 @@ defmodule ExampleWeb.LiveStruct do
   end
 
   def handle_event("randomize", _, socket) do
-    {:noreply, assign(socket, :struct, %User{name: "Bob", age: Enum.random(0..100)})}
+    new_struct = %User{name: "Bob", age: Enum.random(0..100)}
+    {:noreply, assign(socket, :struct, new_struct)}
   end
 end

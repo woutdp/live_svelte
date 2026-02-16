@@ -10,12 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 -   Auto-generated IDs for duplicate Svelte components to ensure correct reconciliation
--   Upgrade example project to use Daisy UI and latest Phoenix 
+-   Upgrade example project to use Daisy UI and latest Phoenix
 
 ### Fixed
 
 -   Svelte component remounting on server events when it should update in place
 -   Static Svelte components in LiveView parent are now handled properly
+-   Fix duplicate ID collisions in `for` loops by replacing timing-based counter with deterministic identity extraction from props (`id`, `key`, `index`, `idx`). Added `key` attribute for explicit loop identity.
 
 
 ## 0.17.2 - 2026-02-02

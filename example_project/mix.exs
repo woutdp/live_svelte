@@ -50,6 +50,8 @@ defmodule Example.MixProject do
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
       {:floki, ">= 0.30.0", only: :test},
+      {:wallaby, "~> 0.30", runtime: false, only: :test},
+      {:phoenix_test, "~> 0.9", only: :test},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:tailwind, "~> 0.3", runtime: Mix.env() == :dev}
     ]
@@ -67,6 +69,8 @@ defmodule Example.MixProject do
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
+      "assets.js": ["cmd --cd assets node build.js"],
+      "test.e2e": ["assets.js", "ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.setup": ["tailwind.install --if-missing"],
       "assets.build": ["tailwind default"],
       "assets.deploy": [

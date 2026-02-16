@@ -12,6 +12,7 @@ defmodule LiveSvelte.AutoIdTest do
       socket: nil,
       name: name,
       id: Keyword.get(opts, :id),
+      key: Keyword.get(opts, :key),
       props: Keyword.get(opts, :props, %{}),
       live_json_props: %{},
       ssr: false,
@@ -47,8 +48,6 @@ defmodule LiveSvelte.AutoIdTest do
   end
 
   defp clear_auto_id_state do
-    Process.delete(:live_svelte_last_render_time)
-
     Process.get_keys()
     |> Enum.each(fn
       {:live_svelte_counter, _} = k -> Process.delete(k)
@@ -63,10 +62,10 @@ defmodule LiveSvelte.AutoIdTest do
   end
 
   # ---------------------------------------------------------------------------
-  # Tests
+  # Tests — counter fallback (no identity in props)
   # ---------------------------------------------------------------------------
 
-  describe "auto_id — single component" do
+  describe "counter fallback — single component without identity props" do
     test "uses the bare component name as id" do
       html = render_html(base_assigns("Counter"))
       assert extract_id(html) == "Counter"
@@ -78,9 +77,8 @@ defmodule LiveSvelte.AutoIdTest do
     end
   end
 
-  describe "auto_id — multiple same-name components" do
+  describe "counter fallback — multiple same-name components without identity props" do
     test "first gets bare name, second gets -1 suffix" do
-      # Call svelte/1 in tight sequence, convert to HTML after
       r1 = render_svelte(base_assigns("Counter"))
       r2 = render_svelte(base_assigns("Counter"))
 
@@ -97,9 +95,8 @@ defmodule LiveSvelte.AutoIdTest do
     end
   end
 
-  describe "auto_id — different component names" do
+  describe "counter fallback — different component names" do
     test "each name has its own independent counter" do
-      # Call all three in tight succession so the gap stays under 1ms
       r_a = render_svelte(base_assigns("Counter"))
       r_b = render_svelte(base_assigns("LogList"))
       r_c = render_svelte(base_assigns("Counter"))
@@ -110,14 +107,27 @@ defmodule LiveSvelte.AutoIdTest do
     end
   end
 
-  describe "auto_id — explicit id override" do
+  # ---------------------------------------------------------------------------
+  # Tests — explicit id override
+  # ---------------------------------------------------------------------------
+
+  describe "explicit id override" do
     test "explicit id takes precedence over auto-generated id" do
       html = render_html(base_assigns("Counter", id: "my-custom-id"))
       assert extract_id(html) == "my-custom-id"
     end
 
+    test "explicit id takes precedence over key attribute" do
+      html = render_html(base_assigns("Counter", id: "my-custom-id", key: 42))
+      assert extract_id(html) == "my-custom-id"
+    end
+
+    test "explicit id takes precedence over identity props" do
+      html = render_html(base_assigns("Counter", id: "my-custom-id", props: %{index: 5}))
+      assert extract_id(html) == "my-custom-id"
+    end
+
     test "explicit id does not consume a counter slot" do
-      # Explicit id first, then two auto-generated ones
       _r1 = render_svelte(base_assigns("Counter", id: "custom"))
       r2 = render_svelte(base_assigns("Counter"))
       r3 = render_svelte(base_assigns("Counter"))
@@ -127,34 +137,126 @@ defmodule LiveSvelte.AutoIdTest do
     end
   end
 
-  describe "counter reset between render cycles" do
-    test "counters reset after a simulated render-cycle gap" do
-      # First render cycle — tight sequence
-      r1 = render_svelte(base_assigns("Counter"))
-      r2 = render_svelte(base_assigns("Counter"))
+  # ---------------------------------------------------------------------------
+  # Tests — key attribute
+  # ---------------------------------------------------------------------------
 
-      assert extract_id(to_html(r1)) == "Counter"
-      assert extract_id(to_html(r2)) == "Counter-1"
-
-      # Simulate time gap between render cycles (>1ms)
-      Process.sleep(2)
-
-      # Second render cycle — counters should reset
-      r3 = render_svelte(base_assigns("Counter"))
-      r4 = render_svelte(base_assigns("Counter"))
-
-      assert extract_id(to_html(r3)) == "Counter"
-      assert extract_id(to_html(r4)) == "Counter-1"
+  describe "key attribute" do
+    test "key generates name-key id" do
+      html = render_html(base_assigns("Static", key: 0))
+      assert extract_id(html) == "Static-0"
     end
 
-    test "counters do NOT reset within the same render cycle" do
-      # Rapid successive calls (same render cycle)
-      results = for _ <- 1..5, do: render_svelte(base_assigns("Widget"))
-      ids = Enum.map(results, &(to_html(&1) |> extract_id()))
+    test "key takes precedence over identity props" do
+      html = render_html(base_assigns("Static", key: "mykey", props: %{index: 99}))
+      assert extract_id(html) == "Static-mykey"
+    end
 
-      assert ids == ["Widget", "Widget-1", "Widget-2", "Widget-3", "Widget-4"]
+    test "string key works" do
+      html = render_html(base_assigns("Card", key: "abc-123"))
+      assert extract_id(html) == "Card-abc-123"
+    end
+
+    test "key does not consume a counter slot" do
+      _r1 = render_svelte(base_assigns("Widget", key: 0))
+      r2 = render_svelte(base_assigns("Widget"))
+
+      # Widget without key/identity falls back to counter — gets bare name
+      assert extract_id(to_html(r2)) == "Widget"
     end
   end
+
+  # ---------------------------------------------------------------------------
+  # Tests — identity auto-detection from props
+  # ---------------------------------------------------------------------------
+
+  describe "identity from props — :index key" do
+    test "props with atom :index key generate deterministic id" do
+      html = render_html(base_assigns("Static", props: %{index: 0, color: "red"}))
+      assert extract_id(html) == "Static-0"
+    end
+
+    test "each loop item gets a unique stable id" do
+      results =
+        for i <- 0..3 do
+          render_svelte(base_assigns("Static", props: %{index: i, color: "red"}))
+        end
+
+      ids = Enum.map(results, &(to_html(&1) |> extract_id()))
+      assert ids == ["Static-0", "Static-1", "Static-2", "Static-3"]
+    end
+
+    test "ids are stable even when only one item is rendered (simulates LiveView partial re-render)" do
+      # First render: items 0, 1, 2
+      batch1 =
+        for i <- 0..2 do
+          render_svelte(base_assigns("Static", props: %{index: i, color: "red"}))
+        end
+
+      ids1 = Enum.map(batch1, &(to_html(&1) |> extract_id()))
+      assert ids1 == ["Static-0", "Static-1", "Static-2"]
+
+      # Simulate LiveView only rendering the NEW item (index 3)
+      # — this is the scenario that broke the old counter approach
+      r_new = render_svelte(base_assigns("Static", props: %{index: 3, color: "red"}))
+      assert extract_id(to_html(r_new)) == "Static-3"
+
+      # No conflict with existing ids — "Static-3" is unique
+    end
+  end
+
+  describe "identity from props — :id key" do
+    test "props with atom :id key generate deterministic id" do
+      html = render_html(base_assigns("UserCard", props: %{id: "user-42", name: "Alice"}))
+      assert extract_id(html) == "UserCard-user-42"
+    end
+  end
+
+  describe "identity from props — string keys" do
+    test "props with string \"index\" key generate deterministic id" do
+      html = render_html(base_assigns("Item", props: %{"index" => 7}))
+      assert extract_id(html) == "Item-7"
+    end
+
+    test "props with string \"id\" key generate deterministic id" do
+      html = render_html(base_assigns("Item", props: %{"id" => "abc"}))
+      assert extract_id(html) == "Item-abc"
+    end
+  end
+
+  describe "identity from props — priority order" do
+    test ":id takes precedence over :index" do
+      html = render_html(base_assigns("Card", props: %{id: "x", index: 5}))
+      assert extract_id(html) == "Card-x"
+    end
+
+    test ":key in props takes precedence over :index" do
+      html = render_html(base_assigns("Card", props: %{key: "k", index: 5}))
+      assert extract_id(html) == "Card-k"
+    end
+  end
+
+  describe "identity from props — no identity keys" do
+    test "falls back to counter when props have no identity keys" do
+      r1 = render_svelte(base_assigns("Chart", props: %{data: [1, 2, 3], type: "line"}))
+      r2 = render_svelte(base_assigns("Chart", props: %{data: [4, 5, 6], type: "bar"}))
+
+      assert extract_id(to_html(r1)) == "Chart"
+      assert extract_id(to_html(r2)) == "Chart-1"
+    end
+
+    test "falls back to counter when props is empty" do
+      r1 = render_svelte(base_assigns("Widget"))
+      r2 = render_svelte(base_assigns("Widget"))
+
+      assert extract_id(to_html(r1)) == "Widget"
+      assert extract_id(to_html(r2)) == "Widget-1"
+    end
+  end
+
+  # ---------------------------------------------------------------------------
+  # Tests — live_json and phx-update (unchanged from before)
+  # ---------------------------------------------------------------------------
 
   describe "live_json id derivation" do
     test "live_json div id is prefixed with lj- and uses the svelte id" do
@@ -167,11 +269,18 @@ defmodule LiveSvelte.AutoIdTest do
   end
 
   describe "phx-update attribute" do
-    test "outer hook container has phx-update=ignore to prevent DOM morphing" do
+    test "inner target div has phx-update=ignore to protect Svelte content" do
       html = render_html(base_assigns("Counter"))
-      # The outer div with phx-hook="SvelteHook" must have phx-update="ignore"
-      # to prevent LiveView from recreating it during DOM diffs
-      assert html =~ ~r/phx-hook="SvelteHook"[^>]*phx-update="ignore"/
+      # The inner data-svelte-target div must have phx-update="ignore"
+      # to protect Svelte's rendered DOM from LiveView's morphdom patching
+      assert html =~ ~r/data-svelte-target[^>]*phx-update="ignore"/
+    end
+
+    test "outer hook container does NOT have phx-update=ignore" do
+      html = render_html(base_assigns("Counter"))
+      # The outer div must NOT have phx-update="ignore" so LiveView can
+      # manage it in comprehensions (for loops) — add, remove, reorder
+      refute html =~ ~r/phx-hook="SvelteHook"[^>]*phx-update="ignore"/
     end
   end
 end

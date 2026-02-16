@@ -487,6 +487,41 @@ To disable SSR on a specific component, set the `ssr` property to false. Like so
 <.svelte name="Example" ssr={false} />
 ```
 
+### Auto-generated IDs and loops
+
+When the same Svelte component is rendered multiple times (e.g. in a `for` loop),
+LiveSvelte automatically generates unique, stable DOM IDs so that LiveView can
+correctly reconcile hook elements across re-renders.
+
+**How it works (priority order):**
+
+1. **Explicit `id`** — if you pass `id="my-id"`, that value is used as-is.
+2. **Explicit `key`** — if you pass `key={index}`, the DOM id becomes `ComponentName-<key>`.
+3. **Auto-detected identity from props** — LiveSvelte inspects the `props` map for
+   common identity keys (`:id`, `:key`, `:index`, `:idx` and their string equivalents).
+   When found, the value is appended to the component name to form a deterministic ID.
+4. **Counter fallback** — when none of the above apply, a simple per-name counter
+   produces sequential IDs (`Name`, `Name-1`, `Name-2`, …). This works for
+   standalone components but is **not** reliable inside comprehensions.
+
+For most loops you already pass an `index` or `id` in your props, so IDs are
+generated automatically with no extra work:
+
+```elixir
+<%= for {item, index} <- Enum.with_index(@list) do %>
+  <%!-- index in props → auto-generates ids: "Card-0", "Card-1", … --%>
+  <.svelte name="Card" props={%{index: index, color: @color}} />
+<% end %>
+```
+
+If your props don't contain a natural identity key, use the `key` attribute:
+
+```elixir
+<%= for {item, index} <- Enum.with_index(@list) do %>
+  <.svelte name="Chart" key={index} props={%{data: item.data}} />
+<% end %>
+```
+
 ### JSON Library
 
 LiveSvelte uses Erlang/OTP 27's native `:json` module by default for JSON encoding.

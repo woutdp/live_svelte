@@ -14,16 +14,14 @@ defmodule ExampleWeb.LiveStaticColor do
         Static color
       </h2>
       <p class="text-sm text-base-content/50 text-center max-w-md">
-        Svelte component receives color from LiveView; list re-renders on server.
+        Svelte components rendered inside a for loop receive color from LiveView.
+        Pressing "Add Element" should keep all components visible.
       </p>
       <div class="w-full max-w-4xl rounded-2xl border border-base-300/50 bg-gradient-to-br from-base-100 to-base-200/40 shadow-xl shadow-base-300/10 overflow-hidden">
         <div class="px-4 pt-4 pb-1 border-b border-base-300/30 bg-base-200/20">
           <span class="badge badge-outline badge-sm font-medium text-base-content/60 border-base-300/50">LiveView + LiveSvelte</span>
         </div>
         <div class="p-6 flex flex-row flex-wrap justify-center items-stretch gap-6">
-          <div class="flex flex-row justify-center items-center">
-            <.svelte name="Static" props={%{color: @color}} />
-          </div>
           <div class="flex flex-col justify-center items-center gap-4">
             <div>
               <div class="card bg-base-100 shadow-md border border-base-300/50 overflow-hidden">
@@ -37,18 +35,16 @@ defmodule ExampleWeb.LiveStaticColor do
                   <button class="btn btn-sm bg-red-500 text-white border-0" phx-click="change_color_to_red">
                     Change color to red
                   </button>
-                  <button class="btn btn-sm btn-outline border-base-300" phx-click="add_element">Add Element</button>
+                  <button class="btn btn-sm btn-outline border-base-300" phx-click="add_element" data-testid="static-color-add-element">Add Element</button>
                 </div>
               </div>
             </div>
 
-            <%= for {item, index} <- Enum.with_index(@list) do %>
-              <div class="card bg-base-200/50 border border-base-300/50 rounded-lg flex flex-row justify-center items-center p-4 min-w-[8rem]">
-                <div :if={@color == "red"} class="text-red-500 font-medium">red</div>
-                <div :if={@color == "blue"} class="text-blue-500 font-medium">blue</div>
-                <div :if={@color == "white"} class="text-base-content/70 font-medium">white</div>
-              </div>
-            <% end %>
+            <div data-testid="static-color-list" class="flex flex-col gap-4">
+              <%= for {_item, index} <- Enum.with_index(@list) do %>
+                <.svelte name="Static" props={%{color: @color, index: index}} />
+              <% end %>
+            </div>
           </div>
         </div>
       </div>

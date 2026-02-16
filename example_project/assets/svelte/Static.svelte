@@ -20,7 +20,7 @@
     <div 
     class={colorClass}
     >
-      <span class="font-medium italic">{color}</span>
+      <span class="font-medium italic" data-testid="static-color-svelte-value">{color}</span>
     </div>
   </div>
 </div>
