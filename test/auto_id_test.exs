@@ -8,7 +8,7 @@ defmodule LiveSvelte.AutoIdTest do
 
   defp base_assigns(name, opts \\ []) do
     %{
-      __changed__: nil,
+      __changed__: Keyword.get(opts, :__changed__, nil),
       socket: nil,
       name: name,
       id: Keyword.get(opts, :id),
@@ -53,6 +53,9 @@ defmodule LiveSvelte.AutoIdTest do
       {:live_svelte_counter, _} = k -> Process.delete(k)
       _ -> :ok
     end)
+    Process.delete(:live_svelte_counter_names)
+    Process.delete(:live_svelte_total_counter)
+    Process.delete(:live_svelte_expected_total)
   end
 
   setup do
@@ -92,6 +95,44 @@ defmodule LiveSvelte.AutoIdTest do
       r3 = render_svelte(base_assigns("Counter"))
 
       assert extract_id(to_html(r3)) == "Counter-2"
+    end
+
+    test "ids are stable across init and update so client state is preserved" do
+      # Init: two Counter components without key/identity
+      r1_init = render_svelte(base_assigns("Counter"))
+      r2_init = render_svelte(base_assigns("Counter"))
+      assert extract_id(to_html(r1_init)) == "Counter"
+      assert extract_id(to_html(r2_init)) == "Counter-1"
+
+      # Update: same two components (simulates LiveView re-render after server update)
+      r1_update = render_svelte(base_assigns("Counter", __changed__: %{number: true}))
+      r2_update = render_svelte(base_assigns("Counter", __changed__: %{number: true}))
+      assert extract_id(to_html(r1_update)) == "Counter"
+      assert extract_id(to_html(r2_update)) == "Counter-1"
+    end
+
+    test "ids remain stable across three consecutive updates with identical __changed__" do
+      # Init render (connected mount)
+      _r1 = render_svelte(base_assigns("Counter"))
+      _r2 = render_svelte(base_assigns("Counter"))
+
+      # 1st update — counter reset because expected not yet set
+      r1_u1 = render_svelte(base_assigns("Counter", __changed__: %{props: true}))
+      r2_u1 = render_svelte(base_assigns("Counter", __changed__: %{props: true}))
+      assert extract_id(to_html(r1_u1)) == "Counter"
+      assert extract_id(to_html(r2_u1)) == "Counter-1"
+
+      # 2nd update — same __changed__ value; counter must still reset
+      r1_u2 = render_svelte(base_assigns("Counter", __changed__: %{props: true}))
+      r2_u2 = render_svelte(base_assigns("Counter", __changed__: %{props: true}))
+      assert extract_id(to_html(r1_u2)) == "Counter"
+      assert extract_id(to_html(r2_u2)) == "Counter-1"
+
+      # 3rd update — verifies stability holds indefinitely
+      r1_u3 = render_svelte(base_assigns("Counter", __changed__: %{props: true}))
+      r2_u3 = render_svelte(base_assigns("Counter", __changed__: %{props: true}))
+      assert extract_id(to_html(r1_u3)) == "Counter"
+      assert extract_id(to_html(r2_u3)) == "Counter-1"
     end
   end
 
@@ -269,18 +310,19 @@ defmodule LiveSvelte.AutoIdTest do
   end
 
   describe "phx-update attribute" do
-    test "inner target div has phx-update=ignore to protect Svelte content" do
+    test "outer hook container has phx-update=ignore to protect Svelte DOM" do
       html = render_html(base_assigns("Counter"))
-      # The inner data-svelte-target div must have phx-update="ignore"
-      # to protect Svelte's rendered DOM from LiveView's morphdom patching
-      assert html =~ ~r/data-svelte-target[^>]*phx-update="ignore"/
+      # The outer div with phx-hook="SvelteHook" must have phx-update="ignore"
+      # so LiveView updates the element's attributes (firing the hook's updated()
+      # callback) but does not morphdom-patch children (preserving Svelte's DOM).
+      assert html =~ ~r/phx-hook="SvelteHook"[^>]*phx-update="ignore"/
     end
 
-    test "outer hook container does NOT have phx-update=ignore" do
+    test "inner target div does NOT have phx-update=ignore (redundant)" do
       html = render_html(base_assigns("Counter"))
-      # The outer div must NOT have phx-update="ignore" so LiveView can
-      # manage it in comprehensions (for loops) — add, remove, reorder
-      refute html =~ ~r/phx-hook="SvelteHook"[^>]*phx-update="ignore"/
+      # phx-update="ignore" on the outer div already protects all children;
+      # the inner data-svelte-target div no longer needs its own copy.
+      refute html =~ ~r/data-svelte-target[^>]*phx-update="ignore"/
     end
   end
 end

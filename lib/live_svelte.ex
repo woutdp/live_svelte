@@ -73,7 +73,7 @@ defmodule LiveSvelte do
     dead = assigns.socket == nil or not LiveView.connected?(assigns.socket)
     ssr_active = Application.get_env(:live_svelte, :ssr, true)
 
-    svelte_id = assigns.id || key_based_id(assigns.name, assigns.key, assigns.props)
+    svelte_id = assigns.id || key_based_id(assigns.name, assigns.key, assigns.props, assigns.__changed__)
 
     if init and ssr_active and assigns.ssr and assigns.loading != [] do
       IO.warn(
@@ -124,9 +124,10 @@ defmodule LiveSvelte do
       }
       data-slots={@slots |> Slots.base_encode_64() |> json}
       phx-hook="SvelteHook"
+      phx-update="ignore"
       class={@class}
     >
-      <div id={"#{@svelte_id}-target"} data-svelte-target phx-update="ignore">
+      <div id={"#{@svelte_id}-target"} data-svelte-target>
         <%= raw(@ssr_render["head"]) %>
         <style>
           <%= raw(@ssr_render["css"]["code"]) %>
@@ -160,14 +161,17 @@ defmodule LiveSvelte do
   # The counter fallback is only safe for components that are NOT inside a
   # comprehension where LiveView may skip rendering unchanged items.
 
-  defp key_based_id(name, key, _props) when not is_nil(key) do
+  defp key_based_id(name, key, _props, _changed) when not is_nil(key) do
     "#{name}-#{key}"
   end
 
-  defp key_based_id(name, nil, props) do
+  defp key_based_id(name, nil, props, changed) do
     case extract_identity(props) do
-      nil -> counter_id(name)
-      identity -> "#{name}-#{identity}"
+      nil ->
+        maybe_reset_id_counters_for_update(changed)
+        counter_id(name)
+      identity ->
+        "#{name}-#{identity}"
     end
   end
 
@@ -179,8 +183,40 @@ defmodule LiveSvelte do
 
   defp extract_identity(_), do: nil
 
+  # Detect new render cycles by tracking the total number of counter-based
+  # component calls. When the total reaches the expected count from the
+  # previous render, we know a new render has started and must reset counters
+  # so ordinal positions produce the same DOM ids. This keeps LiveView from
+  # replacing nodes and preserves Svelte component instances (and their local state).
+  defp maybe_reset_id_counters_for_update(nil), do: :ok
+
+  defp maybe_reset_id_counters_for_update(_changed) do
+    total = Process.get(:live_svelte_total_counter, 0)
+    expected = Process.get(:live_svelte_expected_total, :not_set)
+
+    should_reset =
+      case expected do
+        :not_set -> total > 0
+        n -> total >= n
+      end
+
+    if should_reset do
+      Process.put(:live_svelte_expected_total, total)
+
+      for name <- Process.get(:live_svelte_counter_names, []) do
+        Process.put({:live_svelte_counter, name}, 0)
+      end
+
+      Process.put(:live_svelte_total_counter, 0)
+    end
+
+    :ok
+  end
+
   # Simple counter for standalone (non-loop) components that lack identity props.
   defp counter_id(name) do
+    Process.put(:live_svelte_counter_names, Enum.uniq([name | Process.get(:live_svelte_counter_names, [])]))
+    Process.put(:live_svelte_total_counter, Process.get(:live_svelte_total_counter, 0) + 1)
     key = {:live_svelte_counter, name}
     count = Process.get(key, 0)
     Process.put(key, count + 1)
