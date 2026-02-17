@@ -23,7 +23,7 @@
         <span class="badge badge-ghost badge-sm font-medium text-base-content/70 w-fit"> Brightness </span>
         <progress class="progress progress-brand border-0 w-full rounded-full h-3 bg-base-200" value={$progress} max="1"></progress>
         <div class="flex items-center justify-center min-h-10">
-            <span class="font-mono text-lg font-semibold tabular-nums {brightness > 0 ? 'text-brand' : 'text-base-content/50'}">
+            <span class="font-mono text-lg font-semibold tabular-nums {brightness > 0 ? 'text-brand' : 'text-base-content/50'}" data-testid="light-brightness-value">
                 {brightness > 0 ? `${brightness}%` : "OFF"}
             </span>
         </div>
