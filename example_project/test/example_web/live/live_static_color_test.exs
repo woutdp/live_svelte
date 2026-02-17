@@ -72,8 +72,21 @@ defmodule ExampleWeb.LiveStaticColorTest do
       |> click(Query.button("Change color to red"))
       |> click(Query.css("[data-testid='static-color-add-element']"))
 
+    # Wait for the 4th Svelte component to mount and render (LiveView patch + client hydration)
+    session = wait_for_svelte_count(session, 4)
     svelte_values = session |> all(Query.css("[data-testid='static-color-svelte-value']"))
     assert length(svelte_values) == 4
     for value <- svelte_values, do: assert Wallaby.Element.text(value) == "red"
+  end
+
+  defp wait_for_svelte_count(session, expected, attempts \\ 80) do
+    count = session |> all(Query.css("[data-testid='static-color-svelte-value']")) |> length()
+    cond do
+      count >= expected -> session
+      attempts == 0 -> raise "timeout waiting for #{expected} Svelte value elements, got #{count}"
+      true ->
+        :timer.sleep(100)
+        wait_for_svelte_count(session, expected, attempts - 1)
+    end
   end
 end
