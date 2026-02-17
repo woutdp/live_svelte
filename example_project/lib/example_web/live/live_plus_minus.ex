@@ -20,14 +20,16 @@ defmodule ExampleWeb.LivePlusMinus do
               class="btn btn-square btn-sm btn-outline border-base-300 hover:border-error hover:text-error"
               phx-click="subtract"
               aria-label={"Decrease by #{@amount}"}
+              data-testid="live-plus-minus-minus"
             >
               -<%= @amount %>
             </button>
-            <span class="text-3xl font-bold tabular-nums text-brand min-w-[3rem] text-center"><%= @number %></span>
+            <span class="text-3xl font-bold tabular-nums text-brand min-w-[3rem] text-center" data-testid="live-plus-minus-value"><%= @number %></span>
             <button
               class="btn btn-square btn-sm btn-success border-0"
               phx-click="add"
               aria-label={"Increase by #{@amount}"}
+              data-testid="live-plus-minus-plus"
             >
               +<%= @amount %>
             </button>
@@ -40,6 +42,7 @@ defmodule ExampleWeb.LivePlusMinus do
               value={@amount}
               min="1"
               name="amount"
+              phx-blur="update_amount"
               phx-keydown="update_amount"
               phx-keyup="update_amount"
               aria-label="Step amount"
@@ -63,7 +66,20 @@ defmodule ExampleWeb.LivePlusMinus do
     {:noreply, assign(socket, :number, socket.assigns.number + socket.assigns.amount)}
   end
 
-  def handle_event("update_amount", %{"value" => amount_str}, socket) do
-    {:noreply, assign(socket, :amount, String.to_integer(amount_str))}
+  def handle_event("update_amount", %{"value" => value}, socket) do
+    amount_str = extract_amount_value(value)
+    amount = if is_binary(amount_str) and amount_str != "" do
+      case Integer.parse(amount_str) do
+        {n, _} when n >= 1 -> n
+        _ -> socket.assigns.amount
+      end
+    else
+      socket.assigns.amount
+    end
+    {:noreply, assign(socket, :amount, amount)}
   end
+
+  defp extract_amount_value(str) when is_binary(str), do: str
+  defp extract_amount_value(%{"value" => v}), do: extract_amount_value(v)
+  defp extract_amount_value(_), do: ""
 end
