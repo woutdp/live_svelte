@@ -1,7 +1,7 @@
 <script>
-    /** @type {{number: any}} */
-    let {number} = $props()
-    let other = $state(1)
+    /** @type {{number: any, initialClientValue?: number}} */
+    let { number, initialClientValue = 1 } = $props()
+    let other = $state(initialClientValue)
 </script>
 
 <svelte:head>

@@ -35,11 +35,11 @@ defmodule ExampleWeb.LiveSimpleCounter do
               <div class="flex flex-wrap gap-6 justify-center py-4">
                 <div class="flex flex-col items-center gap-2">
                   <span class="text-xs text-base-content/50">Component 1</span>
-                  <.svelte name="SimpleCounter" key={1} props={%{number: @number}} socket={@socket} />
+                  <.svelte name="SimpleCounter" props={%{number: @number, initialClientValue: @initial_client_value}} socket={@socket} />
                 </div>
                 <div class="flex flex-col items-center gap-2">
                   <span class="text-xs text-base-content/50">Component 2</span>
-                  <.svelte name="SimpleCounter" key={2} props={%{number: @number}} socket={@socket} />
+                  <.svelte name="SimpleCounter" props={%{number: @number, initialClientValue: @initial_client_value}} socket={@socket} />
                 </div>
               </div>
             </div>
@@ -51,7 +51,13 @@ defmodule ExampleWeb.LiveSimpleCounter do
   end
 
   def mount(_session, _params, socket) do
-    {:ok, assign(socket, :number, 10)}
+    initial_client =
+      Application.get_env(:example, :simple_counter_initial_client_value, 1)
+
+    {:ok,
+     socket
+     |> assign(:number, 10)
+     |> assign(:initial_client_value, initial_client)}
   end
 
   def handle_event("increment", _values, socket) do
