@@ -40,6 +40,6 @@ defmodule ExampleWeb.PhoenixTest.LiveJsonTest do
     conn
     |> visit("/live-json")
     |> assert_has("dt", text: "Key length")
-    |> assert_has("button", text: "Remove element")
+    |> assert_has("[data-testid='live-json-remove-element']")
   end
 end

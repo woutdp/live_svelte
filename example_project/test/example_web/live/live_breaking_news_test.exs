@@ -8,9 +8,8 @@ defmodule ExampleWeb.LiveBreakingNewsTest do
 
   @moduletag :e2e
 
-  # Headlines list is in ul.max-h-48 (not the nav)
   defp headline_items(session) do
-    session |> all(Query.css("ul.max-h-48 li"))
+    session |> all(Query.css("[data-testid='breaking-news-headlines'] li"))
   end
 
   defp wait_for_headline_with_text(session, text, attempts \\ 50) do
@@ -30,7 +29,7 @@ defmodule ExampleWeb.LiveBreakingNewsTest do
     |> visit("/live-breaking-news")
     |> assert_has(Query.css("h2", text: "Breaking News"))
     |> assert_has(Query.css("p", text: "Add headlines and control the ticker speed; remove items from the list."))
-    |> assert_has(Query.css("input[aria-label='New headline']"))
+    |> assert_has(Query.css("[data-testid='breaking-news-new-headline']"))
 
     # Initial news has 5 items; at least one visible
     items = headline_items(session)
@@ -42,14 +41,14 @@ defmodule ExampleWeb.LiveBreakingNewsTest do
     session =
       session
       |> visit("/live-breaking-news")
-      |> fill_in(Query.css("input[aria-label='New headline']"), with: "Test headline")
+      |> fill_in(Query.css("[data-testid='breaking-news-new-headline']"), with: "Test headline")
       |> click(Query.button("Add"))
 
     session = wait_for_headline_with_text(session, "Test headline")
     items = headline_items(session)
     assert Enum.any?(items, fn el -> Wallaby.Element.text(el) =~ "Test headline" end)
 
-    input = session |> find(Query.css("input[aria-label='New headline']"))
+    input = session |> find(Query.css("[data-testid='breaking-news-new-headline']"))
     assert Wallaby.Element.attr(input, "value") == ""
   end
 
@@ -59,7 +58,7 @@ defmodule ExampleWeb.LiveBreakingNewsTest do
     count_before = headline_items(session) |> length()
 
     # Click the first Remove button (first headline)
-    remove_btns = session |> all(Query.css("ul.max-h-48 li button"))
+    remove_btns = session |> all(Query.css("[data-testid='breaking-news-headlines'] li button"))
     assert length(remove_btns) >= 1
     Wallaby.Element.click(Enum.at(remove_btns, 0))
 

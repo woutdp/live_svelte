@@ -6,23 +6,23 @@
     let {children, subtitle}: Props = $props()
 </script>
 
-<div class="card bg-base-100 shadow-md border border-base-300/50 overflow-hidden w-full max-w-md md:min-w-md">
+<div data-testid="slots-card" class="card bg-base-100 shadow-md border border-base-300/50 overflow-hidden w-full max-w-md md:min-w-md">
     <div class="card-body gap-4 p-5">
-        <span class="badge badge-ghost badge-sm font-medium text-base-content/70 w-fit"> Slots </span>
-        <div class="text-sm text-base-content/50 italic">Opening</div>
-        <div class="border-t border-base-300/50 pt-2">
+        <span data-testid="slots-badge" class="badge badge-ghost badge-sm font-medium text-base-content/70 w-fit"> Slots </span>
+        <div data-testid="slots-opening" class="text-sm text-base-content/50 italic">Opening</div>
+        <div data-testid="slots-default-content" class="border-t border-base-300/50 pt-2">
             <div class="text-base-content/90">
                 {@render children?.()}
             </div>
         </div>
         {#if subtitle}
-            <div class="border-t border-base-300/50 pt-3 space-y-2">
+            <div data-testid="slots-subtitle" class="border-t border-base-300/50 pt-3 space-y-2">
                 <h3 class="text-lg font-semibold text-base-content/80">Svelte subtitle</h3>
                 <div class="text-base-content/90">
                     {@render subtitle?.()}
                 </div>
             </div>
         {/if}
-        <div class="border-t border-base-300/50 pt-2 text-sm text-base-content/50 italic">Closing</div>
+        <div data-testid="slots-closing" class="border-t border-base-300/50 pt-2 text-sm text-base-content/50 italic">Closing</div>
     </div>
 </div>

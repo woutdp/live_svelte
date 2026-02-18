@@ -41,6 +41,7 @@
 
             <form class="flex gap-2 flex-wrap">
                 <input
+                    data-testid="log-list-new-entry"
                     type="text"
                     bind:value={body}
                     class="input input-bordered input-sm flex-1 min-w-0 bg-base-200/50 border-base-300"
@@ -54,7 +55,7 @@
 
             {#if showItems}
                 <div class="border border-base-300/50 rounded-lg bg-base-200/30 overflow-hidden" transition:fly={{x: -20}}>
-                    <ul class="max-h-64 overflow-auto divide-y divide-base-300/50">
+                    <ul data-testid="log-list-items" class="max-h-64 overflow-auto divide-y divide-base-300/50">
                         {#each items.slice(0, i) as item (item.id)}
                             <li in:fly={{x: -40}} out:fly={{x: 20}}>
                                 <div transition:slide|local class="px-3 py-2 text-sm font-mono text-base-content/90">
@@ -65,7 +66,7 @@
                         {/each}
                     </ul>
                     {#if items.length === 0}
-                        <div class="px-3 py-6 text-center text-sm text-base-content/50">
+                        <div data-testid="log-list-empty-state" class="px-3 py-6 text-center text-sm text-base-content/50">
                             No entries yet. Add one above or wait for the timer.
                         </div>
                     {/if}

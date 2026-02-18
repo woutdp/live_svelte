@@ -9,7 +9,7 @@ defmodule ExampleWeb.LiveChatTest do
   @moduletag :e2e
 
   defp chat_bubbles(session) do
-    session |> all(Query.css(".chat-bubble"))
+    session |> all(Query.css("[data-testid='chat-message']"))
   end
 
   defp wait_for_chat_bubble_with_text(session, text, attempts \\ 50) do
@@ -29,34 +29,34 @@ defmodule ExampleWeb.LiveChatTest do
     |> visit("/live-chat")
     |> assert_has(Query.css("h2", text: "Chat"))
     |> assert_has(Query.css("p", text: "Enter your name to join; then send messages. Your name labels your bubbles."))
-    |> assert_has(Query.css("input[aria-label='Your name']"))
-    |> assert_has(Query.css("button", text: "Join"))
+    |> assert_has(Query.css("[data-testid='chat-join-name']"))
+    |> assert_has(Query.css("[data-testid='chat-join-form'] button", text: "Join"))
   end
 
   test "joining with a name shows chat UI with message input", %{session: session} do
     session =
       session
       |> visit("/live-chat")
-      |> fill_in(Query.css("input[aria-label='Your name']"), with: "Alice")
-      |> click(Query.button("Join"))
+      |> fill_in(Query.css("[data-testid='chat-join-name']"), with: "Alice")
+      |> click(Query.css("[data-testid='chat-join-form'] button", text: "Join"))
 
     session
-    |> assert_has(Query.css("input[aria-label='Message']"))
-    |> assert_has(Query.css("button", text: "Send"))
-    |> assert_has(Query.css(".badge", text: "Alice"))
+    |> assert_has(Query.css("[data-testid='chat-message-input']"))
+    |> assert_has(Query.css("[data-testid='chat-send']"))
+    |> assert_has(Query.css("[data-testid='chat-user-badge']", text: "Alice"))
   end
 
   test "sending a message shows it in the chat", %{session: session} do
     session =
       session
       |> visit("/live-chat")
-      |> fill_in(Query.css("input[aria-label='Your name']"), with: "Bob")
-      |> click(Query.button("Join"))
+      |> fill_in(Query.css("[data-testid='chat-join-name']"), with: "Bob")
+      |> click(Query.css("[data-testid='chat-join-form'] button", text: "Join"))
 
     session
-    |> assert_has(Query.css("input[aria-label='Message']"))
-    |> fill_in(Query.css("input[aria-label='Message']"), with: "Hello from E2E")
-    |> click(Query.css("button", text: "Send"))
+    |> assert_has(Query.css("[data-testid='chat-message-input']"))
+    |> fill_in(Query.css("[data-testid='chat-message-input']"), with: "Hello from E2E")
+    |> click(Query.css("[data-testid='chat-send']"))
 
     session = wait_for_chat_bubble_with_text(session, "Hello from E2E")
     bubbles = chat_bubbles(session)
@@ -64,7 +64,7 @@ defmodule ExampleWeb.LiveChatTest do
     assert Enum.any?(bubbles, fn el -> Wallaby.Element.text(el) =~ "Hello from E2E" end)
 
     # Input cleared after send
-    input = session |> find(Query.css("input[aria-label='Message']"))
+    input = session |> find(Query.css("[data-testid='chat-message-input']"))
     assert Wallaby.Element.attr(input, "value") == ""
   end
 end

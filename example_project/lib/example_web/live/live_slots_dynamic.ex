@@ -12,14 +12,14 @@ defmodule ExampleWeb.LiveSlotsDynamic do
       </p>
       <.svelte name="Slots" socket={@socket}>
         <div class="flex flex-wrap items-center gap-3">
-          <button phx-click="increase" class="btn btn-sm bg-brand text-white border-0 hover:opacity-90">
+          <button data-testid="slots-dynamic-increment" phx-click="increase" class="btn btn-sm bg-brand text-white border-0 hover:opacity-90">
             Increment the number
           </button>
-          <span class="text-2xl font-bold tabular-nums text-brand"><%= @number %></span>
+          <span data-testid="slots-dynamic-number" class="text-2xl font-bold tabular-nums text-brand"><%= @number %></span>
         </div>
 
         <:subtitle>
-          <span class="text-xl font-semibold tabular-nums text-brand"><%= @number %></span>
+          <span data-testid="slots-dynamic-subtitle-number" class="text-xl font-semibold tabular-nums text-brand"><%= @number %></span>
         </:subtitle>
       </.svelte>
     </div>

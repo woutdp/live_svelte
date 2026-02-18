@@ -8,9 +8,8 @@ defmodule ExampleWeb.LiveLogListTest do
 
   @moduletag :e2e
 
-  # Log list items are in ul.max-h-64 (not the nav)
   defp log_list_items(session) do
-    session |> all(Query.css("ul.max-h-64 li"))
+    session |> all(Query.css("[data-testid='log-list-items'] li"))
   end
 
   defp wait_for_log_item_with_text(session, text, attempts \\ 50) do
@@ -41,7 +40,7 @@ defmodule ExampleWeb.LiveLogListTest do
     |> visit("/live-log-list")
     |> assert_has(Query.css("h2", text: "Log stream"))
     |> assert_has(Query.css("p", text: "Add items or let the timer append entries; limit how many are shown."))
-    |> assert_has(Query.css("input[aria-label='New log entry']"))
+    |> assert_has(Query.css("[data-testid='log-list-new-entry']"))
     # Empty state may be gone if timer already appended an entry
   end
 
@@ -49,7 +48,7 @@ defmodule ExampleWeb.LiveLogListTest do
     session =
       session
       |> visit("/live-log-list")
-      |> fill_in(Query.css("input[aria-label='New log entry']"), with: "Hello")
+      |> fill_in(Query.css("[data-testid='log-list-new-entry']"), with: "Hello")
       |> click(Query.button("Add item"))
 
     session = wait_for_log_item_with_text(session, "Hello")
@@ -57,7 +56,7 @@ defmodule ExampleWeb.LiveLogListTest do
     assert length(items) >= 1
     assert Enum.any?(items, fn el -> Wallaby.Element.text(el) =~ "Hello" end)
 
-    input = session |> find(Query.css("input[aria-label='New log entry']"))
+    input = session |> find(Query.css("[data-testid='log-list-new-entry']"))
     assert Wallaby.Element.attr(input, "value") == ""
   end
 

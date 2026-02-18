@@ -30,9 +30,9 @@ defmodule ExampleWeb.PhoenixTest.LiveSlotsSimpleTest do
     conn
     |> visit("/live-slots-simple")
     |> assert_has("[data-name='Slots']")
-    |> assert_has("span.badge", text: "Slots")
-    |> assert_has("div", text: "Inside Slot")
-    |> assert_has("div", text: "Opening")
-    |> assert_has("div", text: "Closing")
+    |> assert_has("[data-testid='slots-badge']", text: "Slots")
+    |> assert_has("[data-testid='slots-default-content']", text: "Inside Slot")
+    |> assert_has("[data-testid='slots-opening']", text: "Opening")
+    |> assert_has("[data-testid='slots-closing']", text: "Closing")
   end
 end

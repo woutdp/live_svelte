@@ -26,15 +26,15 @@ defmodule ExampleWeb.PhoenixTest.LiveChatTest do
     |> visit("/live-chat")
     |> assert_has("h2", text: "Chat")
     |> assert_has("p", text: "Enter your name to join; then send messages. Your name labels your bubbles.")
-    |> assert_has("input[aria-label='Your name']")
-    |> assert_has("button", text: "Join")
+    |> assert_has("[data-testid='chat-join-name']")
+    |> assert_has("[data-testid='chat-join-form'] button", text: "Join")
   end
 
   test "after joining, Chat component is shown with empty messages", %{conn: conn} do
     conn
     |> visit("/live-chat")
     |> unwrap(fn view ->
-      view |> form("form[phx-submit='set_name']", %{"name" => "Alice"}) |> render_submit()
+      view |> form("[data-testid='chat-join-form']", %{"name" => "Alice"}) |> render_submit()
     end)
     |> assert_has("[data-name='Chat']")
     |> assert_has("[data-props*='\"name\":\"Alice\"']")
@@ -45,7 +45,7 @@ defmodule ExampleWeb.PhoenixTest.LiveChatTest do
     conn
     |> visit("/live-chat")
     |> unwrap(fn view ->
-      view |> form("form[phx-submit='set_name']", %{"name" => "Bob"}) |> render_submit()
+      view |> form("[data-testid='chat-join-form']", %{"name" => "Bob"}) |> render_submit()
     end)
     |> assert_has("[data-name='Chat']")
     |> unwrap(fn view ->

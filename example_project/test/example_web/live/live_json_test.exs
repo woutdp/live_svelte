@@ -10,7 +10,7 @@ defmodule ExampleWeb.LiveJsonTest do
 
   # First key-count dd in the first section (SSR)
   defp first_key_count_dd(session) do
-    session |> all(Query.css("section.card dd")) |> List.first()
+    session |> all(Query.css("[data-testid='live-json-key-count']")) |> List.first()
   end
 
   defp wait_for_key_count(session, expected, attempts \\ 50) do
@@ -43,9 +43,9 @@ defmodule ExampleWeb.LiveJsonTest do
 
     # Wait for Svelte to hydrate and show key count
     session = wait_for_key_count(session, "100,000")
-    key_length_dts = session |> all(Query.css("section.card dt", text: "Key length"))
+    key_length_dts = session |> all(Query.css("dt", text: "Key length"))
     assert length(key_length_dts) >= 1
-    remove_btns = session |> all(Query.css("section.card button", text: "Remove element"))
+    remove_btns = session |> all(Query.css("[data-testid='live-json-remove-element']"))
     assert length(remove_btns) >= 1
   end
 
@@ -56,7 +56,7 @@ defmodule ExampleWeb.LiveJsonTest do
       |> wait_for_key_count("100,000")
 
     # Click the first section's Remove element button
-    [remove_btn | _] = session |> all(Query.css("section.card button", text: "Remove element"))
+    [remove_btn | _] = session |> all(Query.css("[data-testid='live-json-remove-element']"))
     Wallaby.Element.click(remove_btn)
 
     session = wait_for_key_count(session, "99,999")

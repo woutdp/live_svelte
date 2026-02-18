@@ -15,7 +15,7 @@ defmodule ExampleWeb.LiveChat do
         Enter your name to join; then send messages. Your name labels your bubbles.
       </p>
 
-      <form :if={!@name} phx-submit="set_name" class="w-full max-w-md">
+      <form :if={!@name} phx-submit="set_name" class="w-full max-w-md" data-testid="chat-join-form">
         <div class="card bg-base-100 shadow-md border border-base-300/50 overflow-hidden">
           <div class="card-body gap-4 p-5">
             <span class="badge badge-ghost badge-sm font-medium text-base-content/70 w-fit">
@@ -24,6 +24,7 @@ defmodule ExampleWeb.LiveChat do
             <div class="flex gap-2 flex-wrap">
               <!-- svelte-ignore a11y-autofocus -->
               <input
+                data-testid="chat-join-name"
                 type="text"
                 placeholder="Your name"
                 name="name"

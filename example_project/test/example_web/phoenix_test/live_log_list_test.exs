@@ -40,7 +40,7 @@ defmodule ExampleWeb.PhoenixTest.LiveLogListTest do
     |> visit("/live-log-list")
     |> assert_has("[data-name='LogList']")
     |> assert_has("[data-props*='\"items\":[]']")
-    |> assert_has("div", text: "No entries yet. Add one above or wait for the timer.")
+    |> assert_has("[data-testid='log-list-empty-state']")
     |> unwrap(fn view ->
       render_click(view, "add_item", %{"body" => "hello"})
     end)

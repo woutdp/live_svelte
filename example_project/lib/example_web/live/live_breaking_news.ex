@@ -98,6 +98,7 @@ defmodule ExampleWeb.LiveBreakingNews do
 
                 <form class="flex flex-wrap gap-2">
                     <input
+                        data-testid="breaking-news-new-headline"
                         class="input input-bordered input-sm flex-1 min-w-0 bg-base-200/50 border-base-300"
                         type="text"
                         bind:value={newItem}
@@ -116,7 +117,7 @@ defmodule ExampleWeb.LiveBreakingNews do
                 </div>
 
                 <div class="border border-base-300/50 rounded-lg bg-base-200/30 overflow-hidden">
-                    <ul class="max-h-48 overflow-auto divide-y divide-base-300/50">
+                    <ul data-testid="breaking-news-headlines" class="max-h-48 overflow-auto divide-y divide-base-300/50">
                         {#each news as item (item.id)}
                             <li in:fly={{y: 20}} out:slide={{y: -20}} class="flex items-center justify-between gap-2 px-3 py-2 text-sm">
                                 <span class="min-w-0 flex-1 truncate">{item.body}</span>
