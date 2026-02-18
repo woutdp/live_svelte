@@ -40,7 +40,6 @@ defmodule ExampleWeb.Router do
     live "/live-notes-otp", LiveNotesOtp
     # not referenced in app.html.heex:
     live "/live-composition", LiveComposition
-    live "/my-liveview", MyLiveView
   end
 
   # Other scopes may use custom stacks.

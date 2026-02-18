@@ -1,5 +1,8 @@
 <script>
-  let { color } = $props();
+  /**
+   * @type {{ color: string, index: number }}
+   */
+  let { color, index } = $props();
   const colorClass = $derived(
     color === "red" ? "text-red-500" : color === "blue" ? "text-blue-500" : "text-base-content/80"
   );
@@ -8,19 +11,19 @@
   );
 </script>
 
-<div class="card bg-base-100 shadow-md border overflow-hidden w-full max-w-xs md:min-w-md {borderClass}">
+<div class="card card-xs bg-base-100 shadow-md border overflow-hidden {borderClass}">
   <div class="card-body gap-4 p-5">
     <span class="badge badge-outline badge-sm font-medium text-base-content/70 w-fit">
-      LiveSvelte
+      LiveSvelte (file based)
     </span>
-    <h3 class="font-semibold text-lg text-base-content">Svelte component</h3>
+    <h3 class="font-semibold text-lg text-base-content">Svelte component {index}</h3>
     <p class="text-sm text-base-content/80">
       This svelte component will receive the color from the LiveView and display it.
     </p>
     <div 
     class={colorClass}
     >
-      <span class="font-medium italic" data-testid="static-color-svelte-value">{color}</span>
+      <span class="font-medium italic uppercase" data-testid="static-color-svelte-value">{color}</span>
     </div>
   </div>
 </div>
