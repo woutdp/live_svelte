@@ -25,17 +25,17 @@ defmodule ExampleWeb.LiveSigil do
             Server + Client
           </span>
           <div class="font-mono text-center text-lg tabular-nums">
-            <span class="text-brand">{number}</span>
+            <span data-testid="sigil-server-number" class="text-brand">{number}</span>
             <span class="text-base-content/60"> + </span>
-            <span class="text-success">{number2}</span>
+            <span data-testid="sigil-client-number" class="text-success">{number2}</span>
             <span class="text-base-content/60"> = </span>
-            <span class="font-bold text-brand">{combined}</span>
+            <span data-testid="sigil-combined" class="font-bold text-brand">{combined}</span>
           </div>
           <div class="flex gap-2 justify-center pt-2">
-            <button class="btn btn-sm bg-brand text-white border-0 hover:opacity-90" phx-click="increment">
+            <button data-testid="sigil-increment-server" class="btn btn-sm bg-brand text-white border-0 hover:opacity-90" phx-click="increment">
               +server
             </button>
-            <button class="btn btn-sm btn-success border-0" onclick={() => number2 += 1}>
+            <button data-testid="sigil-increment-client" class="btn btn-sm btn-success border-0" onclick={() => number2 += 1}>
               +client
             </button>
           </div>

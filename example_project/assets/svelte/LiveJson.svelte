@@ -11,12 +11,12 @@
     <dl class="flex flex-col gap-2">
         <div class="flex justify-between items-center gap-4 text-sm">
             <dt class="text-base-content/60">Key length</dt>
-            <dd class="font-mono font-semibold tabular-nums text-brand">{keyCount.toLocaleString()}</dd>
+            <dd data-testid="live-json-key-count" class="font-mono font-semibold tabular-nums text-brand">{keyCount.toLocaleString()}</dd>
         </div>
         <div class="flex justify-between items-center gap-4 text-sm">
             <dt class="text-base-content/60">Rough byte size</dt>
-            <dd class="font-mono font-semibold tabular-nums text-brand">{byteSize.toLocaleString()}</dd>
+            <dd data-testid="live-json-byte-size" class="font-mono font-semibold tabular-nums text-brand">{byteSize.toLocaleString()}</dd>
         </div>
     </dl>
-    <button phx-click="remove_element" class="btn btn-sm bg-brand text-white border-0 hover:opacity-90 w-fit mt-1"> Remove element </button>
+    <button data-testid="live-json-remove-element" phx-click="remove_element" class="btn btn-sm bg-brand text-white border-0 hover:opacity-90 w-fit mt-1"> Remove element </button>
 </div>

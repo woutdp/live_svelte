@@ -31,8 +31,14 @@ defmodule LiveSvelte do
   attr :id, :string,
     default: nil,
     doc:
-      "Optional stable DOM id override. Auto-generated from the component name by default. " <>
-        "Only needed when the same component appears in a loop or conditionally rendered block."
+      "Optional stable DOM id override. Auto-generated from the component name and props by " <>
+        "default. Only needed when auto-detection is insufficient (e.g. two loops with the same component name)."
+
+  attr :key, :any,
+    default: nil,
+    doc:
+      "Identity key for stable DOM IDs in loops. When set, the DOM id becomes `name-key`. " <>
+        "When not set, LiveSvelte auto-detects identity from props (id, key, index, idx keys)."
 
   attr :class, :string,
     default: nil,
@@ -67,7 +73,7 @@ defmodule LiveSvelte do
     dead = assigns.socket == nil or not LiveView.connected?(assigns.socket)
     ssr_active = Application.get_env(:live_svelte, :ssr, true)
 
-    svelte_id = assigns.id || auto_id(assigns.name)
+    svelte_id = assigns.id || key_based_id(assigns.name, assigns.key, assigns.props, assigns.__changed__)
 
     if init and ssr_active and assigns.ssr and assigns.loading != [] do
       IO.warn(
@@ -102,8 +108,6 @@ defmodule LiveSvelte do
       |> assign(:slots, slots)
       |> assign(:ssr_render, ssr_code)
       |> assign(:svelte_id, svelte_id)
-
-    Process.put(:live_svelte_last_render_time, System.monotonic_time(:microsecond))
 
     ~H"""
     <.live_json live_json_props={@live_json_props} svelte_id={@svelte_id}>
@@ -150,37 +154,88 @@ defmodule LiveSvelte do
     json_library.encode!(props)
   end
 
-  defp auto_id(name) do
-    maybe_reset_counters()
+  # --- Deterministic ID generation ------------------------------------------------
+  #
+  # Priority: explicit `key` attr > auto-detected identity from props > counter fallback.
+  #
+  # The counter fallback is only safe for components that are NOT inside a
+  # comprehension where LiveView may skip rendering unchanged items.
+
+  defp key_based_id(name, key, _props, _changed) when not is_nil(key) do
+    "#{name}-#{key}"
+  end
+
+  defp key_based_id(name, nil, props, changed) do
+    case extract_identity(props) do
+      nil ->
+        maybe_reset_id_counters_for_update(changed)
+        counter_id(name)
+      identity ->
+        "#{name}-#{identity}"
+    end
+  end
+
+  @identity_keys [:id, "id", :key, "key", :index, "index", :idx, "idx"]
+
+  defp extract_identity(props) when is_map(props) do
+    Enum.find_value(@identity_keys, fn k -> Map.get(props, k) end)
+  end
+
+  defp extract_identity(_), do: nil
+
+  # Detect new render cycles by tracking the total number of counter-based
+  # component calls. When the total reaches the expected count from the
+  # previous render, we know a new render has started and must reset counters
+  # so ordinal positions produce the same DOM ids. This keeps LiveView from
+  # replacing nodes and preserves Svelte component instances (and their local state).
+  defp maybe_reset_id_counters_for_update(nil), do: :ok
+
+  defp maybe_reset_id_counters_for_update(_changed) do
+    total = Process.get(:live_svelte_total_counter, 0)
+    expected = Process.get(:live_svelte_expected_total, :not_set)
+
+    should_reset =
+      case expected do
+        :not_set -> total > 0
+        n -> total >= n
+      end
+
+    if should_reset do
+      Process.put(:live_svelte_expected_total, total)
+
+      for name <- Process.get(:live_svelte_counter_names, []) do
+        Process.put({:live_svelte_counter, name}, 0)
+      end
+
+      Process.put(:live_svelte_total_counter, 0)
+    end
+
+    :ok
+  end
+
+  # Simple counter for standalone (non-loop) components that lack identity props.
+  defp counter_id(name) do
+    Process.put(:live_svelte_counter_names, Enum.uniq([name | Process.get(:live_svelte_counter_names, [])]))
+    Process.put(:live_svelte_total_counter, Process.get(:live_svelte_total_counter, 0) + 1)
     key = {:live_svelte_counter, name}
     count = Process.get(key, 0)
     Process.put(key, count + 1)
     if count == 0, do: name, else: "#{name}-#{count}"
   end
 
-  defp maybe_reset_counters do
-    now = System.monotonic_time(:microsecond)
-    last = Process.get(:live_svelte_last_render_time)
-
-    if last != nil and now - last > 1000 do
-      Process.get_keys()
-      |> Enum.each(fn
-        {:live_svelte_counter, _} = k -> Process.delete(k)
-        _ -> :ok
-      end)
-    end
-  end
+  @reserved_prop_keys [:__changed__, :__given__, :svelte_opts, :ssr, :class, :socket]
 
   @doc false
   def get_props(assigns) do
     prop_keys =
-      assigns
-      |> Map.get(:__changed__)
-      |> Map.keys()
+      case Map.get(assigns, :__changed__) do
+        nil -> Map.keys(assigns)
+        changed when is_map(changed) -> Map.keys(changed)
+      end
 
     assigns
     |> Map.filter(fn
-      {:svelte_opts, _v} -> false
+      {k, _v} when k in @reserved_prop_keys -> false
       {k, _v} -> k in prop_keys
     end)
   end

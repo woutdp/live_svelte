@@ -19,8 +19,8 @@ defmodule ExampleWeb.LiveSimpleCounter do
                 LiveView (native)
               </span>
               <div class="flex flex-row items-center justify-center gap-6 py-2">
-                <span class="text-4xl font-bold tabular-nums text-brand"><%= @number %></span>
-                <button class="btn btn-sm bg-brand text-white border-0 hover:opacity-90" phx-click="increment">
+                <span data-testid="live-simple-counter-value" class="text-4xl font-bold tabular-nums text-brand"><%= @number %></span>
+                <button data-testid="live-simple-counter-increment" class="btn btn-sm bg-brand text-white border-0 hover:opacity-90" phx-click="increment">
                   +1
                 </button>
               </div>
@@ -35,11 +35,11 @@ defmodule ExampleWeb.LiveSimpleCounter do
               <div class="flex flex-wrap gap-6 justify-center py-4">
                 <div class="flex flex-col items-center gap-2">
                   <span class="text-xs text-base-content/50">Component 1</span>
-                  <.svelte name="SimpleCounter" props={%{number: @number}} socket={@socket} />
+                  <.svelte name="SimpleCounter" props={%{number: @number, initialClientValue: @initial_client_value}} socket={@socket} />
                 </div>
                 <div class="flex flex-col items-center gap-2">
                   <span class="text-xs text-base-content/50">Component 2</span>
-                  <.svelte name="SimpleCounter" props={%{number: @number}} socket={@socket} />
+                  <.svelte name="SimpleCounter" props={%{number: @number, initialClientValue: @initial_client_value}} socket={@socket} />
                 </div>
               </div>
             </div>
@@ -51,7 +51,13 @@ defmodule ExampleWeb.LiveSimpleCounter do
   end
 
   def mount(_session, _params, socket) do
-    {:ok, assign(socket, :number, 10)}
+    initial_client =
+      Application.get_env(:example, :simple_counter_initial_client_value, 1)
+
+    {:ok,
+     socket
+     |> assign(:number, 10)
+     |> assign(:initial_client_value, initial_client)}
   end
 
   def handle_event("increment", _values, socket) do

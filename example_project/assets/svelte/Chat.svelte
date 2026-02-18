@@ -28,11 +28,11 @@
     >
         <div class="card-body gap-0 p-0 flex flex-col min-h-0 flex-1 sm:h-[520px]">
             <div class="px-4 pt-4 pb-2">
-                <span class="badge badge-ghost badge-sm font-medium text-base-content/70 w-fit">
+                <span data-testid="chat-user-badge" class="badge badge-ghost badge-sm font-medium text-base-content/70 w-fit">
                     {name}
                 </span>
             </div>
-            <ul bind:this={messagesElement} class="flex flex-col gap-3 flex-1 min-h-0 overflow-x-clip overflow-y-auto px-4 py-2">
+            <ul data-testid="chat-messages" bind:this={messagesElement} class="flex flex-col gap-3 flex-1 min-h-0 overflow-x-clip overflow-y-auto px-4 py-2">
                 {#each messages as message (message.id)}
                     {@const me = message.name === name}
                     <li
@@ -40,7 +40,7 @@
                         class={me ? "chat chat-end" : "chat chat-start"}
                     >
                         <div in:fly={{y: 10}} class="chat-header text-xs text-base-content/60">{message.name}</div>
-                        <div class={me ? "chat-bubble bg-brand text-white border-0" : "chat-bubble chat-bubble-neutral"}>
+                        <div data-testid="chat-message" class={me ? "chat-bubble bg-brand text-white border-0" : "chat-bubble chat-bubble-neutral"}>
                             {message.body}
                         </div>
                     </li>
@@ -51,6 +51,7 @@
                 <div class="relative flex-1 min-w-0">
                     <!-- svelte-ignore a11y_autofocus -->
                     <input
+                        data-testid="chat-message-input"
                         type="text"
                         name="message"
                         bind:value={body}
@@ -64,7 +65,7 @@
                         {charCount}
                     </span>
                 </div>
-                <button type="submit" class="btn btn-sm bg-brand text-white border-0 hover:opacity-90 shrink-0"> Send </button>
+                <button data-testid="chat-send" type="submit" class="btn btn-sm bg-brand text-white border-0 hover:opacity-90 shrink-0"> Send </button>
             </form>
         </div>
     </div>

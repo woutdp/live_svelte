@@ -12,7 +12,7 @@
         <span class="badge badge-ghost badge-sm font-medium text-base-content/70 w-fit"> Light </span>
         <div class="flex justify-between items-center gap-4">
             <label class="flex items-center gap-3 cursor-pointer">
-                <input type="checkbox" class="toggle toggle-brand" checked={isOn} onchange={toggleLight} aria-label="Toggle light" />
+                <input type="checkbox" class="toggle toggle-brand" checked={isOn} onchange={toggleLight} aria-label="Toggle light" data-testid="light-toggle" />
                 <span class="text-sm font-medium text-base-content/80">On / Off</span>
             </label>
             <div class="flex gap-2">
@@ -20,6 +20,7 @@
                     phx-click="down"
                     class="btn btn-square btn-outline btn-sm border-base-300 hover:border-brand hover:text-brand"
                     aria-label="Decrease brightness"
+                    data-testid="light-down"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -36,6 +37,7 @@
                     phx-click="up"
                     class="btn btn-square btn-outline btn-sm border-base-300 hover:border-brand hover:text-brand"
                     aria-label="Increase brightness"
+                    data-testid="light-up"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"

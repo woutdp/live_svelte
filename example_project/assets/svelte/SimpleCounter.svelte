@@ -1,7 +1,7 @@
 <script>
-    /** @type {{number: any}} */
-    let {number} = $props()
-    let other = $state(1)
+    /** @type {{number: any, initialClientValue?: number}} */
+    let { number, initialClientValue = 1 } = $props()
+    let other = $state(initialClientValue)
 </script>
 
 <svelte:head>
@@ -25,8 +25,8 @@
         <div class="card bg-base-100 shadow-lg border border-base-300/50 w-52 md:min-w-md">
             <div class="card-body items-center text-center gap-4 py-6">
                 <span class="badge badge-outline badge-sm font-medium text-base-content/70">Client</span>
-                <span class="text-4xl font-bold tabular-nums text-success">{other}</span>
-                <button class="btn btn-sm btn-success border-0" onclick={() => (other += 1)}> +1 </button>
+                <span data-testid="simple-counter-client-value" class="text-4xl font-bold tabular-nums text-success">{other}</span>
+                <button data-testid="simple-counter-client-increment" class="btn btn-sm btn-success border-0" onclick={() => (other += 1)}> +1 </button>
             </div>
         </div>
     </div>

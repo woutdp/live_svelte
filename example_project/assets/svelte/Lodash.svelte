@@ -18,13 +18,13 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div class="flex flex-col gap-1">
                 <span class="text-xs text-base-content/50 font-medium">Unordered</span>
-                <pre class="font-mono text-sm bg-base-200/80 text-base-content p-3 rounded-lg border border-base-300/50"><code
+                <pre data-testid="lodash-unordered" class="font-mono text-sm bg-base-200/80 text-base-content p-3 rounded-lg border border-base-300/50"><code
                         >[{unordered.join(", ")}]</code
                     ></pre>
             </div>
             <div class="flex flex-col gap-1">
                 <span class="text-xs text-base-content/50 font-medium">Ordered</span>
-                <pre class="font-mono text-sm bg-base-200/80 text-base-content p-3 rounded-lg border border-base-300/50"><code
+                <pre data-testid="lodash-ordered" class="font-mono text-sm bg-base-200/80 text-base-content p-3 rounded-lg border border-base-300/50"><code
                         >[{ordered.join(", ")}]</code
                     ></pre>
             </div>

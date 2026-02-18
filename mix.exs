@@ -1,7 +1,7 @@
 defmodule LiveSvelte.MixProject do
   use Mix.Project
 
-  @version "0.17.3"
+  @version "0.17.4"
   @repo_url "https://github.com/woutdp/live_svelte"
 
   def project do

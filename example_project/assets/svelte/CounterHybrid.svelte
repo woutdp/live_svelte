@@ -16,15 +16,17 @@
                     phx-click="set_number"
                     value={number - amount}
                     aria-label="Decrease by {amount}"
+                    data-testid="hybrid-plus-minus-minus"
                 >
                     -{amount}
                 </button>
-                <span class="text-3xl font-bold tabular-nums text-brand min-w-[3rem] text-center">{number}</span>
+                <span class="text-3xl font-bold tabular-nums text-brand min-w-[3rem] text-center" data-testid="hybrid-plus-minus-value">{number}</span>
                 <button
                     class="btn btn-square btn-sm btn-success border-0"
                     phx-click="set_number"
                     value={number + amount}
                     aria-label="Increase by {amount}"
+                    data-testid="hybrid-plus-minus-plus"
                 >
                     +{amount}
                 </button>
@@ -37,6 +39,7 @@
                     bind:value={amount}
                     min="1"
                     aria-label="Step amount"
+                    data-testid="hybrid-plus-minus-step"
                 />
             </label>
         </div>
