@@ -113,9 +113,9 @@
     <title>Notes ({encoder})</title>
 </svelte:head>
 
-<div class="w-full max-w-4xl mx-auto">
+<div class="w-full max-w-4xl mx-auto" data-testid="notes-otp-app">
     <!-- Info -->
-    <div class="card bg-base-100 shadow-md border border-base-300/50 overflow-hidden mb-6 md:min-w-md">
+    <div class="card bg-base-100 shadow-md border border-base-300/50 overflow-hidden mb-6 md:min-w-md" data-testid="notes-otp-info">
         <div class="card-body gap-2 p-4">
             <span class="badge badge-ghost badge-sm font-medium text-base-content/70 w-fit">
                 {encoder} JSON encoder
@@ -126,6 +126,7 @@
 
     <!-- Create Note Form -->
     <form
+        data-testid="notes-otp-form"
         onsubmit={e => {
             e.preventDefault()
             handleSubmit()
@@ -139,6 +140,7 @@
                 <span class="text-xs font-medium text-base-content/50">Title *</span>
                 <input
                     id="title"
+                    data-testid="notes-otp-title"
                     type="text"
                     bind:value={title}
                     placeholder="Enter note title"
@@ -151,6 +153,7 @@
                 <span class="text-xs font-medium text-base-content/50">Content</span>
                 <textarea
                     id="content"
+                    data-testid="notes-otp-content"
                     bind:value={content}
                     placeholder="Enter note content (optional)"
                     rows="3"
@@ -177,17 +180,18 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-sm bg-brand text-white border-0 hover:opacity-90 w-fit"> Add note </button>
+            <button type="submit" data-testid="notes-otp-submit" class="btn btn-sm bg-brand text-white border-0 hover:opacity-90 w-fit"> Add note </button>
         </div>
     </form>
 
     <!-- Notes Grid -->
-    <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" data-testid="notes-otp-list">
         {#each notes as note, index (note.id)}
             <li
                 animate:flip={{delay: 100, duration: 500}}
                 role="listitem"
                 id={`note-${note.id}`}
+                data-testid="notes-otp-note"
                 aria-label={`Note ${index + 1}`}
                 class="rounded-lg border border-base-300/50 p-4 transition-shadow hover:shadow-md"
                 style="background-color: {note.color}"
@@ -195,7 +199,9 @@
                 <div class="flex justify-between items-start gap-2 mb-2">
                     <h3 class="font-semibold text-base-content break-words flex-1 min-w-0">{note.title}</h3>
                     <button
+                        type="button"
                         aria-label="Delete note"
+                        data-testid="notes-otp-delete"
                         onclick={() => handleDelete(note.id)}
                         class="btn btn-ghost btn-xs hover:bg-error/20 hover:text-error shrink-0"
                         title="Delete note"
@@ -216,7 +222,7 @@
                 </div>
             </li>
         {:else}
-            <li class="col-span-full">
+            <li class="col-span-full" data-testid="notes-otp-empty">
                 <div class="card bg-base-100 shadow-md border border-base-300/50 overflow-hidden">
                     <div class="card-body py-12 text-center">
                         <p class="text-base-content/70 font-medium">No notes yet</p>

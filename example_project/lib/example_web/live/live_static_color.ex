@@ -36,14 +36,14 @@ defmodule ExampleWeb.LiveStaticColor do
           </div>
           <h3 class="my-4 text-base-content">Use LiveSvelte via a file based component (Static.svelte)</h3>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            <%= for {item, index} <- Enum.with_index(@list) do %>
+            <%= for {_item, index} <- Enum.with_index(@list) do %>
               <.svelte name="Static" props={%{color: @color, index: index}} />
             <% end %>
           </div>
           <div class="divider"></div>
           <h3 class="mb-4 text-base-content">Use LiveSvelte as a function via the (~V sigil) to render the Svelte component</h3>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            <%= for {item, index} <- Enum.with_index(@list) do %>
+            <%= for {_item, index} <- Enum.with_index(@list) do %>
               <.static_svelte_component color={@color} index={index} />
             <% end %>
           </div>
