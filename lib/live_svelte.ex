@@ -223,16 +223,19 @@ defmodule LiveSvelte do
     if count == 0, do: name, else: "#{name}-#{count}"
   end
 
+  @reserved_prop_keys [:__changed__, :__given__, :svelte_opts, :ssr, :class, :socket]
+
   @doc false
   def get_props(assigns) do
     prop_keys =
-      assigns
-      |> Map.get(:__changed__)
-      |> Map.keys()
+      case Map.get(assigns, :__changed__) do
+        nil -> Map.keys(assigns)
+        changed when is_map(changed) -> Map.keys(changed)
+      end
 
     assigns
     |> Map.filter(fn
-      {:svelte_opts, _v} -> false
+      {k, _v} when k in @reserved_prop_keys -> false
       {k, _v} -> k in prop_keys
     end)
   end
