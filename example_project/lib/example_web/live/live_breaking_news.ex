@@ -137,6 +137,8 @@ defmodule ExampleWeb.LiveBreakingNews do
     </div>
     <div
         bind:this={marqueeEl}
+        data-testid="breaking-news-ticker"
+        data-rate={speed}
         class="fixed bottom-0 w-screen text-white font-bold text-lg py-2 bg-error/90 shadow-inner"
         aria-hidden="true"
     >
