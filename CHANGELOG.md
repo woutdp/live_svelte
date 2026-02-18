@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.17.4 - 2026-02-18
+
+### Added
+
+-   `key` attribute for stable DOM IDs in loops (`name-key`).
+-   Auto-detect identity from props (`id`, `key`, `index`, `idx`) to generate deterministic IDs.
+
+### Fixed
+
+-   Preserve Svelte component instances/local state by avoiding timing-based ID resets and using deterministic ID generation.
+-   Correct props filtering when `assigns.__changed__` is `nil` (e.g. `~V` sigil / initial render).
+
+### Changed (dev)
+
+-   Expanded `example_project` test coverage across **PhoenixTest** (server-side contract) and **Wallaby E2E** (full browser pipeline) to validate LiveView → LiveSvelte hook → Svelte component rendering and interactions across more demos (e.g. counters, slots, live_json, chat, lights, client-side loading, struct/OTP examples).
+
 ## 0.17.3 - 2026-02-08
 
 ### Added
