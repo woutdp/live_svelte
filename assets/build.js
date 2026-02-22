@@ -5,7 +5,7 @@ const watch = args.includes("--watch")
 const deploy = args.includes("--deploy")
 
 let moduleOpts = {
-    entryPoints: ["js/live_svelte/index.js"],
+    entryPoints: ["js/live_svelte/index.ts"],
     bundle: true,
     format: "esm",
     outfile: "../priv/static/live_svelte.esm.js",
@@ -16,7 +16,7 @@ let moduleOpts = {
 }
 
 let mainOpts = {
-    entryPoints: ["js/live_svelte/index.js"],
+    entryPoints: ["js/live_svelte/index.ts"],
     bundle: true,
     conditions: ["svelte", "browser"],
     format: "cjs",
@@ -28,7 +28,7 @@ let mainOpts = {
 }
 
 let cdnOpts = {
-    entryPoints: ["js/live_svelte/index.js"],
+    entryPoints: ["js/live_svelte/index.ts"],
     bundle: true,
     target: "es2016",
     format: "iife",
@@ -39,7 +39,7 @@ let cdnOpts = {
 }
 
 let cdnMinOpts = {
-    entryPoints: ["js/live_svelte/index.js"],
+    entryPoints: ["js/live_svelte/index.ts"],
     bundle: true,
     minify: true,
     target: "es2016",

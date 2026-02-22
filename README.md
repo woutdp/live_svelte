@@ -28,6 +28,7 @@ Svelte inside Phoenix LiveView with seamless end-to-end reactivity
 -   💀 **Dead View** Support
 -   🤏 **live_json** Support
 -   🦥 **Slot Interoperability**
+-   📘 **TypeScript** — client assets in TypeScript; public API is type-safe with exported type definitions for consumers
 
 ## Resources
 
@@ -778,6 +779,8 @@ Or run the watcher:
 ```bash
 mix assets.build --watch
 ```
+
+**Type checking:** The LiveSvelte client library is written in TypeScript with a type-safe public API (no `any` in exported types). Consumers get type hints via the package `types` entry. From the library repo, run `npm run typecheck` in `live_svelte/assets` to run `tsc --noEmit`.
 
 ### Releasing
 

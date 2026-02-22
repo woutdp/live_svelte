@@ -28,6 +28,9 @@ live_svelte-*.tar
 # NPM dependencies
 node_modules/
 
+# Vitest coverage output (generated)
+assets/coverage/
+
 # Elixir tools
 .elixir-tools/
 
