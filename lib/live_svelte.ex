@@ -59,6 +59,10 @@ defmodule LiveSvelte do
     doc: "LiveJson props to pass to the Svelte component",
     examples: [%{my_big_data_set: %{some_data: 1}}]
 
+  attr :diff, :boolean,
+    default: true,
+    doc: "When true (and config enable_props_diff is true), only changed props are sent on update. Set to false to always send full props."
+
   slot :inner_block, doc: "Inner block of the Svelte component"
 
   slot(:loading,
@@ -72,8 +76,10 @@ defmodule LiveSvelte do
     init = assigns.__changed__ == nil
     dead = assigns.socket == nil or not LiveView.connected?(assigns.socket)
     ssr_active = Application.get_env(:live_svelte, :ssr, true)
+    use_diff = diff_enabled?(assigns)
 
     svelte_id = assigns.id || key_based_id(assigns.name, assigns.key, assigns.props, assigns.__changed__)
+    props_to_send = props_for_payload(assigns, svelte_id, init, dead, use_diff)
 
     if init and ssr_active and assigns.ssr and assigns.loading != [] do
       IO.warn(
@@ -108,6 +114,8 @@ defmodule LiveSvelte do
       |> assign(:slots, slots)
       |> assign(:ssr_render, ssr_code)
       |> assign(:svelte_id, svelte_id)
+      |> assign(:props_to_send, props_to_send)
+      |> assign(:use_diff, use_diff)
 
     ~H"""
     <.live_json live_json_props={@live_json_props} svelte_id={@svelte_id}>
@@ -117,7 +125,8 @@ defmodule LiveSvelte do
     <div
       id={@svelte_id}
       data-name={@name}
-      data-props={json(@props)}
+      data-props={json(@props_to_send)}
+      data-use-diff={to_string(@use_diff)}
       data-ssr={@ssr_render != nil}
       data-live-json={
         if @init, do: json(@live_json_props), else: @live_json_props |> Map.keys() |> json()
@@ -147,6 +156,75 @@ defmodule LiveSvelte do
     )
 
     svelte(assigns)
+  end
+
+  # Returns the props map to send to the client: full on init/dead/diff disabled,
+  # otherwise only changed keys when __changed__[:props] is the old map.
+  @doc false
+  def props_for_payload(assigns) do
+    init = assigns.__changed__ == nil
+    dead = assigns.socket == nil or not LiveView.connected?(assigns.socket)
+    use_diff = diff_enabled?(assigns)
+    props = Map.get(assigns, :props, %{})
+
+    cond do
+      init or dead or not use_diff -> props
+      is_map(assigns.__changed__[:props]) -> props_changed_only(props, assigns.__changed__[:props])
+      true -> props
+    end
+  end
+
+  @doc false
+  def props_for_payload(assigns, svelte_id, init, dead, use_diff) do
+    props = Map.get(assigns, :props, %{})
+
+    # Track previous props per component id so we can extract changed keys even when
+    # LiveView only marks `__changed__[:props]` as `true` (common when `props` is built as a map).
+    prev_key = {:live_svelte_prev_props, svelte_id}
+
+    payload =
+      cond do
+        not use_diff ->
+          props
+
+        init or dead ->
+          props
+
+        is_map(assigns.__changed__[:props]) ->
+          props_changed_only(props, assigns.__changed__[:props])
+
+        true ->
+          case Process.get(prev_key) do
+            old when is_map(old) -> props_changed_only(props, old)
+            _ -> props
+          end
+      end
+
+    if use_diff do
+      Process.put(prev_key, props)
+    end
+
+    payload
+  end
+
+  defp diff_enabled?(assigns) do
+    config_enabled = Application.get_env(:live_svelte, :enable_props_diff, true)
+    per_component = Map.get(assigns, :diff, true)
+    config_enabled and per_component != false
+  end
+
+  # Returns a map of only keys whose value changed (or were added/removed).
+  # Removed keys are included as key => nil. Used for Tier 1 change tracking.
+  @doc false
+  def props_changed_only(new_props, old_props) when is_map(new_props) and is_map(old_props) do
+    all_keys = (Map.keys(new_props) ++ Map.keys(old_props)) |> Enum.uniq()
+
+    all_keys
+    |> Enum.reduce(%{}, fn k, acc ->
+      new_val = Map.get(new_props, k)
+      old_val = Map.get(old_props, k)
+      if new_val != old_val, do: Map.put(acc, k, new_val), else: acc
+    end)
   end
 
   defp json(props) do

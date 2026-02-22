@@ -33,6 +33,7 @@ defmodule ExampleWeb.Router do
     live "/live-breaking-news", LiveBreakingNews
     live "/live-chat", LiveChat
     live "/live-json", LiveJson
+    live "/live-props-diff", LivePropsDiff
     live "/live-slots-simple", LiveSlotsSimple
     live "/live-slots-dynamic", LiveSlotsDynamic
     live "/live-client-side-loading", LiveClientSideLoading
