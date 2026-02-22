@@ -108,6 +108,19 @@ defmodule ExampleWeb.PhoenixTest.LiveSimpleCounterTest do
     |> assert_client_counter_rendered_from_state()
   end
 
+  test "props diffing: after increment, data-use-diff is true and props reflect new value", %{conn: conn} do
+    conn
+    |> visit("/live-simple-counter")
+    |> assert_has("[data-testid='live-simple-counter-value']", text: "10")
+    |> assert_has("[data-use-diff='true']")
+    |> click_button("[data-testid='live-simple-counter-increment']", "+1")
+    |> assert_has("[data-testid='live-simple-counter-value']", text: "11")
+    |> assert_has("[data-props*='\"number\":11']", count: 2)
+    # Prove unchanged props are omitted from the update payload (Tier 1 contract)
+    |> refute_has("[data-props*='\"initialClientValue\"']", count: 2)
+    |> assert_has("[data-use-diff='true']")
+  end
+
   test "many server increments leave SimpleCounter mount points intact", %{conn: conn} do
     conn =
       conn

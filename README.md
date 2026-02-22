@@ -523,6 +523,15 @@ If your props don't contain a natural identity key, use the `key` attribute:
 <% end %>
 ```
 
+### Props diffing (change tracking)
+
+When props diffing is enabled, LiveSvelte sends only **changed** props to the client on updates, so unchanged props are not included in the payload and updates are minimal.
+
+-   **Config:** `config :live_svelte, enable_props_diff: true` (default). Set to `false` to always send full props.
+-   **Per component:** Use the `diff` attribute to opt out on a single component: `<.svelte name="Example" props={@props} diff={false} />`.
+
+On the initial render or when the socket is disconnected, full props are always sent. When connected and diffing is on, only keys that changed (compared to the previous render) are sent, and the client merges them into existing state.
+
 ### JSON Library
 
 LiveSvelte uses Erlang/OTP 27's native `:json` module by default for JSON encoding.

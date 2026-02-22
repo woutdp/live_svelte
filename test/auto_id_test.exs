@@ -51,6 +51,7 @@ defmodule LiveSvelte.AutoIdTest do
     Process.get_keys()
     |> Enum.each(fn
       {:live_svelte_counter, _} = k -> Process.delete(k)
+      {:live_svelte_prev_props, _} = k -> Process.delete(k)
       _ -> :ok
     end)
     Process.delete(:live_svelte_counter_names)

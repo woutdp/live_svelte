@@ -52,9 +52,28 @@ function getProps(ref) {
 }
 
 function update_state(ref) {
-  const newProps = getProps(ref)
-  for (const key in newProps) {
-    ref._instance.state[key] = newProps[key]
+  const useDiff = ref.el.getAttribute("data-use-diff") === "true"
+  const state = ref._instance?.state
+
+  if (useDiff && state) {
+    // Only changed props are in data-props; merge into existing state
+    const payload = getAttributeJson(ref, "data-props")
+    for (const key in payload) {
+      // Server sends removed keys as `null` (JSON) for Tier 1; treat as "unset"
+      if (payload[key] === null) state[key] = undefined
+      else state[key] = payload[key]
+    }
+    // Keep live, liveJson, and slots in sync
+    const liveJson = getLiveJsonProps(ref)
+    for (const key in liveJson) state[key] = liveJson[key]
+    const slots = getSlots(ref)
+    for (const key in slots) state[key] = slots[key]
+    state.live = ref
+  } else {
+    const newProps = getProps(ref)
+    for (const key in newProps) {
+      state[key] = newProps[key]
+    }
   }
 }
 
