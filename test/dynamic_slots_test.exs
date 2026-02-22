@@ -17,6 +17,7 @@ defmodule LiveSvelte.DynamicSlotsTest do
 
   describe "slot validation bypass" do
     test "LiveSvelte module has __components__/0 defined" do
+      assert Code.ensure_loaded?(LiveSvelte)
       assert function_exported?(LiveSvelte, :__components__, 0)
     end
   end
