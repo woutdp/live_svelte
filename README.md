@@ -561,6 +561,23 @@ you don't need `@derive Jason.Encoder` when using the default native JSON encode
 If you're using Jason and need custom struct encoding behavior, see the
 [Structs and Ecto](#structs-and-ecto) section for details on `@derive Jason.Encoder`.
 
+#### LiveSvelte.Encoder protocol
+
+All props pass through the `LiveSvelte.Encoder` protocol before JSON encoding. You can control which struct fields are sent to Svelte with `@derive`:
+
+```elixir
+defmodule User do
+  @derive {LiveSvelte.Encoder, except: [:password]}
+  defstruct [:name, :email, :password]
+end
+```
+
+- `@derive LiveSvelte.Encoder` — encode all fields except `__struct__`
+- `@derive {LiveSvelte.Encoder, only: [:name, :email]}` — encode only listed keys
+- `@derive {LiveSvelte.Encoder, except: [:password]}` — encode all except listed keys
+
+Phoenix.HTML.Form, Ecto.Changeset, and Phoenix LiveView upload structs have built-in encoders. Date/Time types are encoded as ISO8601 strings.
+
 ### live_json
 
 LiveSvelte has support for [live_json](https://github.com/Miserlou/live_json).

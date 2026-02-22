@@ -48,6 +48,7 @@ defmodule LiveSvelte.JSON do
   @spec encode!(term()) :: binary()
   def encode!(term) do
     term
+    |> LiveSvelte.Encoder.encode([])
     |> prepare_term()
     |> :json.encode()
     |> IO.iodata_to_binary()
@@ -76,7 +77,11 @@ defmodule LiveSvelte.JSON do
 
   """
   @spec prepare(term()) :: term()
-  def prepare(term), do: prepare_term(term)
+  def prepare(term) do
+    term
+    |> LiveSvelte.Encoder.encode([])
+    |> prepare_term()
+  end
 
   # Recursively prepare terms for JSON encoding.
   # Converts structs to maps, nil to null, and handles nested structures.

@@ -151,7 +151,16 @@ defmodule LiveSvelte do
 
   defp json(props) do
     json_library = Application.get_env(:live_svelte, :json_library, LiveSvelte.JSON)
-    json_library.encode!(props)
+
+    # Ensure props pass through LiveSvelte.Encoder for all JSON libraries.
+    # LiveSvelte.JSON already runs the encoder internally, so avoid double work.
+    if json_library == LiveSvelte.JSON do
+      json_library.encode!(props)
+    else
+      props
+      |> LiveSvelte.Encoder.encode([])
+      |> json_library.encode!()
+    end
   end
 
   # --- Deterministic ID generation ------------------------------------------------
