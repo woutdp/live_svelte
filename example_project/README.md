@@ -9,10 +9,10 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 ## Testing
 
-- Run all tests: `mix test`
+- Run all tests: `mix test` (by default this excludes E2E tests; use `mix test --only e2e` to run browser tests).
 - Run only E2E (browser) tests: `mix test --only e2e`
 
-E2E tests use [Wallaby](https://hexdocs.pm/wallaby) and serve the app from **built** assets (`priv/static`). After changing Svelte (or other frontend) code, rebuild before E2E so tests see your changes:
+E2E test modules must use `@moduletag :e2e`. E2E tests use [Wallaby](https://hexdocs.pm/wallaby) and serve the app from **built** assets (`priv/static`). After changing Svelte (or other frontend) code, rebuild before E2E so tests see your changes:
 
 ```bash
 mix assets.js && mix test --only e2e

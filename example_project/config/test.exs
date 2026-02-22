@@ -17,8 +17,10 @@ config :example, ExampleWeb.Endpoint,
   secret_key_base: "XvZC2gcAePazgtLhJ+/kX9NxRrJA9HBGVxRjfVHW7f//XBDiDpQJ4/ot6N3llQjW",
   server: true
 
-# Wallaby E2E: base URL must match endpoint port
-config :wallaby, base_url: "http://localhost:4002"
+# Wallaby E2E: base URL must match endpoint port; explicit driver for clarity and CI
+config :wallaby,
+  base_url: "http://localhost:4002",
+  driver: Wallaby.Chrome
 
 # PhoenixTest: lightweight server-side testing (no browser needed)
 config :phoenix_test, :endpoint, ExampleWeb.Endpoint
