@@ -13,8 +13,10 @@ defmodule ExampleWeb.LiveBreakingNewsTest do
   end
 
   defp wait_for_headline_with_text(session, text, attempts \\ 50) do
-    items = headline_items(session)
-    found = Enum.any?(items, fn el -> Wallaby.Element.text(el) =~ text end)
+    # Use container text to avoid stale refs when DOM updates (e.g. after Add/Remove).
+    container = session |> find(Query.css("[data-testid='breaking-news-headlines']"))
+    container_text = Wallaby.Element.text(container)
+    found = String.contains?(container_text, text)
     cond do
       found -> session
       attempts == 0 -> raise "timeout waiting for headline containing #{inspect(text)}"
@@ -85,8 +87,10 @@ defmodule ExampleWeb.LiveBreakingNewsTest do
   end
 
   defp wait_for_headline_removed(session, text, attempts) do
-    items = headline_items(session)
-    found = Enum.any?(items, fn el -> Wallaby.Element.text(el) =~ text end)
+    # Use container text to avoid stale refs: after Remove, li elements are detached from DOM.
+    container = session |> find(Query.css("[data-testid='breaking-news-headlines']"))
+    container_text = Wallaby.Element.text(container)
+    found = String.contains?(container_text, text)
     cond do
       not found -> session
       attempts == 0 -> raise "timeout waiting for headline #{inspect(text)} to be removed"
