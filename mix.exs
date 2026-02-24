@@ -61,6 +61,7 @@ defmodule LiveSvelte.MixProject do
   defp deps do
     [
       {:ex_doc, "~> 0.37.3", only: :dev, runtime: false},
+      {:jsonpatch, "~> 2.3"},
       {:ecto, ">= 3.0.0", optional: true},
       {:phoenix_ecto, ">= 4.0.0", optional: true},
       {:jason, "~> 1.2", optional: true},

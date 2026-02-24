@@ -33,7 +33,8 @@ defmodule ExampleWeb.Layouts do
           %{label: "Breaking News", to: ~p"/live-breaking-news"},
           %{label: "Chat", to: ~p"/live-chat"},
           %{label: "LiveJSON", to: ~p"/live-json"},
-          %{label: "Props Diff", to: ~p"/live-props-diff"}
+          %{label: "Props Diff", to: ~p"/live-props-diff"},
+          %{label: "ID List Diff", to: ~p"/live-id-list-diff"}
         ]
       },
       %{
