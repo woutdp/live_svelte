@@ -10,6 +10,7 @@ defmodule LiveSvelte do
   import LiveSvelte.LiveJson
 
   alias Phoenix.LiveView
+  alias Phoenix.LiveView.LiveStream
   alias LiveSvelte.Slots
   alias LiveSvelte.SSR
 
@@ -129,6 +130,8 @@ defmodule LiveSvelte do
         end
       end
 
+    streams_diff = calculate_streams_diff(assigns, init or dead)
+
     assigns =
       assigns
       |> assign(:init, init)
@@ -138,6 +141,7 @@ defmodule LiveSvelte do
       |> assign(:props_to_send, props_to_send)
       |> assign(:use_diff, use_diff)
       |> assign(:props_diff, props_diff)
+      |> assign(:streams_diff, streams_diff)
 
     ~H"""
     <.live_json live_json_props={@live_json_props} svelte_id={@svelte_id}>
@@ -149,6 +153,7 @@ defmodule LiveSvelte do
       data-name={@name}
       data-props={json(@props_to_send)}
       data-props-diff={json(@props_diff)}
+      data-streams-diff={json(@streams_diff)}
       data-use-diff={to_string(@use_diff)}
       data-ssr={@ssr_render != nil}
       data-live-json={
@@ -302,6 +307,82 @@ defmodule LiveSvelte do
   @doc false
   def prepare_diff(%{op: op, path: p, value: value}), do: [op, p, value]
   def prepare_diff(%{op: op, path: p}), do: [op, p]
+
+  # --- Phoenix Streams support ----------------------------------------------------
+
+  # Extracts all %LiveStream{} values from assigns, keyed by their assign name.
+  defp extract_streams(assigns) do
+    Enum.reduce(assigns, %{}, fn {k, v}, acc ->
+      if match?(%LiveStream{}, v), do: Map.put(acc, k, v), else: acc
+    end)
+  end
+
+  # Computes compressed stream diff ops for all streams in assigns.
+  # On initial/dead render: sends reset-to-[] + full inserts for each stream.
+  # On live updates: sends only the patch ops from this render cycle.
+  defp calculate_streams_diff(assigns, initial) do
+    streams = extract_streams(assigns)
+
+    if streams == %{} do
+      []
+    else
+      do_calculate_streams_diff(streams, initial)
+    end
+  end
+
+  defp do_calculate_streams_diff(streams, true = _initial) do
+    # Initial render: prepend replace [] for each stream, then apply all patch ops
+    init_ops = Enum.map(streams, fn {k, _} -> %{op: "replace", path: "/#{k}", value: []} end)
+    diff_ops = Enum.flat_map(streams, fn {k, stream} -> generate_stream_patches(k, stream) end)
+    (init_ops ++ diff_ops) |> Enum.map(&prepare_diff/1)
+  end
+
+  defp do_calculate_streams_diff(streams, false = _initial) do
+    streams
+    |> Enum.flat_map(fn {k, stream} -> generate_stream_patches(k, stream) end)
+    |> then(fn
+      [] -> []
+      ops -> [%{op: "test", path: "", value: :rand.uniform(10_000_000)} | ops]
+    end)
+    |> Enum.map(&prepare_diff/1)
+  end
+
+  # Generates JSON Patch ops for a single %LiveStream{}.
+  # Handles both LV 0.18.x (3-tuple inserts, no reset?) and LV 1.0.x (4-tuple inserts, has reset?/limit).
+  # Op order: reset → deletes → inserts (each prepended, then list reversed).
+  defp generate_stream_patches(stream_name, stream) do
+    reset? = Map.get(stream, :reset?, false)
+
+    patches =
+      if reset?,
+        do: [%{op: "replace", path: "/#{stream_name}", value: []} | []],
+        else: []
+
+    patches =
+      Enum.reduce(stream.deletes, patches, fn dom_id, acc ->
+        [%{op: "remove", path: "/#{stream_name}/$$#{dom_id}"} | acc]
+      end)
+
+    patches =
+      stream.inserts
+      |> Enum.reverse()
+      |> Enum.reduce(patches, fn insert, acc ->
+        case insert do
+          {dom_id, at, item, limit} ->
+            item_map = Map.put(item, :__dom_id, dom_id)
+            at_path = if at == -1, do: "-", else: to_string(at)
+            acc = [%{op: "upsert", path: "/#{stream_name}/#{at_path}", value: item_map} | acc]
+            if limit, do: [%{op: "limit", path: "/#{stream_name}", value: limit} | acc], else: acc
+
+          {dom_id, at, item} ->
+            item_map = Map.put(item, :__dom_id, dom_id)
+            at_path = if at == -1, do: "-", else: to_string(at)
+            [%{op: "upsert", path: "/#{stream_name}/#{at_path}", value: item_map} | acc]
+        end
+      end)
+
+    Enum.reverse(patches)
+  end
 
   # Encodes structs via LiveSvelte.Encoder so Jsonpatch can compare them.
   defp encode_for_diff(struct) when is_struct(struct), do: LiveSvelte.Encoder.encode(struct)
