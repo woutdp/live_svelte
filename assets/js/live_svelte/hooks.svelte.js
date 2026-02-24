@@ -1,5 +1,6 @@
 import { decodeB64ToUTF8, normalizeComponents } from "./utils"
 import { mount, hydrate, unmount, createRawSnippet } from "svelte"
+import { applyPatch } from "./jsonPatch.js"
 
 function getAttributeJson(ref, attributeName) {
   const data = ref.el.getAttribute(attributeName)
@@ -51,19 +52,36 @@ function getProps(ref) {
   }
 }
 
+function getDiff(ref) {
+  const data = ref.el.getAttribute("data-props-diff")
+  if (!data) return []
+  try {
+    const ops = JSON.parse(data)
+    return Array.isArray(ops) ? ops : []
+  } catch {
+    return []
+  }
+}
+
 function update_state(ref) {
   const useDiff = ref.el.getAttribute("data-use-diff") === "true"
   const state = ref._instance?.state
 
   if (useDiff && state) {
-    // Only changed props are in data-props; merge into existing state
-    const payload = getAttributeJson(ref, "data-props")
-    for (const key in payload) {
-      // Server sends removed keys as `null` (JSON) for Tier 1; treat as "unset"
-      if (payload[key] === null) state[key] = undefined
-      else state[key] = payload[key]
+    const diff = getDiff(ref)
+    if (diff.length > 0) {
+      // Tier 2 + 3: Apply JSON Patch operations to state in-place.
+      applyPatch(state, diff)
+    } else {
+      // Tier 1 fallback: Only changed props are in data-props; merge into existing state.
+      const payload = getAttributeJson(ref, "data-props")
+      for (const key in payload) {
+        // Server sends removed keys as `null` (JSON) for Tier 1; treat as "unset"
+        if (payload[key] === null) state[key] = undefined
+        else state[key] = payload[key]
+      }
     }
-    // Keep live, liveJson, and slots in sync
+    // Always keep live ref, liveJson, and slots in sync
     const liveJson = getLiveJsonProps(ref)
     for (const key in liveJson) state[key] = liveJson[key]
     const slots = getSlots(ref)

@@ -79,7 +79,28 @@ defmodule LiveSvelte do
     use_diff = diff_enabled?(assigns)
 
     svelte_id = assigns.id || key_based_id(assigns.name, assigns.key, assigns.props, assigns.__changed__)
+
+    # Snapshot previous props BEFORE props_for_payload/5 updates the process dict.
+    # Used for JSON Patch diff computation (Tier 2 + 3).
+    prev_for_diff =
+      if use_diff and not init and not dead do
+        case assigns.__changed__[:props] do
+          old when is_map(old) -> old
+          _ -> Process.get({:live_svelte_prev_props, svelte_id})
+        end
+      end
+
     props_to_send = props_for_payload(assigns, svelte_id, init, dead, use_diff)
+
+    # Tier 2 + 3: compute JSON Patch diff using snapshot of previous props.
+    props_diff =
+      if use_diff and not init and not dead and is_map(prev_for_diff) do
+        assigns.props
+        |> calculate_props_diff(prev_for_diff)
+        |> Enum.map(&prepare_diff/1)
+      else
+        []
+      end
 
     if init and ssr_active and assigns.ssr and assigns.loading != [] do
       IO.warn(
@@ -116,6 +137,7 @@ defmodule LiveSvelte do
       |> assign(:svelte_id, svelte_id)
       |> assign(:props_to_send, props_to_send)
       |> assign(:use_diff, use_diff)
+      |> assign(:props_diff, props_diff)
 
     ~H"""
     <.live_json live_json_props={@live_json_props} svelte_id={@svelte_id}>
@@ -126,6 +148,7 @@ defmodule LiveSvelte do
       id={@svelte_id}
       data-name={@name}
       data-props={json(@props_to_send)}
+      data-props-diff={json(@props_diff)}
       data-use-diff={to_string(@use_diff)}
       data-ssr={@ssr_render != nil}
       data-live-json={
@@ -210,7 +233,7 @@ defmodule LiveSvelte do
   defp diff_enabled?(assigns) do
     config_enabled = Application.get_env(:live_svelte, :enable_props_diff, true)
     per_component = Map.get(assigns, :diff, true)
-    config_enabled and per_component != false
+    config_enabled and per_component == true
   end
 
   # Returns a map of only keys whose value changed (or were added/removed).
@@ -226,6 +249,68 @@ defmodule LiveSvelte do
       if new_val != old_val, do: Map.put(acc, k, new_val), else: acc
     end)
   end
+
+  # Returns a list of RFC 6902 JSON Patch operations describing the minimal diff
+  # between current_props and prev_props. Each op is a map with :op, :path,
+  # and optionally :value. Uses Jsonpatch for complex (map/list) values and
+  # ID-based list matching via object_hash/1 (Tier 3).
+  @doc false
+  def calculate_props_diff(_current_props, nil), do: []
+
+  def calculate_props_diff(current_props, prev_props)
+      when is_map(current_props) and is_map(prev_props) do
+    all_keys = (Map.keys(current_props) ++ Map.keys(prev_props)) |> Enum.uniq()
+
+    diff =
+      Enum.flat_map(all_keys, fn k ->
+        in_current = Map.has_key?(current_props, k)
+        in_prev = Map.has_key?(prev_props, k)
+        new_v = Map.get(current_props, k)
+        old_v = Map.get(prev_props, k)
+
+        cond do
+          in_current and not in_prev ->
+            [%{op: "add", path: "/#{k}", value: encode_for_diff(new_v)}]
+
+          in_prev and not in_current ->
+            [%{op: "remove", path: "/#{k}"}]
+
+          old_v == new_v ->
+            []
+
+          (is_map(old_v) or is_list(old_v)) and (is_map(new_v) or is_list(new_v)) ->
+            Jsonpatch.diff(
+              old_v,
+              new_v,
+              ancestor_path: "/#{k}",
+              prepare_map: &encode_for_diff/1,
+              object_hash: &object_hash/1
+            )
+
+          true ->
+            [%{op: "replace", path: "/#{k}", value: encode_for_diff(new_v)}]
+        end
+      end)
+
+    case diff do
+      [] -> []
+      ops -> [%{op: "test", path: "", value: :rand.uniform(10_000_000)} | ops]
+    end
+  end
+
+  # Compresses a JSON Patch operation map to the [op, path, value] wire format.
+  @doc false
+  def prepare_diff(%{op: op, path: p, value: value}), do: [op, p, value]
+  def prepare_diff(%{op: op, path: p}), do: [op, p]
+
+  # Encodes structs via LiveSvelte.Encoder so Jsonpatch can compare them.
+  defp encode_for_diff(struct) when is_struct(struct), do: LiveSvelte.Encoder.encode(struct)
+  defp encode_for_diff(other), do: other
+
+  # Returns the :id field of a map as the identity key for ID-based list diffing (Tier 3).
+  # When nil is returned, Jsonpatch falls back to index-based matching.
+  defp object_hash(%{id: id}) when not is_nil(id), do: id
+  defp object_hash(_), do: nil
 
   defp json(props) do
     json_library = Application.get_env(:live_svelte, :json_library, LiveSvelte.JSON)
