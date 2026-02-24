@@ -52,8 +52,15 @@ function getProps(ref) {
   }
 }
 
-function getDiff(ref) {
-  const data = ref.el.getAttribute("data-props-diff")
+/**
+ * Read a diff attribute from the element and return the compressed ops array.
+ * Compressed format: [[op, path, value?], ...] — passed directly to applyPatch.
+ * @param {object} ref - The hook reference
+ * @param {string} attributeName - The data attribute to read (e.g. "data-props-diff", "data-streams-diff")
+ * @returns {Array} Array of compressed op arrays
+ */
+function getDiff(ref, attributeName) {
+  const data = ref.el.getAttribute(attributeName)
   if (!data) return []
   try {
     const ops = JSON.parse(data)
@@ -68,7 +75,7 @@ function update_state(ref) {
   const state = ref._instance?.state
 
   if (useDiff && state) {
-    const diff = getDiff(ref)
+    const diff = getDiff(ref, "data-props-diff")
     if (diff.length > 0) {
       // Tier 2 + 3: Apply JSON Patch operations to state in-place.
       applyPatch(state, diff)
@@ -87,10 +94,18 @@ function update_state(ref) {
     const slots = getSlots(ref)
     for (const key in slots) state[key] = slots[key]
     state.live = ref
-  } else {
+  } else if (state) {
     const newProps = getProps(ref)
     for (const key in newProps) {
       state[key] = newProps[key]
+    }
+  }
+
+  // Always apply streams diff unconditionally — independent of data-use-diff
+  if (state) {
+    const streamsDiff = getDiff(ref, "data-streams-diff")
+    if (streamsDiff.length > 0) {
+      applyPatch(state, streamsDiff)
     }
   }
 }
@@ -127,6 +142,12 @@ export function getHooks(components) {
         props: state,
       })
       this._instance.state = state
+
+      // Apply initial stream items from data-streams-diff
+      const initialStreamsDiff = getDiff(this, "data-streams-diff")
+      if (initialStreamsDiff.length > 0) {
+        applyPatch(state, initialStreamsDiff)
+      }
     },
 
     updated() {

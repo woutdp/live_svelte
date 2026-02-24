@@ -250,6 +250,12 @@ defmodule LiveSvelte.PropsDiffTest do
       assert diff == []
     end
 
+    test "diff nil is treated as false (strict == true guard), disabling diffing" do
+      assigns = base_assigns(props: %{"x" => 1}, __changed__: nil) |> Map.put(:diff, nil)
+      html = render_html(assigns)
+      assert data_use_diff_from_html(html) == "false"
+    end
+
     test "when enable_props_diff is false, data-use-diff is false even if diff defaults to true" do
       Application.put_env(:live_svelte, :enable_props_diff, false)
 
