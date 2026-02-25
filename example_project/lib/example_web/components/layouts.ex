@@ -61,7 +61,8 @@ defmodule ExampleWeb.Layouts do
         links: [
           %{label: "Form (useLiveForm)", to: ~p"/live-form"},
           %{label: "Navigation (useLiveNavigation)", to: ~p"/live-navigation"},
-          %{label: "Composition (useLiveSvelte)", to: ~p"/live-composition"}
+          %{label: "Composition (useLiveSvelte)", to: ~p"/live-composition"},
+          %{label: "File Upload (useLiveUpload)", to: ~p"/live-upload"}
         ]
       }
     ]

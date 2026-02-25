@@ -253,3 +253,109 @@ export declare function useLiveForm<T extends object>(
   options?: FormOptions
 ): UseLiveFormReturn<T>;
 
+// ---------------------------------------------------------------------------
+// useLiveUpload types
+// Keep in sync with useLiveUpload.ts — that file is the source of truth.
+// ---------------------------------------------------------------------------
+
+/**
+ * Shape of a single upload entry from Phoenix.LiveView.UploadEntry,
+ * encoded by LiveSvelte.Encoder.
+ */
+export interface UploadEntry {
+  /** Phoenix upload ref for this entry (e.g. "phx-ref-0"). */
+  ref: string;
+  /** Original filename from the client. */
+  client_name: string;
+  /** File size in bytes. */
+  client_size: number;
+  /** MIME type. */
+  client_type: string;
+  /** Upload progress 0–100. */
+  progress: number;
+  /** Whether the upload has completed. */
+  done: boolean;
+  /** Whether the entry passes accept/size validations. */
+  valid: boolean;
+  /** Whether Phoenix has acknowledged (preflighted) this entry. */
+  preflighted: boolean;
+  /** Entry-specific validation error messages. */
+  errors: string[];
+}
+
+/**
+ * Shape of a Phoenix.LiveView.UploadConfig encoded by LiveSvelte.Encoder.
+ * Pass `@uploads.name` as a prop from the LiveView.
+ */
+export interface UploadConfig {
+  /** Phoenix upload ref (e.g. "phx-abc123"). */
+  ref: string;
+  /** Upload name matching `allow_upload(:name, ...)` in the LiveView. */
+  name: string;
+  /** Accepted file types (e.g. ".jpg,.png") or false for any. */
+  accept: string | false;
+  /** Maximum number of concurrent uploads. */
+  max_entries: number;
+  /** When true, uploads begin as soon as files are selected. */
+  auto_upload: boolean;
+  /** Current upload entries. */
+  entries: UploadEntry[];
+  /** Top-level upload config errors (ref + error message pairs). */
+  errors: { ref: string; error: string }[];
+}
+
+/** Options for `useLiveUpload`. */
+export interface UploadOptions {
+  /** Server event name for Phoenix phx-change (validation). Optional. */
+  changeEvent?: string;
+  /** Server event name for Phoenix phx-submit (required). */
+  submitEvent: string;
+}
+
+/** Return value of `useLiveUpload`. */
+export interface UseLiveUploadReturn {
+  /** Reactive list of current upload entries from the server. */
+  entries: Readable<UploadEntry[]>;
+  /** Overall upload progress 0–100 averaged across all entries. */
+  progress: Readable<number>;
+  /** True when the upload config has no top-level errors. */
+  valid: Readable<boolean>;
+  /** The underlying hidden `<input type="file">` element store. */
+  inputEl: Readable<HTMLInputElement | null>;
+  /** Opens the native file-picker dialog. */
+  showFilePicker(): void;
+  /** Enqueue files from an array or DataTransfer (for drag-drop). */
+  addFiles(files: File[] | DataTransfer): void;
+  /** Dispatch a form submit event to trigger Phoenix upload (manual upload). */
+  submit(): void;
+  /** Cancel a specific entry by ref, or all entries when omitted. */
+  cancel(ref?: string): void;
+  /** Reset the hidden input value to clear the file queue. */
+  clear(): void;
+  /**
+   * Merge an updated UploadConfig from the server into the composable.
+   * Call from a Svelte `$effect(() => { upload.sync(props.uploads.avatar) })`.
+   */
+  sync(newConfig: UploadConfig): void;
+}
+
+/**
+ * Bind to a Phoenix.LiveView.UploadConfig prop for reactive file upload management.
+ *
+ * @example
+ * ```svelte
+ * <script lang="ts">
+ *   import { useLiveUpload } from "live_svelte"
+ *   let { uploads } = $props()
+ *   const upload = useLiveUpload(uploads.avatar, { changeEvent: "validate", submitEvent: "save" })
+ *   $effect(() => { upload.sync(uploads.avatar) })
+ * </script>
+ * <button onclick={() => upload.showFilePicker()}>Select Files</button>
+ * {#each $upload.entries as entry}{entry.client_name}{/each}
+ * ```
+ */
+export declare function useLiveUpload(
+  uploadConfig: UploadConfig,
+  options: UploadOptions
+): UseLiveUploadReturn;
+

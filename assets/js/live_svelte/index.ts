@@ -15,3 +15,5 @@ export type {
   FormFieldArray,
   UseLiveFormReturn,
 } from "./useLiveForm";
+export { useLiveUpload } from "./useLiveUpload";
+export type { UploadEntry, UploadConfig, UploadOptions, UseLiveUploadReturn } from "./useLiveUpload";
