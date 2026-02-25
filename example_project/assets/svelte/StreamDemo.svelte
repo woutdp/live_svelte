@@ -34,6 +34,10 @@
   function updateItem(id) {
     live.pushEvent("update_item", { id })
   }
+
+  function addCappedItem() {
+    live.pushEvent("add_capped_item", {})
+  }
 </script>
 
 <div class="card bg-base-100 shadow-lg border border-base-300/50">
@@ -76,6 +80,9 @@
       </button>
       <button class="btn btn-sm btn-outline" data-testid="reset-button-at-0" onclick={resetStreamAt0}>
         Reset (at: 0)
+      </button>
+      <button class="btn btn-sm btn-secondary btn-outline" data-testid="add-capped-button" onclick={addCappedItem}>
+        Add Capped (max 3)
       </button>
     </div>
 

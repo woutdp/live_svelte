@@ -2,9 +2,14 @@
     import {preventDefault} from "svelte/legacy"
     import {fly} from "svelte/transition"
     import {elasticOut} from "svelte/easing"
+    import {useLiveSvelte, useLiveConnection} from "live_svelte"
 
-    /** @type {{ messages: any, name: any, live: any }} */
-    let {messages, name, live} = $props()
+    /** @type {{ messages: any, name: any }} */
+    let {messages, name} = $props()
+
+    const conn = useLiveConnection()
+
+    const { pushEvent } = useLiveSvelte()
 
     let body = $state("")
     let messagesElement = $state()
@@ -17,7 +22,7 @@
 
     function submitMessage() {
         if (body === "") return
-        live.pushEvent("send_message", {body})
+        pushEvent("send_message", {body})
         body = ""
     }
 </script>
@@ -32,6 +37,11 @@
                     {name}
                 </span>
             </div>
+            {#if !conn.connected}
+                <div data-testid="chat-reconnecting" class="px-4 py-1 text-xs text-warning bg-warning/10 text-center">
+                    Reconnecting…
+                </div>
+            {/if}
             <ul data-testid="chat-messages" bind:this={messagesElement} class="flex flex-col gap-3 flex-1 min-h-0 overflow-x-clip overflow-y-auto px-4 py-2">
                 {#each messages as message (message.id)}
                     {@const me = message.name === name}

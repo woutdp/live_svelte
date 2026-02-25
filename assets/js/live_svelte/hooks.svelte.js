@@ -1,6 +1,7 @@
 import { decodeB64ToUTF8, normalizeComponents } from "./utils"
 import { mount, hydrate, unmount, createRawSnippet } from "svelte"
 import { applyPatch } from "./jsonPatch.js"
+import { LIVE_SYMBOL, CONNECTION_SYMBOL } from "./composables"
 
 function getAttributeJson(ref, attributeName) {
   const data = ref.el.getAttribute(attributeName)
@@ -116,6 +117,8 @@ export function getHooks(components) {
   const SvelteHook = {
     mounted() {
       let state = $state(getProps(this))
+      let connectionState = $state({ connected: true })
+
       const componentName = this.el.getAttribute("data-name")
       if (!componentName) throw new Error("Component name must be provided")
 
@@ -140,8 +143,10 @@ export function getHooks(components) {
       this._instance = hydrateOrMount(Component, {
         target,
         props: state,
+        context: new Map([[LIVE_SYMBOL, this], [CONNECTION_SYMBOL, connectionState]]),
       })
       this._instance.state = state
+      this._instance.connectionState = connectionState
 
       // Apply initial stream items from data-streams-diff
       const initialStreamsDiff = getDiff(this, "data-streams-diff")
@@ -152,6 +157,23 @@ export function getHooks(components) {
 
     updated() {
       update_state(this)
+    },
+
+    // Updates the reactive connection state shared via Svelte context with
+    // useLiveConnection(). Unit-testing these is impractical (requires Svelte
+    // $state outside a component context); correctness is validated by
+    // the Chat.svelte `data-testid="chat-reconnecting"` E2E happy-path test
+    // and by the Chat page remaining functional through connect/disconnect cycles.
+    disconnected() {
+      if (this._instance?.connectionState) {
+        this._instance.connectionState.connected = false
+      }
+    },
+
+    reconnected() {
+      if (this._instance?.connectionState) {
+        this._instance.connectionState.connected = true
+      }
     },
 
     destroyed() {

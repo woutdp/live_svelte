@@ -348,7 +348,7 @@ defmodule LiveSvelte do
   end
 
   # Generates JSON Patch ops for a single %LiveStream{}.
-  # Handles both LV 0.18.x (3-tuple inserts, no reset?) and LV 1.0.x (4-tuple inserts, has reset?/limit).
+  # Handles LV 0.18.x (3-tuple), LV 1.0.x (4-tuple), and LV ≥ 1.0.x (5-tuple with update_only).
   # Op order: reset → deletes → inserts (each prepended, then list reversed).
   defp generate_stream_patches(stream_name, stream) do
     reset? = Map.get(stream, :reset?, false)
@@ -368,20 +368,42 @@ defmodule LiveSvelte do
       |> Enum.reverse()
       |> Enum.reduce(patches, fn insert, acc ->
         case insert do
+          {dom_id, at, item, limit, update_only} ->
+            item_map = encode_stream_item(item, dom_id)
+
+            acc =
+              if update_only do
+                [%{op: "replace", path: "/#{stream_name}/$$#{dom_id}", value: item_map} | acc]
+              else
+                at_path = if at == -1, do: "-", else: to_string(at)
+                [%{op: "upsert", path: "/#{stream_name}/#{at_path}", value: item_map} | acc]
+              end
+
+            if limit, do: [%{op: "limit", path: "/#{stream_name}", value: limit} | acc], else: acc
+
           {dom_id, at, item, limit} ->
-            item_map = Map.put(item, :__dom_id, dom_id)
+            item_map = encode_stream_item(item, dom_id)
             at_path = if at == -1, do: "-", else: to_string(at)
             acc = [%{op: "upsert", path: "/#{stream_name}/#{at_path}", value: item_map} | acc]
             if limit, do: [%{op: "limit", path: "/#{stream_name}", value: limit} | acc], else: acc
 
           {dom_id, at, item} ->
-            item_map = Map.put(item, :__dom_id, dom_id)
+            item_map = encode_stream_item(item, dom_id)
             at_path = if at == -1, do: "-", else: to_string(at)
             [%{op: "upsert", path: "/#{stream_name}/#{at_path}", value: item_map} | acc]
         end
       end)
 
     Enum.reverse(patches)
+  end
+
+  # Encodes a stream item via LiveSvelte.Encoder before attaching __dom_id.
+  # Encoding MUST happen first so that @derive {only: [...]} restrictions are applied
+  # before __dom_id is added (otherwise __dom_id could be stripped by the struct encoder).
+  defp encode_stream_item(item, dom_id) do
+    item
+    |> LiveSvelte.Encoder.encode([])
+    |> Map.put(:__dom_id, dom_id)
   end
 
   # Encodes structs via LiveSvelte.Encoder so Jsonpatch can compare them.

@@ -62,6 +62,21 @@ defmodule ExampleWeb.Streams do
     {:noreply, stream_insert(socket, :items, updated)}
   end
 
+  def handle_event("add_capped_item", _params, socket) do
+    new_item = %{
+      id: socket.assigns.next_id,
+      name: "Capped #{socket.assigns.next_id}",
+      description: "Stream keeps last 3 items"
+    }
+
+    socket =
+      socket
+      |> stream_insert(:items, new_item, limit: -3)
+      |> assign(:next_id, socket.assigns.next_id + 1)
+
+    {:noreply, socket}
+  end
+
   def handle_event("clear_stream", _params, socket) do
     {:noreply, stream(socket, :items, [], reset: true)}
   end
