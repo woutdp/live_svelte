@@ -44,10 +44,12 @@ defmodule ExampleWeb.LiveUpload do
       </p>
       <.svelte
         name="UploadDemo"
-        props={%{
-          uploads: %{test_files: @uploads.test_files},
-          uploaded_files: @uploaded_files
-        }}
+        props={
+          %{
+            uploads: %{test_files: @uploads.test_files},
+            uploaded_files: @uploaded_files
+          }
+        }
         socket={@socket}
       />
     </div>

@@ -22,16 +22,21 @@ defmodule ExampleWeb.LivePlusMinus do
               aria-label={"Decrease by #{@amount}"}
               data-testid="live-plus-minus-minus"
             >
-              -<%= @amount %>
+              -{@amount}
             </button>
-            <span class="text-3xl font-bold tabular-nums text-brand min-w-[3rem] text-center" data-testid="live-plus-minus-value"><%= @number %></span>
+            <span
+              class="text-3xl font-bold tabular-nums text-brand min-w-[3rem] text-center"
+              data-testid="live-plus-minus-value"
+            >
+              {@number}
+            </span>
             <button
               class="btn btn-square btn-sm btn-success border-0"
               phx-click="add"
               aria-label={"Increase by #{@amount}"}
               data-testid="live-plus-minus-plus"
             >
-              +<%= @amount %>
+              +{@amount}
             </button>
           </div>
           <label class="flex flex-col gap-1.5 mx-auto">
@@ -68,14 +73,17 @@ defmodule ExampleWeb.LivePlusMinus do
 
   def handle_event("update_amount", %{"value" => value}, socket) do
     amount_str = extract_amount_value(value)
-    amount = if is_binary(amount_str) and amount_str != "" do
-      case Integer.parse(amount_str) do
-        {n, _} when n >= 1 -> n
-        _ -> socket.assigns.amount
+
+    amount =
+      if is_binary(amount_str) and amount_str != "" do
+        case Integer.parse(amount_str) do
+          {n, _} when n >= 1 -> n
+          _ -> socket.assigns.amount
+        end
+      else
+        socket.assigns.amount
       end
-    else
-      socket.assigns.amount
-    end
+
     {:noreply, assign(socket, :amount, amount)}
   end
 

@@ -11,11 +11,11 @@ defmodule ExampleWeb.LiveStruct do
   def render(assigns) do
     ~H"""
     <h1 class="text-center text-2xl font-light my-4">
-          Struct Demo
-        </h1>
-        <p class="text-sm text-base-content/50 mb-8 text-center">
-          Passing a struct to Svelte.
-        </p>
+      Struct Demo
+    </h1>
+    <p class="text-sm text-base-content/50 mb-8 text-center">
+      Passing a struct to Svelte.
+    </p>
 
     <.svelte name="Struct" props={%{struct: @struct}} socket={@socket} />
     """

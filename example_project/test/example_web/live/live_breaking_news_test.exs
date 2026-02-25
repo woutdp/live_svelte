@@ -17,9 +17,14 @@ defmodule ExampleWeb.LiveBreakingNewsTest do
     container = session |> find(Query.css("[data-testid='breaking-news-headlines']"))
     container_text = Wallaby.Element.text(container)
     found = String.contains?(container_text, text)
+
     cond do
-      found -> session
-      attempts == 0 -> raise "timeout waiting for headline containing #{inspect(text)}"
+      found ->
+        session
+
+      attempts == 0 ->
+        raise "timeout waiting for headline containing #{inspect(text)}"
+
       true ->
         :timer.sleep(100)
         wait_for_headline_with_text(session, text, attempts - 1)
@@ -30,7 +35,11 @@ defmodule ExampleWeb.LiveBreakingNewsTest do
     session
     |> visit("/live-breaking-news")
     |> assert_has(Query.css("h2", text: "Breaking News"))
-    |> assert_has(Query.css("p", text: "Add headlines and control the ticker speed; remove items from the list."))
+    |> assert_has(
+      Query.css("p",
+        text: "Add headlines and control the ticker speed; remove items from the list."
+      )
+    )
     |> assert_has(Query.css("[data-testid='breaking-news-new-headline']"))
 
     # Initial news has 5 items; at least one visible
@@ -39,7 +48,9 @@ defmodule ExampleWeb.LiveBreakingNewsTest do
     assert Enum.any?(items, fn el -> Wallaby.Element.text(el) =~ "Giant Pink Elephant" end)
   end
 
-  test "adding a headline via the UI shows it in the list and clears the input", %{session: session} do
+  test "adding a headline via the UI shows it in the list and clears the input", %{
+    session: session
+  } do
     session =
       session
       |> visit("/live-breaking-news")
@@ -91,9 +102,14 @@ defmodule ExampleWeb.LiveBreakingNewsTest do
     container = session |> find(Query.css("[data-testid='breaking-news-headlines']"))
     container_text = Wallaby.Element.text(container)
     found = String.contains?(container_text, text)
+
     cond do
-      not found -> session
-      attempts == 0 -> raise "timeout waiting for headline #{inspect(text)} to be removed"
+      not found ->
+        session
+
+      attempts == 0 ->
+        raise "timeout waiting for headline #{inspect(text)} to be removed"
+
       true ->
         :timer.sleep(100)
         wait_for_headline_removed(session, text, attempts - 1)
@@ -110,6 +126,7 @@ defmodule ExampleWeb.LiveBreakingNewsTest do
       _ ->
         if attempts == 0 do
           actual = Wallaby.Element.attr(ticker, "data-rate")
+
           raise "timeout waiting for ticker rate (expected: #{inspect(expected)}, actual: #{inspect(actual)})"
         end
 

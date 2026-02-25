@@ -25,7 +25,10 @@ defmodule ExampleWeb.PhoenixTest.LiveNotesOtpTest do
     conn
     |> visit("/live-notes-otp")
     |> assert_has("[data-testid='notes-otp-heading']", text: "Notes (OTP)")
-    |> assert_has("p", text: "Ecto structs are encoded automatically. Changes sync in real time across all browsers via PubSub.")
+    |> assert_has("p",
+      text:
+        "Ecto structs are encoded automatically. Changes sync in real time across all browsers via PubSub."
+    )
   end
 
   test "renders NotesApp with form and empty state or notes in props", %{conn: conn} do

@@ -23,7 +23,9 @@ defmodule ExampleWeb.PhoenixTest.LiveSlotsSimpleTest do
     conn
     |> visit("/live-slots-simple")
     |> assert_has("h2", text: "Simple slots")
-    |> assert_has("p", text: "Phoenix slots are passed into the Svelte component as the default slot content.")
+    |> assert_has("p",
+      text: "Phoenix slots are passed into the Svelte component as the default slot content."
+    )
   end
 
   test "renders Slots component with default slot content", %{conn: conn} do

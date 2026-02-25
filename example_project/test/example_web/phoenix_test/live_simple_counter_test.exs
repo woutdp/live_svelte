@@ -34,14 +34,19 @@ defmodule ExampleWeb.PhoenixTest.LiveSimpleCounterTest do
 
   defp assert_client_counter_rendered_from_state(conn) do
     conn
-    |> assert_has("[data-testid='simple-counter-client-value']", text: "#{@initial_client_value}", count: 2)
+    |> assert_has("[data-testid='simple-counter-client-value']",
+      text: "#{@initial_client_value}",
+      count: 2
+    )
   end
 
   test "renders page heading and description", %{conn: conn} do
     conn
     |> visit("/live-simple-counter")
     |> assert_has("h1", text: "Simple Counter Demo")
-    |> assert_has("p", text: "Same LiveView state drives the native counter and both Svelte components.")
+    |> assert_has("p",
+      text: "Same LiveView state drives the native counter and both Svelte components."
+    )
   end
 
   test "renders initial counter and two SimpleCounter Svelte components", %{conn: conn} do
@@ -108,7 +113,9 @@ defmodule ExampleWeb.PhoenixTest.LiveSimpleCounterTest do
     |> assert_client_counter_rendered_from_state()
   end
 
-  test "props diffing: after increment, data-use-diff is true and props reflect new value", %{conn: conn} do
+  test "props diffing: after increment, data-use-diff is true and props reflect new value", %{
+    conn: conn
+  } do
     conn
     |> visit("/live-simple-counter")
     |> assert_has("[data-testid='live-simple-counter-value']", text: "10")

@@ -12,12 +12,17 @@ defmodule ExampleWeb.LiveClientSideLoading do
       </p>
 
       <div class="flex flex-col sm:flex-row flex-wrap justify-center gap-6 w-full max-w-3xl">
-        <section data-testid="client-side-loading-client-section" class="card bg-base-100 shadow-md border border-base-300/50 overflow-hidden w-full max-w-sm">
+        <section
+          data-testid="client-side-loading-client-section"
+          class="card bg-base-100 shadow-md border border-base-300/50 overflow-hidden w-full max-w-sm"
+        >
           <div class="card-body gap-4 p-5">
             <span class="badge badge-ghost badge-sm font-medium text-base-content/70 w-fit">
               Client side
             </span>
-            <p class="text-xs text-base-content/50">Recommended: no SSR, loading slot shown until hydrated.</p>
+            <p class="text-xs text-base-content/50">
+              Recommended: no SSR, loading slot shown until hydrated.
+            </p>
             <.svelte name="ClientSideLoading" ssr={false}>
               <:loading>
                 <div class="flex items-center gap-2 py-4">
@@ -29,7 +34,10 @@ defmodule ExampleWeb.LiveClientSideLoading do
           </div>
         </section>
 
-        <section data-testid="client-side-loading-server-section" class="card bg-base-100 shadow-md border border-base-300/50 overflow-hidden w-full max-w-sm border-warning/50">
+        <section
+          data-testid="client-side-loading-server-section"
+          class="card bg-base-100 shadow-md border border-base-300/50 overflow-hidden w-full max-w-sm border-warning/50"
+        >
           <div class="card-body gap-4 p-5">
             <span class="badge badge-warning badge-sm font-medium w-fit">
               Server side (avoid)

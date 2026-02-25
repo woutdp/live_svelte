@@ -15,9 +15,14 @@ defmodule ExampleWeb.LiveChatTest do
   defp wait_for_chat_bubble_with_text(session, text, attempts \\ 50) do
     bubbles = chat_bubbles(session)
     found = Enum.any?(bubbles, fn el -> Wallaby.Element.text(el) =~ text end)
+
     cond do
-      found -> session
-      attempts == 0 -> raise "timeout waiting for chat bubble containing #{inspect(text)}"
+      found ->
+        session
+
+      attempts == 0 ->
+        raise "timeout waiting for chat bubble containing #{inspect(text)}"
+
       true ->
         :timer.sleep(100)
         wait_for_chat_bubble_with_text(session, text, attempts - 1)
@@ -28,12 +33,18 @@ defmodule ExampleWeb.LiveChatTest do
     session
     |> visit("/live-chat")
     |> assert_has(Query.css("h2", text: "Chat"))
-    |> assert_has(Query.css("p", text: "Enter your name to join; then send messages. Your name labels your bubbles."))
+    |> assert_has(
+      Query.css("p",
+        text: "Enter your name to join; then send messages. Your name labels your bubbles."
+      )
+    )
     |> assert_has(Query.css("[data-testid='chat-join-name']"))
     |> assert_has(Query.css("[data-testid='chat-join-form'] button", text: "Join"))
   end
 
-  test "useLiveConnection: reconnecting banner absent when connected (happy path)", %{session: session} do
+  test "useLiveConnection: reconnecting banner absent when connected (happy path)", %{
+    session: session
+  } do
     session
     |> visit("/live-chat")
     |> fill_in(Query.css("[data-testid='chat-join-name']"), with: "Alice")

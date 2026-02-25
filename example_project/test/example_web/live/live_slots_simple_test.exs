@@ -12,7 +12,11 @@ defmodule ExampleWeb.LiveSlotsSimpleTest do
     session
     |> visit("/live-slots-simple")
     |> assert_has(Query.css("h2", text: "Simple slots"))
-    |> assert_has(Query.css("p", text: "Phoenix slots are passed into the Svelte component as the default slot content."))
+    |> assert_has(
+      Query.css("p",
+        text: "Phoenix slots are passed into the Svelte component as the default slot content."
+      )
+    )
 
     # Slots card: badge and slot content
     session |> assert_has(Query.css("[data-testid='slots-card']"))

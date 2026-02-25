@@ -12,13 +12,19 @@ defmodule ExampleWeb.LiveLightsTest do
     if attempts == 0 do
       el = session |> find(Query.css("[data-testid='light-brightness-value']"))
       actual = Wallaby.Element.text(el)
+
       raise "timeout waiting for brightness (expected: #{inspect(expected)}, actual: #{inspect(actual)})"
     end
 
     el = session |> find(Query.css("[data-testid='light-brightness-value']"))
+
     case Wallaby.Element.text(el) do
-      ^expected -> session
-      _ -> :timer.sleep(100); wait_for_brightness(session, expected, attempts - 1)
+      ^expected ->
+        session
+
+      _ ->
+        :timer.sleep(100)
+        wait_for_brightness(session, expected, attempts - 1)
     end
   end
 
@@ -28,7 +34,9 @@ defmodule ExampleWeb.LiveLightsTest do
     |> find(Query.css("h1", text: "Light Bulb Controller"))
   end
 
-  test "renders LightStatusBar and LightControllers with initial brightness 10%", %{session: session} do
+  test "renders LightStatusBar and LightControllers with initial brightness 10%", %{
+    session: session
+  } do
     session = visit(session, "/live-lights")
 
     session |> find(Query.css("[data-name='LightStatusBar']"))

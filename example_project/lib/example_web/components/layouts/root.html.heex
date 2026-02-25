@@ -5,13 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
     <.live_title suffix=" · Phoenix Framework">
-      <%= assigns[:page_title] || "Example" %>
+      {assigns[:page_title] || "Example"}
     </.live_title>
-    <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
-    <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
-    </script>
+    <LiveSvelte.Reload.vite_assets assets={["/js/app.vite.js"]}>
+      <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
+      <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
+      </script>
+    </LiveSvelte.Reload.vite_assets>
   </head>
   <body class="bg-base-200 antialiased" data-theme="light">
-    <%= @inner_content %>
+    {@inner_content}
   </body>
 </html>

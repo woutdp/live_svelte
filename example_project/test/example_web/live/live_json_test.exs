@@ -16,9 +16,14 @@ defmodule ExampleWeb.LiveJsonTest do
   defp wait_for_key_count(session, expected, attempts \\ 50) do
     dd = first_key_count_dd(session)
     actual = dd && Wallaby.Element.text(dd)
+
     cond do
-      actual == expected -> session
-      attempts == 0 -> raise "timeout waiting for key count #{inspect(expected)}, got #{inspect(actual)}"
+      actual == expected ->
+        session
+
+      attempts == 0 ->
+        raise "timeout waiting for key count #{inspect(expected)}, got #{inspect(actual)}"
+
       true ->
         :timer.sleep(100)
         wait_for_key_count(session, expected, attempts - 1)
@@ -29,7 +34,12 @@ defmodule ExampleWeb.LiveJsonTest do
     session
     |> visit("/live-json")
     |> assert_has(Query.css("h2", text: "Live JSON"))
-    |> assert_has(Query.css("p", text: "Large payloads are patched over the wire. Compare SSR vs no-SSR and watch the WebSocket traffic when removing elements."))
+    |> assert_has(
+      Query.css("p",
+        text:
+          "Large payloads are patched over the wire. Compare SSR vs no-SSR and watch the WebSocket traffic when removing elements."
+      )
+    )
   end
 
   test "renders two sections with key length and Remove element button", %{session: session} do

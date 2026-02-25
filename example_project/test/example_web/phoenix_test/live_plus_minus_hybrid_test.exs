@@ -22,7 +22,7 @@ defmodule ExampleWeb.PhoenixTest.LivePlusMinusHybridTest do
     :ok
   end
 
-  test "renders page heading and description", %{conn: conn} do
+         test "renders page heading and description", %{conn: conn} do
     conn
     |> visit("/live-plus-minus-hybrid")
     |> assert_has("h2", text: "Plus / Minus (Hybrid)")

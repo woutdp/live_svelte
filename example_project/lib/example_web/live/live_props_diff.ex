@@ -22,8 +22,9 @@ defmodule ExampleWeb.LivePropsDiff do
           Props Diff Demo
         </h1>
         <p class="text-sm text-base-content/50 mb-6 text-center">
-          Click a button, then compare the two payloads below: <strong>diff on</strong> sends only changed keys,
-          <strong>diff off</strong> sends the full object every time.
+          Click a button, then compare the two payloads below: <strong>diff on</strong>
+          sends only changed keys, <strong>diff off</strong>
+          sends the full object every time.
         </p>
 
         <div class="flex flex-col gap-6" id="props-diff-demo-root" phx-hook="PropsDiffPayloadDisplay">
@@ -47,16 +48,12 @@ defmodule ExampleWeb.LivePropsDiff do
                 >
                   Increment B
                 </button>
-                <button
-                  data-testid="props-diff-inc-c"
-                  class="btn btn-sm btn-accent"
-                  phx-click="inc_c"
-                >
+                <button data-testid="props-diff-inc-c" class="btn btn-sm btn-accent" phx-click="inc_c">
                   Increment C
                 </button>
               </div>
               <p class="text-xs text-base-content/50">
-                Server state: A=<%= @a %>, B=<%= @b %>, C=<%= @c %>
+                Server state: A={@a}, B={@b}, C={@c}
               </p>
             </div>
           </section>
@@ -92,20 +89,35 @@ defmodule ExampleWeb.LivePropsDiff do
             </section>
           </div>
 
-          <section class="card bg-base-100 shadow-lg border border-base-300/50" aria-label="Payload in DOM">
+          <section
+            class="card bg-base-100 shadow-lg border border-base-300/50"
+            aria-label="Payload in DOM"
+          >
             <div class="card-body gap-2">
-              <h2 class="text-lg font-semibold text-base-content">Payload in DOM (<code>data-props</code>)</h2>
+              <h2 class="text-lg font-semibold text-base-content">
+                Payload in DOM (<code>data-props</code>)
+              </h2>
               <p class="text-xs text-base-content/50 mb-2">
                 After each update, the diff-on component receives only changed keys; the diff-off component receives the full object.
               </p>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <p class="text-xs font-medium text-base-content/70 mb-1">diff on (only changed keys)</p>
-                  <pre id="payload-display-diff-on" class="bg-base-200 text-xs p-3 rounded-lg overflow-x-auto min-h-[4rem]" data-testid="payload-diff-on">—</pre>
+                  <p class="text-xs font-medium text-base-content/70 mb-1">
+                    diff on (only changed keys)
+                  </p>
+                  <pre
+                    id="payload-display-diff-on"
+                    class="bg-base-200 text-xs p-3 rounded-lg overflow-x-auto min-h-[4rem]"
+                    data-testid="payload-diff-on"
+                  >—</pre>
                 </div>
                 <div>
                   <p class="text-xs font-medium text-base-content/70 mb-1">diff off (full object)</p>
-                  <pre id="payload-display-diff-off" class="bg-base-200 text-xs p-3 rounded-lg overflow-x-auto min-h-[4rem]" data-testid="payload-diff-off">—</pre>
+                  <pre
+                    id="payload-display-diff-off"
+                    class="bg-base-200 text-xs p-3 rounded-lg overflow-x-auto min-h-[4rem]"
+                    data-testid="payload-diff-off"
+                  >—</pre>
                 </div>
               </div>
             </div>

@@ -46,7 +46,9 @@ defmodule ExampleWeb.LiveUploadTest do
 
   # Create a temp file for upload tests, cleaned up after the test.
   defp tmp_upload_file(content \\ "test upload content") do
-    path = Path.join(System.tmp_dir!(), "live_upload_test_#{System.unique_integer([:positive])}.txt")
+    path =
+      Path.join(System.tmp_dir!(), "live_upload_test_#{System.unique_integer([:positive])}.txt")
+
     File.write!(path, content)
     path
   end

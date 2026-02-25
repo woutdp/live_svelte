@@ -9,7 +9,8 @@ defmodule ExampleWeb.LiveSimpleCounterTest do
   """
   @moduletag :e2e
 
-  defp native_increment_js, do: "document.querySelector(\"[data-testid='live-simple-counter-increment']\").click()"
+  defp native_increment_js,
+    do: "document.querySelector(\"[data-testid='live-simple-counter-increment']\").click()"
 
   defp click_native_increment(session) do
     session |> Wallaby.Browser.execute_script(native_increment_js())
@@ -20,17 +21,22 @@ defmodule ExampleWeb.LiveSimpleCounterTest do
     assert length(client_values) == 2, "expected 2 SimpleCounter client value elements"
     actual_first = Wallaby.Element.text(Enum.at(client_values, 0))
     actual_second = Wallaby.Element.text(Enum.at(client_values, 1))
+
     assert actual_first == expected_first,
            "first component client state was affected by server increment (expected: #{expected_first}, got: #{actual_first})"
+
     assert actual_second == expected_second,
            "second component client state was affected by server increment (expected: #{expected_second}, got: #{actual_second})"
+
     session
   end
 
   defp wait_for_client_counters(session, count, attempts \\ 30)
   defp wait_for_client_counters(_session, _count, 0), do: :ok
+
   defp wait_for_client_counters(session, count, attempts) do
     els = session |> all(Query.css("[data-testid='simple-counter-client-value']"))
+
     if length(els) >= count do
       :ok
     else
@@ -47,14 +53,20 @@ defmodule ExampleWeb.LiveSimpleCounterTest do
   defp wait_for_counter_value(session, expected, 0) do
     el = session |> find(Query.css("[data-testid='live-simple-counter-value']"))
     actual = Wallaby.Element.text(el)
+
     raise "timeout waiting for counter value (expected: #{inspect(expected)}, actual: #{inspect(actual)})"
   end
 
   defp wait_for_counter_value(session, expected, attempts) do
     el = session |> find(Query.css("[data-testid='live-simple-counter-value']"))
+
     case Wallaby.Element.text(el) do
-      ^expected -> session
-      _ -> :timer.sleep(100); wait_for_counter_value(session, expected, attempts - 1)
+      ^expected ->
+        session
+
+      _ ->
+        :timer.sleep(100)
+        wait_for_counter_value(session, expected, attempts - 1)
     end
   end
 
@@ -91,9 +103,11 @@ defmodule ExampleWeb.LiveSimpleCounterTest do
       |> click(Query.css("[data-testid='live-simple-counter-increment']"))
 
     # Each SimpleCounter has a Server card with span.text-brand for the server number
-    svelte_server_numbers = session |> all(Query.css("[data-name='SimpleCounter'] span.text-brand"))
+    svelte_server_numbers =
+      session |> all(Query.css("[data-name='SimpleCounter'] span.text-brand"))
+
     assert length(svelte_server_numbers) >= 2
-    for el <- Enum.take(svelte_server_numbers, 2), do: assert Wallaby.Element.text(el) == "11"
+    for el <- Enum.take(svelte_server_numbers, 2), do: assert(Wallaby.Element.text(el) == "11")
   end
 
   test "renders client counter at 1 in each SimpleCounter", %{session: session} do
@@ -102,7 +116,7 @@ defmodule ExampleWeb.LiveSimpleCounterTest do
     wait_for_client_counters(session, 2)
     client_values = session |> all(Query.css("[data-testid='simple-counter-client-value']"))
     assert length(client_values) == 2
-    for el <- client_values, do: assert Wallaby.Element.text(el) == "1"
+    for el <- client_values, do: assert(Wallaby.Element.text(el) == "1")
   end
 
   test "clicking client +1 updates only that component's client counter", %{session: session} do
@@ -111,7 +125,9 @@ defmodule ExampleWeb.LiveSimpleCounterTest do
     session |> find(Query.css("[data-testid='live-simple-counter-value']"))
 
     # Click the first SimpleCounter's client +1 button
-    [first_client_btn | _] = session |> all(Query.css("[data-testid='simple-counter-client-increment']"))
+    [first_client_btn | _] =
+      session |> all(Query.css("[data-testid='simple-counter-client-increment']"))
+
     Wallaby.Element.click(first_client_btn)
 
     client_values = session |> all(Query.css("[data-testid='simple-counter-client-value']"))
@@ -126,7 +142,9 @@ defmodule ExampleWeb.LiveSimpleCounterTest do
     session |> find(Query.css("[data-testid='live-simple-counter-value']", text: "10"))
 
     # Bump only the first component's client counter: 1 → 2
-    [first_client_btn | _] = session |> all(Query.css("[data-testid='simple-counter-client-increment']"))
+    [first_client_btn | _] =
+      session |> all(Query.css("[data-testid='simple-counter-client-increment']"))
+
     Wallaby.Element.click(first_client_btn)
     :timer.sleep(200)
     assert_client_values_unchanged(session, "2", "1")
@@ -141,7 +159,9 @@ defmodule ExampleWeb.LiveSimpleCounterTest do
     session |> find(Query.css("[data-testid='live-simple-counter-value']", text: "10"))
 
     # First component client: 1 → 2 → 3
-    [first_client_btn | _] = session |> all(Query.css("[data-testid='simple-counter-client-increment']"))
+    [first_client_btn | _] =
+      session |> all(Query.css("[data-testid='simple-counter-client-increment']"))
+
     Wallaby.Element.click(first_client_btn)
     :timer.sleep(100)
     Wallaby.Element.click(first_client_btn)
@@ -161,7 +181,9 @@ defmodule ExampleWeb.LiveSimpleCounterTest do
     assert_client_values_unchanged(session, "3", "1")
   end
 
-  test "client state on second component only is unchanged by server increments", %{session: session} do
+  test "client state on second component only is unchanged by server increments", %{
+    session: session
+  } do
     session = visit(session, "/live-simple-counter")
     wait_for_client_counters(session, 2)
     session |> find(Query.css("[data-testid='live-simple-counter-value']", text: "10"))
@@ -180,7 +202,9 @@ defmodule ExampleWeb.LiveSimpleCounterTest do
     assert_client_values_unchanged(session, "1", "2")
   end
 
-  test "server increment never resets or changes client state on both components", %{session: session} do
+  test "server increment never resets or changes client state on both components", %{
+    session: session
+  } do
     session = visit(session, "/live-simple-counter")
     wait_for_client_counters(session, 2)
     session |> find(Query.css("[data-testid='live-simple-counter-value']", text: "10"))
@@ -192,12 +216,14 @@ defmodule ExampleWeb.LiveSimpleCounterTest do
       Wallaby.Element.click(Enum.at(client_btns, 0))
       :timer.sleep(100)
     end
+
     :timer.sleep(100)
     # Second component: 1 → 2 → 3 → 4 → 5
     for _ <- 1..4 do
       Wallaby.Element.click(Enum.at(client_btns, 1))
       :timer.sleep(80)
     end
+
     :timer.sleep(200)
     assert_client_values_unchanged(session, "4", "5")
 
@@ -210,7 +236,8 @@ defmodule ExampleWeb.LiveSimpleCounterTest do
     assert_client_values_unchanged(session, "4", "5")
   end
 
-  test "server increments first, then client state: client state still unaffected by later server increments", %{session: session} do
+  test "server increments first, then client state: client state still unaffected by later server increments",
+       %{session: session} do
     session = visit(session, "/live-simple-counter")
     wait_for_client_counters(session, 2)
     session |> find(Query.css("[data-testid='live-simple-counter-value']", text: "10"))
@@ -223,7 +250,14 @@ defmodule ExampleWeb.LiveSimpleCounterTest do
     client_btns = session |> all(Query.css("[data-testid='simple-counter-client-increment']"))
     Wallaby.Element.click(Enum.at(client_btns, 0))
     :timer.sleep(100)
-    for _ <- 1..3, do: (Wallaby.Element.click(Enum.at(client_btns, 1)); :timer.sleep(80))
+
+    for _ <- 1..3,
+        do:
+          (
+            Wallaby.Element.click(Enum.at(client_btns, 1))
+            :timer.sleep(80)
+          )
+
     :timer.sleep(200)
     assert_client_values_unchanged(session, "2", "4")
 

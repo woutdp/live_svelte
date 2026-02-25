@@ -24,7 +24,10 @@ defmodule ExampleWeb.PhoenixTest.LiveSlotsDynamicTest do
     conn
     |> visit("/live-slots-dynamic")
     |> assert_has("h2", text: "Dynamic slots")
-    |> assert_has("p", text: "Default slot and named slot (:subtitle) both receive LiveView state; the button updates the number.")
+    |> assert_has("p",
+      text:
+        "Default slot and named slot (:subtitle) both receive LiveView state; the button updates the number."
+    )
   end
 
   test "renders Slots with default and subtitle slots showing initial number", %{conn: conn} do

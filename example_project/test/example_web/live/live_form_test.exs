@@ -72,7 +72,9 @@ defmodule ExampleWeb.LiveFormTest do
     |> assert_has(Query.css("[data-testid='form-email-error']"))
   end
 
-  test "submitting valid form resets fields (re-submit verifies empty values)", %{session: session} do
+  test "submitting valid form resets fields (re-submit verifies empty values)", %{
+    session: session
+  } do
     session =
       session
       |> visit("/live-form")

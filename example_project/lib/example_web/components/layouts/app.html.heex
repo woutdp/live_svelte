@@ -9,7 +9,11 @@
           <%!-- Logo and mobile menu button --%>
           <div class="flex items-center gap-4">
             <%!-- Mobile menu button --%>
-            <label for="mobile-drawer" class="lg:hidden -m-2.5 p-2.5 text-zinc-700 cursor-pointer" aria-label="Open sidebar">
+            <label
+              for="mobile-drawer"
+              class="lg:hidden -m-2.5 p-2.5 text-zinc-700 cursor-pointer"
+              aria-label="Open sidebar"
+            >
               <.icon name="hero-bars-3" class="h-6 w-6" />
             </label>
 
@@ -45,7 +49,7 @@
     </header>
 
     <main class="p-4 sm:py-8 sm:px-6 lg:px-8 min-h-[calc(100vh-65px)]">
-      <%= @inner_content %>
+      {@inner_content}
     </main>
   </div>
 

@@ -25,7 +25,9 @@ defmodule ExampleWeb.PhoenixTest.LiveBreakingNewsTest do
     conn
     |> visit("/live-breaking-news")
     |> assert_has("h2", text: "Breaking News")
-    |> assert_has("p", text: "Add headlines and control the ticker speed; remove items from the list.")
+    |> assert_has("p",
+      text: "Add headlines and control the ticker speed; remove items from the list."
+    )
   end
 
   test "renders inline Svelte mount and initial news in props", %{conn: conn} do
