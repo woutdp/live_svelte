@@ -10,8 +10,16 @@ import topbar from "../vendor/topbar"
 import {createLiveJsonHooks} from "live_json"
 import {getHooks} from "live_svelte"
 
-// Vite-native glob (replaces `import * as Components from "../svelte/**/*.svelte"`)
-const Components = import.meta.glob('../svelte/**/*.svelte', { eager: true })
+// import.meta.glob returns Record<path, module> (e.g. {"../svelte/Counter.svelte": {default: ...}}).
+// getHooks expects Record<name, Component> (e.g. {"Counter": Component}).
+// Transform: strip path prefix and .svelte extension to get the component name.
+const rawComponents = import.meta.glob('../svelte/**/*.svelte', { eager: true })
+const Components = Object.fromEntries(
+  Object.entries(rawComponents).map(([path, mod]) => [
+    path.replace('../svelte/', '').replace('.svelte', ''),
+    mod.default,
+  ])
+)
 
 function formatPayload(str) {
     if (!str || str === "—") return "—"

@@ -57,4 +57,21 @@ describe("normalizeComponents", () => {
     const result = normalizeComponents(components);
     expect(result).toEqual({ OnlyOne: ComponentA });
   });
+
+  it("passes through pre-normalized Record<name, Component> unchanged (Vite import.meta.glob usage)", () => {
+    // import.meta.glob returns Record<path, module>. The recommended transformation
+    // in server.vite.js and app.vite.js converts this to Record<name, Component>
+    // before passing to getRender/getHooks. Verify normalizeComponents passes it through
+    // and component lookup by name works.
+    const CounterComponent = {};
+    const NavigationComponent = {};
+    // Simulates post-transformation shape: { "Counter": Component, "Navigation": Component }
+    const components = {
+      Counter: CounterComponent,
+      Navigation: NavigationComponent,
+    } as unknown as Parameters<typeof normalizeComponents>[0];
+    const result = normalizeComponents(components);
+    expect(result).toHaveProperty("Counter", CounterComponent);
+    expect(result).toHaveProperty("Navigation", NavigationComponent);
+  });
 });

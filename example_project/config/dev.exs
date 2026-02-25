@@ -21,6 +21,9 @@ config :example, ExampleWeb.Endpoint,
   code_reloader: true,
   debug_errors: true,
   secret_key_base: "cZ19cfxyAQ7Nr/qlKBKxr/jRRgW6wk8MQEgJrMNFjfOPEo6hSY1v50sFb0vIjv3P",
+  # NOTE: When using Vite dev server (see vite_host config below), comment out
+  # the `node:` watcher — Vite handles JS compilation. Run `cd assets && npx vite`
+  # in a separate terminal instead.
   watchers: [
     node: ["build.js", "--watch", cd: Path.expand("../assets", __DIR__)],
     tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]}
