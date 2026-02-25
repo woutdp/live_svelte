@@ -36,9 +36,9 @@ defmodule LiveSvelte.Reload do
 
     ~H"""
     <%= if @vite_host do %>
-      <script type="module" src={Path.join(@vite_host, "@vite/client")}></script>
-      <link :for={path <- @stylesheets} rel="stylesheet" href={Path.join(@vite_host, path)} />
-      <script :for={path <- @javascripts} type="module" src={Path.join(@vite_host, path)}></script>
+      <script type="module" src={"#{@vite_host}/@vite/client"}></script>
+      <link :for={path <- @stylesheets} rel="stylesheet" href={"#{@vite_host}#{path}"} />
+      <script :for={path <- @javascripts} type="module" src={"#{@vite_host}#{path}"}></script>
     <% else %>
       <%= render_slot(@inner_block) %>
     <% end %>
