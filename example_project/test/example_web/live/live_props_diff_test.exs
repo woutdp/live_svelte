@@ -25,9 +25,9 @@ defmodule ExampleWeb.LivePropsDiffTest do
     assert length(values_b) == 2
     assert length(values_c) == 2
 
-    for el <- values_a, do: assert Wallaby.Element.text(el) == "1"
-    for el <- values_b, do: assert Wallaby.Element.text(el) == "2"
-    for el <- values_c, do: assert Wallaby.Element.text(el) == "3"
+    for el <- values_a, do: assert(Wallaby.Element.text(el) == "1")
+    for el <- values_b, do: assert(Wallaby.Element.text(el) == "2")
+    for el <- values_c, do: assert(Wallaby.Element.text(el) == "3")
   end
 
   test "Increment A updates both Svelte components to A=2", %{session: session} do
@@ -38,7 +38,7 @@ defmodule ExampleWeb.LivePropsDiffTest do
 
     values_a = session |> all(Query.css("[data-testid='props-diff-value-a']"))
     assert length(values_a) == 2
-    for el <- values_a, do: assert Wallaby.Element.text(el) == "2"
+    for el <- values_a, do: assert(Wallaby.Element.text(el) == "2")
   end
 
   test "Increment B then C updates displayed values", %{session: session} do
@@ -52,8 +52,8 @@ defmodule ExampleWeb.LivePropsDiffTest do
     values_c = session |> all(Query.css("[data-testid='props-diff-value-c']"))
     assert length(values_b) == 2
     assert length(values_c) == 2
-    for el <- values_b, do: assert Wallaby.Element.text(el) == "3"
-    for el <- values_c, do: assert Wallaby.Element.text(el) == "4"
+    for el <- values_b, do: assert(Wallaby.Element.text(el) == "3")
+    for el <- values_c, do: assert(Wallaby.Element.text(el) == "4")
   end
 
   test "multiple increments leave all displayed values in sync", %{session: session} do
@@ -66,7 +66,7 @@ defmodule ExampleWeb.LivePropsDiffTest do
 
     values_a = session |> all(Query.css("[data-testid='props-diff-value-a']"))
     values_b = session |> all(Query.css("[data-testid='props-diff-value-b']"))
-    for el <- values_a, do: assert Wallaby.Element.text(el) == "3"
-    for el <- values_b, do: assert Wallaby.Element.text(el) == "3"
+    for el <- values_a, do: assert(Wallaby.Element.text(el) == "3")
+    for el <- values_b, do: assert(Wallaby.Element.text(el) == "3")
   end
 end

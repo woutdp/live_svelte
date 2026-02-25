@@ -9,39 +9,49 @@ defmodule ExampleWeb.LiveStaticColor do
   @impl true
   def render(assigns) do
     ~H"""
-     <h1 class="text-center text-2xl font-light my-4">
-          Static Color Demo
-        </h1>
-        <p class="text-sm text-base-content/50 mb-8 text-center">
-          Passing dynamic props to a list of Svelte components from LiveView.
-        </p>
+    <h1 class="text-center text-2xl font-light my-4">
+      Static Color Demo
+    </h1>
+    <p class="text-sm text-base-content/50 mb-8 text-center">
+      Passing dynamic props to a list of Svelte components from LiveView.
+    </p>
     <div class="border-1 border-[var(--color-brand)] shadow-lg card p-5">
       <div class="badge badge-outline badge-sm font-medium text-base-content/70 w-fit">LiveView</div>
       <div class="flex flex-row my-4 justify-center items-center">
         <div class="flex flex-col justify-center items-center gap-4">
           <div>
             <div class="w-full border-1 border-gray-500 card card-lg p-5 flex flex-col gap-5 justify-center items-center">
-              <div class="badge badge-outline badge-sm font-medium text-base-content/70 text-nowrap">LiveView Component</div>
-            <div class="flex flex-col md:flex-row gap-4 items-center">
-              <button class="btn bg-slate-50" phx-click="change_color_to_white">
-                Change color to white
-              </button>
-              <button class="btn bg-red-500 text-white" phx-click="change_color_to_red">
-                Change color to red
-              </button>
-              <button class="btn bg-[var(--color-brand)] text-white" phx-click="add_element">Add Element</button>
-            </div>
-              <div class="text-sm text-base-content/50 text-nowrap">Total elements: <span class="font-bold text-lg">{length(@list)}</span></div>
+              <div class="badge badge-outline badge-sm font-medium text-base-content/70 text-nowrap">
+                LiveView Component
+              </div>
+              <div class="flex flex-col md:flex-row gap-4 items-center">
+                <button class="btn bg-slate-50" phx-click="change_color_to_white">
+                  Change color to white
+                </button>
+                <button class="btn bg-red-500 text-white" phx-click="change_color_to_red">
+                  Change color to red
+                </button>
+                <button class="btn bg-[var(--color-brand)] text-white" phx-click="add_element">
+                  Add Element
+                </button>
+              </div>
+              <div class="text-sm text-base-content/50 text-nowrap">
+                Total elements: <span class="font-bold text-lg">{length(@list)}</span>
+              </div>
             </div>
           </div>
-          <h3 class="my-4 text-base-content">Use LiveSvelte via a file based component (Static.svelte)</h3>
+          <h3 class="my-4 text-base-content">
+            Use LiveSvelte via a file based component (Static.svelte)
+          </h3>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             <%= for {_item, index} <- Enum.with_index(@list) do %>
               <.svelte name="Static" props={%{color: @color, index: index}} />
             <% end %>
           </div>
           <div class="divider"></div>
-          <h3 class="mb-4 text-base-content">Use LiveSvelte as a function via the (~V sigil) to render the Svelte component</h3>
+          <h3 class="mb-4 text-base-content">
+            Use LiveSvelte as a function via the (~V sigil) to render the Svelte component
+          </h3>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             <%= for {_item, index} <- Enum.with_index(@list) do %>
               <.static_svelte_component color={@color} index={index} />

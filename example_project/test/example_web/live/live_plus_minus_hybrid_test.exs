@@ -13,13 +13,19 @@ defmodule ExampleWeb.LivePlusMinusHybridTest do
     if attempts == 0 do
       el = session |> find(Query.css("[data-testid='hybrid-plus-minus-value']"))
       actual = Wallaby.Element.text(el)
+
       raise "timeout waiting for value (expected: #{inspect(expected)}, actual: #{inspect(actual)})"
     end
 
     el = session |> find(Query.css("[data-testid='hybrid-plus-minus-value']"))
+
     case Wallaby.Element.text(el) do
-      ^expected -> session
-      _ -> :timer.sleep(100); wait_for_value(session, expected, attempts - 1)
+      ^expected ->
+        session
+
+      _ ->
+        :timer.sleep(100)
+        wait_for_value(session, expected, attempts - 1)
     end
   end
 
@@ -73,7 +79,9 @@ defmodule ExampleWeb.LivePlusMinusHybridTest do
     assert Wallaby.Element.text(value) == "12"
   end
 
-  test "multiple plus clicks with stepper 2 keep stepper at 2 and increment by 2 each time", %{session: session} do
+  test "multiple plus clicks with stepper 2 keep stepper at 2 and increment by 2 each time", %{
+    session: session
+  } do
     session =
       session
       |> visit("/live-plus-minus-hybrid")

@@ -25,7 +25,10 @@ defmodule ExampleWeb.PhoenixTest.LiveJsonTest do
     conn
     |> visit("/live-json")
     |> assert_has("h2", text: "Live JSON")
-    |> assert_has("p", text: "Large payloads are patched over the wire. Compare SSR vs no-SSR and watch the WebSocket traffic when removing elements.")
+    |> assert_has("p",
+      text:
+        "Large payloads are patched over the wire. Compare SSR vs no-SSR and watch the WebSocket traffic when removing elements."
+    )
   end
 
   test "renders two sections (SSR and No SSR) with LiveJson component", %{conn: conn} do

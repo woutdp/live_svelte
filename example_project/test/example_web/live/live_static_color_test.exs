@@ -13,7 +13,11 @@ defmodule ExampleWeb.LiveStaticColorTest do
       session
       |> visit("/live-static-color")
       |> assert_has(Query.css("h1", text: "Static Color Demo"))
-      |> assert_has(Query.css("p", text: "Passing dynamic props to a list of Svelte components from LiveView."))
+      |> assert_has(
+        Query.css("p",
+          text: "Passing dynamic props to a list of Svelte components from LiveView."
+        )
+      )
 
     # There are two Svelte grids (file-based + ~V sigil), each rendering the same color span.
     session = wait_for_svelte_count(session, 6)
@@ -25,7 +29,9 @@ defmodule ExampleWeb.LiveStaticColorTest do
     end
   end
 
-  test "adding an element increases Svelte component count and preserves all existing ones", %{session: session} do
+  test "adding an element increases Svelte component count and preserves all existing ones", %{
+    session: session
+  } do
     session = visit(session, "/live-static-color")
     session = wait_for_svelte_count(session, 6)
 
@@ -50,7 +56,7 @@ defmodule ExampleWeb.LiveStaticColorTest do
     session = wait_for_svelte_count(session, 6)
     svelte_values = session |> all(Query.css("[data-testid='static-color-svelte-value']"))
     assert length(svelte_values) == 6
-    for value <- svelte_values, do: assert Wallaby.Element.text(value) == "RED"
+    for value <- svelte_values, do: assert(Wallaby.Element.text(value) == "RED")
   end
 
   test "adding elements after color change preserves color in all components", %{session: session} do
@@ -64,14 +70,19 @@ defmodule ExampleWeb.LiveStaticColorTest do
     session = wait_for_svelte_count(session, 8)
     svelte_values = session |> all(Query.css("[data-testid='static-color-svelte-value']"))
     assert length(svelte_values) == 8
-    for value <- svelte_values, do: assert Wallaby.Element.text(value) == "RED"
+    for value <- svelte_values, do: assert(Wallaby.Element.text(value) == "RED")
   end
 
   defp wait_for_svelte_count(session, expected, attempts \\ 80) do
     count = session |> all(Query.css("[data-testid='static-color-svelte-value']")) |> length()
+
     cond do
-      count >= expected -> session
-      attempts == 0 -> raise "timeout waiting for #{expected} Svelte value elements, got #{count}"
+      count >= expected ->
+        session
+
+      attempts == 0 ->
+        raise "timeout waiting for #{expected} Svelte value elements, got #{count}"
+
       true ->
         :timer.sleep(100)
         wait_for_svelte_count(session, expected, attempts - 1)

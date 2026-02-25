@@ -25,10 +25,12 @@ defmodule ExampleWeb.LiveNavigation do
     <div class="flex flex-col justify-center items-center gap-6 p-6">
       <h2 class="text-center text-2xl font-light my-4">Navigation (useLiveNavigation)</h2>
       <p class="text-sm text-base-content/50 text-center max-w-md">
-        Client-side navigation with <code>patch()</code> and <code>navigate()</code>
-        from Svelte without full page reloads, plus the <code>Link</code> component.
+        Client-side navigation with <code>patch()</code>
+        and <code>navigate()</code>
+        from Svelte without full page reloads, plus the <code>Link</code>
+        component.
       </p>
-      <.svelte name="Navigation" props={%{page: @page, query: @query}} socket={@socket} ssr={false} />
+      <.svelte name="Navigation" props={%{page: @page, query: @query}} socket={@socket} />
     </div>
     """
   end

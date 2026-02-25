@@ -23,14 +23,13 @@ defmodule ExampleWeb.LiveIdListDiff do
     ~H"""
     <div class="min-h-screen bg-base-200/40 py-8 px-4">
       <div class="max-w-2xl mx-auto">
-        <h1
-          class="text-center text-2xl font-light my-4"
-          data-testid="id-list-diff-title"
-        >
+        <h1 class="text-center text-2xl font-light my-4" data-testid="id-list-diff-title">
           ID-Based List Diffing Demo
         </h1>
         <p class="text-sm text-base-content/50 mb-6 text-center">
-          Inserts and deletes produce minimal JSON Patch ops because list items carry an <code>:id</code> field.
+          Inserts and deletes produce minimal JSON Patch ops because list items carry an
+          <code>:id</code>
+          field.
         </p>
 
         <div class="card bg-base-100 shadow-lg border border-base-300/50 mb-6">
@@ -39,18 +38,10 @@ defmodule ExampleWeb.LiveIdListDiff do
               LiveView controls
             </span>
             <div class="flex flex-wrap gap-3">
-              <button
-                data-testid="insert-item"
-                class="btn btn-sm btn-primary"
-                phx-click="insert_item"
-              >
+              <button data-testid="insert-item" class="btn btn-sm btn-primary" phx-click="insert_item">
                 Insert Item
               </button>
-              <button
-                data-testid="delete-first"
-                class="btn btn-sm btn-error"
-                phx-click="delete_first"
-              >
+              <button data-testid="delete-first" class="btn btn-sm btn-error" phx-click="delete_first">
                 Delete First
               </button>
               <button
@@ -62,7 +53,7 @@ defmodule ExampleWeb.LiveIdListDiff do
               </button>
             </div>
             <p class="text-xs text-base-content/50">
-              Item count: <%= length(@items) %>
+              Item count: {length(@items)}
             </p>
           </div>
         </div>
@@ -91,8 +82,12 @@ defmodule ExampleWeb.LiveIdListDiff do
 
   def handle_event("move_last_to_top", _params, socket) do
     case socket.assigns.items do
-      [] -> {:noreply, socket}
-      [_] -> {:noreply, socket}
+      [] ->
+        {:noreply, socket}
+
+      [_] ->
+        {:noreply, socket}
+
       items ->
         last = List.last(items)
         rest = Enum.take(items, length(items) - 1)

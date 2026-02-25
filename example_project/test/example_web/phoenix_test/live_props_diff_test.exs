@@ -70,7 +70,9 @@ defmodule ExampleWeb.PhoenixTest.LivePropsDiffTest do
     |> assert_has("[data-use-diff='false'][data-props*='\"b\":2']")
   end
 
-  test "after update diff-off component has full props, diff-on has only changed keys", %{conn: conn} do
+  test "after update diff-off component has full props, diff-on has only changed keys", %{
+    conn: conn
+  } do
     conn
     |> visit("/live-props-diff")
     |> click_button("Increment A")

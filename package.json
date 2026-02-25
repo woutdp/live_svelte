@@ -18,9 +18,13 @@
         "svelte": "^5.1.13"
     },
     "exports": {
-        "types": "./assets/js/live_svelte/types.d.ts",
-        "import": "./priv/static/live_svelte.esm.js",
-        "require": "./priv/static/live_svelte.cjs.js"
+        ".": {
+            "svelte": "./assets/js/live_svelte/index.ts",
+            "types": "./assets/js/live_svelte/types.d.ts",
+            "import": "./priv/static/live_svelte.esm.js",
+            "require": "./priv/static/live_svelte.cjs.js"
+        },
+        "./vitePlugin": "./assets/js/live_svelte/vite_plugin.js"
     },
     "repository": {
         "type": "git",

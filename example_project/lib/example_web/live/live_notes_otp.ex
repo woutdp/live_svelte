@@ -33,11 +33,13 @@ defmodule ExampleWeb.LiveNotesOtp do
       </p>
       <.svelte
         name="NotesApp"
-        props={%{
-          notes: @notes,
-          encoder: "OTP",
-          info: @info
-        }}
+        props={
+          %{
+            notes: @notes,
+            encoder: "OTP",
+            info: @info
+          }
+        }
         socket={@socket}
       />
     </div>

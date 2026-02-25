@@ -62,6 +62,21 @@ config :example, ExampleWeb.Endpoint,
 # Enable dev routes for dashboard and mailbox
 config :example, dev_routes: true
 
+# To use Vite dev server for HMR + SSR during development:
+#
+#   1. Install Vite deps (one-time):
+#        cd assets && npm install
+#
+#   2. Start Vite dev server (in a separate terminal):
+#        cd assets && npx vite
+#
+#   3. Enable Vite in config (uncomment below):
+# config :live_svelte, ssr_module: LiveSvelte.SSR.ViteJS
+# config :live_svelte, vite_host: "http://localhost:5173"
+#
+# With :vite_host set, LiveSvelte.Reload.vite_assets/1 in root.html.heex
+# automatically serves assets from Vite (with HMR) instead of compiled files.
+
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"
 

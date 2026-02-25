@@ -33,7 +33,10 @@ defmodule ExampleWeb.LiveChat do
                 autocomplete="name"
                 aria-label="Your name"
               />
-              <button type="submit" class="btn btn-sm bg-brand text-white border-0 hover:opacity-90 shrink-0">
+              <button
+                type="submit"
+                class="btn btn-sm bg-brand text-white border-0 hover:opacity-90 shrink-0"
+              >
                 Join
               </button>
             </div>
@@ -41,11 +44,7 @@ defmodule ExampleWeb.LiveChat do
         </div>
       </form>
       <div :if={@name} class="w-full flex justify-center">
-        <.Chat
-          messages={@messages}
-          name={@name}
-          socket={@socket}
-        />
+        <.Chat messages={@messages} name={@name} socket={@socket} />
       </div>
     </div>
     """

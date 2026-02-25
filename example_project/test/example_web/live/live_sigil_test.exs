@@ -12,13 +12,19 @@ defmodule ExampleWeb.LiveSigilTest do
     if attempts == 0 do
       el = session |> find(Query.css("[data-testid='#{testid}']"))
       actual = Wallaby.Element.text(el)
+
       raise "timeout waiting for #{testid} (expected: #{inspect(expected)}, actual: #{inspect(actual)})"
     end
 
     el = session |> find(Query.css("[data-testid='#{testid}']"))
+
     case Wallaby.Element.text(el) do
-      ^expected -> session
-      _ -> :timer.sleep(100); wait_for_sigil_value(session, testid, expected, attempts - 1)
+      ^expected ->
+        session
+
+      _ ->
+        :timer.sleep(100)
+        wait_for_sigil_value(session, testid, expected, attempts - 1)
     end
   end
 

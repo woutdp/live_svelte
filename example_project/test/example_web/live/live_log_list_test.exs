@@ -15,9 +15,14 @@ defmodule ExampleWeb.LiveLogListTest do
   defp wait_for_log_item_with_text(session, text, attempts \\ 50) do
     items = log_list_items(session)
     found = Enum.any?(items, fn el -> Wallaby.Element.text(el) =~ text end)
+
     cond do
-      found -> session
-      attempts == 0 -> raise "timeout waiting for log list item containing #{inspect(text)}"
+      found ->
+        session
+
+      attempts == 0 ->
+        raise "timeout waiting for log list item containing #{inspect(text)}"
+
       true ->
         :timer.sleep(100)
         wait_for_log_item_with_text(session, text, attempts - 1)
@@ -26,9 +31,14 @@ defmodule ExampleWeb.LiveLogListTest do
 
   defp wait_for_at_least_one_log_item(session, attempts \\ 35) do
     items = log_list_items(session)
+
     cond do
-      length(items) >= 1 -> session
-      attempts == 0 -> raise "timeout waiting for at least one timer-driven log entry"
+      length(items) >= 1 ->
+        session
+
+      attempts == 0 ->
+        raise "timeout waiting for at least one timer-driven log entry"
+
       true ->
         :timer.sleep(200)
         wait_for_at_least_one_log_item(session, attempts - 1)
@@ -39,8 +49,11 @@ defmodule ExampleWeb.LiveLogListTest do
     session
     |> visit("/live-log-list")
     |> assert_has(Query.css("h2", text: "Log stream"))
-    |> assert_has(Query.css("p", text: "Add items or let the timer append entries; limit how many are shown."))
+    |> assert_has(
+      Query.css("p", text: "Add items or let the timer append entries; limit how many are shown.")
+    )
     |> assert_has(Query.css("[data-testid='log-list-new-entry']"))
+
     # Empty state may be gone if timer already appended an entry
   end
 

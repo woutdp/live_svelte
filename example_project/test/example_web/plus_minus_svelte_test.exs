@@ -11,13 +11,19 @@ defmodule ExampleWeb.PlusMinusSvelteTest do
     if attempts == 0 do
       el = session |> find(Query.css("[data-testid='plus-minus-value']"))
       actual = Wallaby.Element.text(el)
+
       raise "timeout waiting for value (expected: #{inspect(expected)}, actual: #{inspect(actual)})"
     end
 
     el = session |> find(Query.css("[data-testid='plus-minus-value']"))
+
     case Wallaby.Element.text(el) do
-      ^expected -> session
-      _ -> :timer.sleep(100); wait_for_value(session, expected, attempts - 1)
+      ^expected ->
+        session
+
+      _ ->
+        :timer.sleep(100)
+        wait_for_value(session, expected, attempts - 1)
     end
   end
 

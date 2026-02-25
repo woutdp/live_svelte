@@ -8,10 +8,14 @@ defmodule ExampleWeb.PhoenixTest.LiveStaticColorTest do
     conn
     |> visit("/live-static-color")
     |> assert_has("h1", text: "Static Color Demo")
-    |> assert_has("p", text: "Passing dynamic props to a list of Svelte components from LiveView.")
+    |> assert_has("p",
+      text: "Passing dynamic props to a list of Svelte components from LiveView."
+    )
   end
 
-  test "renders both Svelte mountpoints (file-based + ~V sigil) initially with white color", %{conn: conn} do
+  test "renders both Svelte mountpoints (file-based + ~V sigil) initially with white color", %{
+    conn: conn
+  } do
     conn
     |> visit("/live-static-color")
     |> assert_has("[data-name='Static']", count: 3)
@@ -19,7 +23,9 @@ defmodule ExampleWeb.PhoenixTest.LiveStaticColorTest do
     |> assert_has("[data-props*='\"color\":\"white\"']", count: 6)
   end
 
-  test "each Svelte component receives its index in props (twice: file-based + ~V sigil)", %{conn: conn} do
+  test "each Svelte component receives its index in props (twice: file-based + ~V sigil)", %{
+    conn: conn
+  } do
     conn
     |> visit("/live-static-color")
     |> assert_has("[data-props*='\"index\":0']", count: 2)

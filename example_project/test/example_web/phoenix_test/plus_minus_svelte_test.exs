@@ -31,7 +31,9 @@ defmodule ExampleWeb.PhoenixTest.PlusMinusSvelteTest do
     |> assert_has("[data-props*='\"number\":10']")
   end
 
-  test "renders initial value and plus/minus buttons in HTML by data-testid with SSR", %{conn: conn} do
+  test "renders initial value and plus/minus buttons in HTML by data-testid with SSR", %{
+    conn: conn
+  } do
     conn
     |> visit("/plus-minus-svelte")
     |> assert_has("[data-testid='plus-minus-value']", text: "10")

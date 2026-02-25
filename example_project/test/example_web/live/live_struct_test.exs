@@ -13,7 +13,9 @@ defmodule ExampleWeb.LiveStructTest do
     session |> find(Query.css("p", text: "Passing a struct to Svelte."))
   end
 
-  test "struct data flows from LiveView to Svelte component and updates on server events", %{session: session} do
+  test "struct data flows from LiveView to Svelte component and updates on server events", %{
+    session: session
+  } do
     session = visit(session, "/live-struct")
 
     # Verify initial struct from LiveView (%User{name: "Bob", age: 42})

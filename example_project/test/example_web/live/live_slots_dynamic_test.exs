@@ -8,16 +8,28 @@ defmodule ExampleWeb.LiveSlotsDynamicTest do
 
   @moduletag :e2e
 
-  test "page mounts and shows heading, description, slots, and initial number", %{session: session} do
+  test "page mounts and shows heading, description, slots, and initial number", %{
+    session: session
+  } do
     session
     |> visit("/live-slots-dynamic")
     |> assert_has(Query.css("h2", text: "Dynamic slots"))
-    |> assert_has(Query.css("p", text: "Default slot and named slot (:subtitle) both receive LiveView state; the button updates the number."))
+    |> assert_has(
+      Query.css("p",
+        text:
+          "Default slot and named slot (:subtitle) both receive LiveView state; the button updates the number."
+      )
+    )
 
     # Slots card: badge, button, Opening/Closing, subtitle
     session |> assert_has(Query.css("[data-testid='slots-card']"))
     session |> assert_has(Query.css("[data-testid='slots-badge']", text: "Slots"))
-    session |> assert_has(Query.css("[data-testid='slots-dynamic-increment']", text: "Increment the number"))
+
+    session
+    |> assert_has(
+      Query.css("[data-testid='slots-dynamic-increment']", text: "Increment the number")
+    )
+
     session |> assert_has(Query.css("[data-testid='slots-opening']", text: "Opening"))
     session |> assert_has(Query.css("[data-testid='slots-closing']", text: "Closing"))
     session |> assert_has(Query.css("[data-testid='slots-subtitle']", text: "Svelte subtitle"))
@@ -45,12 +57,18 @@ defmodule ExampleWeb.LiveSlotsDynamicTest do
   end
 
   defp wait_for_number(session, expected, attempts \\ 30) do
-    default_span = session |> all(Query.css("[data-testid='slots-dynamic-number']")) |> List.first()
+    default_span =
+      session |> all(Query.css("[data-testid='slots-dynamic-number']")) |> List.first()
+
     actual = default_span && Wallaby.Element.text(default_span)
+
     cond do
-      actual == expected -> session
+      actual == expected ->
+        session
+
       attempts == 0 ->
         raise "timeout waiting for number #{inspect(expected)}, got #{inspect(actual)}"
+
       true ->
         :timer.sleep(100)
         wait_for_number(session, expected, attempts - 1)

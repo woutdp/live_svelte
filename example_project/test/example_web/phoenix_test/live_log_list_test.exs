@@ -25,7 +25,9 @@ defmodule ExampleWeb.PhoenixTest.LiveLogListTest do
     conn
     |> visit("/live-log-list")
     |> assert_has("h2", text: "Log stream")
-    |> assert_has("p", text: "Add items or let the timer append entries; limit how many are shown.")
+    |> assert_has("p",
+      text: "Add items or let the timer append entries; limit how many are shown."
+    )
   end
 
   test "renders LogList mount and initial empty items in props", %{conn: conn} do

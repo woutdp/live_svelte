@@ -25,7 +25,9 @@ defmodule ExampleWeb.PhoenixTest.LiveChatTest do
     conn
     |> visit("/live-chat")
     |> assert_has("h2", text: "Chat")
-    |> assert_has("p", text: "Enter your name to join; then send messages. Your name labels your bubbles.")
+    |> assert_has("p",
+      text: "Enter your name to join; then send messages. Your name labels your bubbles."
+    )
     |> assert_has("[data-testid='chat-join-name']")
     |> assert_has("[data-testid='chat-join-form'] button", text: "Join")
   end

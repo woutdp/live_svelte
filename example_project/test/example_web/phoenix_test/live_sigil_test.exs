@@ -26,7 +26,9 @@ defmodule ExampleWeb.PhoenixTest.LiveSigilTest do
     conn
     |> visit("/live-sigil")
     |> assert_has("h1", text: "Svelte template (~V sigil)")
-    |> assert_has("p", text: "Inline Svelte in LiveView: server state and client state in one template.")
+    |> assert_has("p",
+      text: "Inline Svelte in LiveView: server state and client state in one template."
+    )
   end
 
   test "renders initial server, client, and combined values", %{conn: conn} do

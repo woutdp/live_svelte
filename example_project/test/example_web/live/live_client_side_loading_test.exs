@@ -10,8 +10,10 @@ defmodule ExampleWeb.LiveClientSideLoadingTest do
 
   defp wait_for_hydration(session, count, attempts \\ 30)
   defp wait_for_hydration(_session, _count, 0), do: :ok
+
   defp wait_for_hydration(session, count, attempts) do
     els = session |> all(Query.css("[data-testid='client-side-loading-content']"))
+
     if length(els) >= count do
       :ok
     else
@@ -29,7 +31,12 @@ defmodule ExampleWeb.LiveClientSideLoadingTest do
   test "renders description", %{session: session} do
     session
     |> visit("/live-client-side-loading")
-    |> find(Query.css("p", text: "Use the loading slot when SSR is disabled; the slot shows until the component hydrates on the client."))
+    |> find(
+      Query.css("p",
+        text:
+          "Use the loading slot when SSR is disabled; the slot shows until the component hydrates on the client."
+      )
+    )
   end
 
   test "both components hydrate and show content", %{session: session} do
@@ -39,6 +46,7 @@ defmodule ExampleWeb.LiveClientSideLoadingTest do
     wait_for_hydration(session, 2)
 
     content_els = session |> all(Query.css("[data-testid='client-side-loading-content']"))
+
     assert length(content_els) == 2,
            "expected 2 hydrated ClientSideLoading components, got #{length(content_els)}"
 

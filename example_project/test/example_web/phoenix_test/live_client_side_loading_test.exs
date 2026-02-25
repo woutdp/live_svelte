@@ -14,7 +14,10 @@ defmodule ExampleWeb.PhoenixTest.LiveClientSideLoadingTest do
     conn
     |> visit("/live-client-side-loading")
     |> assert_has("[data-testid='client-side-loading-heading']", text: "Client-side loading")
-    |> assert_has("p", text: "Use the loading slot when SSR is disabled; the slot shows until the component hydrates on the client.")
+    |> assert_has("p",
+      text:
+        "Use the loading slot when SSR is disabled; the slot shows until the component hydrates on the client."
+    )
   end
 
   test "renders two ClientSideLoading mount points", %{conn: conn} do

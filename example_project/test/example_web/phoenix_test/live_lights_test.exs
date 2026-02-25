@@ -36,10 +36,14 @@ defmodule ExampleWeb.PhoenixTest.LiveLightsTest do
     conn
     |> visit("/live-lights")
     |> assert_has("h1", text: "Light Bulb Controller")
-    |> assert_has("p", text: "Same LiveView state drives the native counter and both Svelte components.")
+    |> assert_has("p",
+      text: "Same LiveView state drives the native counter and both Svelte components."
+    )
   end
 
-  test "renders LightStatusBar and LightControllers Svelte components with initial state", %{conn: conn} do
+  test "renders LightStatusBar and LightControllers Svelte components with initial state", %{
+    conn: conn
+  } do
     conn
     |> visit("/live-lights")
     |> assert_has("[data-name='LightStatusBar']", count: 1)
