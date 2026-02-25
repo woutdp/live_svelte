@@ -359,3 +359,58 @@ export declare function useLiveUpload(
   options: UploadOptions
 ): UseLiveUploadReturn;
 
+// ---------------------------------------------------------------------------
+// useEventReply types
+// Keep in sync with useEventReply.ts — that file is the source of truth.
+// ---------------------------------------------------------------------------
+
+/** Options for `useEventReply`. */
+export interface UseEventReplyOptions<T> {
+  /** Initial value for `data` store before first reply. Defaults to `null`. */
+  defaultValue?: T;
+  /**
+   * Transform the reply before storing it in `data`.
+   * Receives the server reply and current store value; return value is stored.
+   */
+  updateData?: (reply: T, currentData: T | null) => T;
+  /** Reject the promise if the LiveView has not replied within this many milliseconds. */
+  timeout?: number;
+}
+
+/** Return value of `useEventReply`. */
+export interface UseEventReplyReturn<T, P extends object | void = object> {
+  /** Reactive store of the last reply data (`null` until first successful reply). */
+  data: Readable<T | null>;
+  /** `true` while the event is in-flight, `false` otherwise. */
+  isLoading: Readable<boolean>;
+  /**
+   * Push the named event to Phoenix with optional params.
+   * Returns a promise that resolves with the reply payload from `{:reply, map, socket}`.
+   * Rejects if already executing, if no LiveSvelte context, or if timeout expires.
+   */
+  execute(params?: P): Promise<T>;
+  /**
+   * Cancel the in-flight execution.
+   * Rejects the pending promise and resets `isLoading` to `false`.
+   */
+  cancel(): void;
+}
+
+/**
+ * Bind a LiveView event to a reactive request-response composable.
+ *
+ * @example
+ * ```svelte
+ * <script lang="ts">
+ *   import { useEventReply } from "live_svelte"
+ *   const { data, isLoading, execute, cancel } = useEventReply<{ result: number }>("compute")
+ * </script>
+ * <button onclick={() => execute({ value: 21 })}>{$isLoading ? "Loading..." : "Go"}</button>
+ * {#if $data}<p>{$data.result}</p>{/if}
+ * ```
+ */
+export declare function useEventReply<T = unknown, P extends object | void = object>(
+  eventName: string,
+  options?: UseEventReplyOptions<T>
+): UseEventReplyReturn<T, P>;
+

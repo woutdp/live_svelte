@@ -62,7 +62,8 @@ defmodule ExampleWeb.Layouts do
           %{label: "Form (useLiveForm)", to: ~p"/live-form"},
           %{label: "Navigation (useLiveNavigation)", to: ~p"/live-navigation"},
           %{label: "Composition (useLiveSvelte)", to: ~p"/live-composition"},
-          %{label: "File Upload (useLiveUpload)", to: ~p"/live-upload"}
+          %{label: "File Upload (useLiveUpload)", to: ~p"/live-upload"},
+          %{label: "Event Reply (useEventReply)", to: ~p"/live-event-reply"}
         ]
       }
     ]
