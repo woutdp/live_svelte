@@ -4,6 +4,7 @@ import { defineConfig } from 'vitest/config'
 // No resolve alias needed unless a test imports them; then add resolve.alias in Vite config.
 export default defineConfig({
   test: {
+    environment: 'jsdom',
     include: ['**/*.test.js', '**/*.spec.js', '**/*.test.ts', '**/*.spec.ts'],
     coverage: {
       provider: 'v8',

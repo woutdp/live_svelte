@@ -55,6 +55,12 @@ defmodule ExampleWeb.Layouts do
         links: [
           %{label: "Notes (OTP)", to: ~p"/live-notes-otp"}
         ]
+      },
+      %{
+        label: "Composables",
+        links: [
+          %{label: "Form (useLiveForm)", to: ~p"/live-form"}
+        ]
       }
     ]
   end

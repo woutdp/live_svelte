@@ -79,6 +79,12 @@ describe("$$dom_id path syntax (remove / replace via dom_id)", () => {
     expect(items[0].name).toBe("Updated")
     expect(items.length).toBe(2)
   })
+
+  it("replace with unknown $$dom_id is silently skipped (update_only: true, item absent)", () => {
+    const state: Record<string, unknown> = { items: [makeItem(1)] }
+    applyPatch(state, [["replace", "/items/$$items-999", makeItem(999, { name: "Ghost" })]])
+    expect((state.items as { id: number }[]).map((i) => i.id)).toEqual([1])
+  })
 })
 
 // ---------------------------------------------------------------------------

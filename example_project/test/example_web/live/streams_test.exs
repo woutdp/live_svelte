@@ -103,7 +103,6 @@ defmodule ExampleWeb.StreamsTest do
       |> click(Query.css("[data-testid='update-1']"))
 
     # Still exactly 3 items — no duplication
-    items = all(session, Query.css("[data-testid^='item-'][data-testid$='-1'], [data-testid='item-1'], [data-testid='item-2'], [data-testid='item-3']"))
     session |> find(Query.css("[data-testid='item-1']"))
     session |> find(Query.css("[data-testid='item-2']"))
     session |> find(Query.css("[data-testid='item-3']"))
@@ -112,6 +111,27 @@ defmodule ExampleWeb.StreamsTest do
     session |> find(Query.css("[data-testid='item-name-1']", text: "Updated 1"))
 
     # Item count shows 3, not 4
+    session |> find(Query.css("[data-testid='item-count']", text: "Items (3)"))
+  end
+
+  test "stream limit enforced: capped insert keeps only last 3 items", %{session: session} do
+    session =
+      session
+      |> visit("/streams")
+      # Initial state: items 1, 2, 3. Click "Add Capped (max 3)" once to add item 4.
+      # With limit: -3, the stream keeps the last 3 → items 2, 3, 4.
+      |> click(Query.css("[data-testid='add-capped-button']"))
+
+    # Items 2, 3, 4 are present
+    session |> find(Query.css("[data-testid='item-2']"))
+    session |> find(Query.css("[data-testid='item-3']"))
+    session |> find(Query.css("[data-testid='item-4']"))
+
+    # Item 1 was evicted by the limit
+    items_1 = all(session, Query.css("[data-testid='item-1']"))
+    assert items_1 == []
+
+    # Total item count is 3
     session |> find(Query.css("[data-testid='item-count']", text: "Items (3)"))
   end
 

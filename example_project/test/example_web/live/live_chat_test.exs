@@ -33,6 +33,15 @@ defmodule ExampleWeb.LiveChatTest do
     |> assert_has(Query.css("[data-testid='chat-join-form'] button", text: "Join"))
   end
 
+  test "useLiveConnection: reconnecting banner absent when connected (happy path)", %{session: session} do
+    session
+    |> visit("/live-chat")
+    |> fill_in(Query.css("[data-testid='chat-join-name']"), with: "Alice")
+    |> click(Query.css("[data-testid='chat-join-form'] button", text: "Join"))
+    |> assert_has(Query.css("[data-testid='chat-message-input']"))
+    |> refute_has(Query.css("[data-testid='chat-reconnecting']"))
+  end
+
   test "joining with a name shows chat UI with message input", %{session: session} do
     session =
       session

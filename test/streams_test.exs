@@ -1,7 +1,15 @@
+# Struct used to test @derive {LiveSvelte.Encoder, only: [...]} in stream items.
+# Must be defined at file level (compile-time) for @derive to work.
+defmodule LiveSvelte.StreamsTest.SecretItem do
+  @derive {LiveSvelte.Encoder, only: [:id, :name]}
+  defstruct [:id, :name, :secret]
+end
+
 defmodule LiveSvelte.StreamsTest do
   use ExUnit.Case, async: true
 
   alias Phoenix.LiveView.LiveStream
+  alias LiveSvelte.StreamsTest.SecretItem
 
   # Build a %LiveStream{} compatible with library's phoenix_live_view 0.18.15.
   # Inserts are 3-tuples {dom_id, at, item} in 0.18.15 and 4-tuples {dom_id, at, item, limit}
@@ -150,6 +158,28 @@ defmodule LiveSvelte.StreamsTest do
       upsert_ops = Enum.filter(diff, fn op -> Enum.at(op, 0) == "upsert" end)
       assert length(upsert_ops) == 2
     end
+
+    test "4-tuple insert with non-nil limit emits limit op" do
+      stream = make_stream(inserts: [{"items-1", -1, %{id: 1, name: "Alice"}, 10}])
+      assigns = base_assigns() |> Map.put(:items, stream)
+      html = render_html(assigns)
+      diff = decode_streams_diff(html)
+
+      limit_op = Enum.find(diff, fn op -> Enum.at(op, 0) == "limit" end)
+      assert limit_op != nil, "expected limit op"
+      assert Enum.at(limit_op, 1) == "/items"
+      assert Enum.at(limit_op, 2) == 10
+    end
+
+    test "4-tuple insert with nil limit does not emit limit op" do
+      stream = make_stream(inserts: [{"items-1", -1, %{id: 1, name: "Alice"}, nil}])
+      assigns = base_assigns() |> Map.put(:items, stream)
+      html = render_html(assigns)
+      diff = decode_streams_diff(html)
+
+      limit_op = Enum.find(diff, fn op -> Enum.at(op, 0) == "limit" end)
+      assert limit_op == nil, "must not emit limit op when limit is nil"
+    end
   end
 
   describe "delete ops" do
@@ -172,6 +202,130 @@ defmodule LiveSvelte.StreamsTest do
 
       remove_ops = Enum.filter(diff, fn op -> Enum.at(op, 0) == "remove" end)
       assert length(remove_ops) == 2
+    end
+  end
+
+  describe "struct encoding in stream items" do
+    test "struct with @derive only: [...] does not expose restricted fields in upsert value" do
+      item = %SecretItem{id: 1, name: "Alice", secret: "hidden_password"}
+      stream = make_stream(inserts: [{"items-1", -1, item}])
+      assigns = base_assigns() |> Map.put(:items, stream)
+      html = render_html(assigns)
+      diff = decode_streams_diff(html)
+
+      upsert_op = Enum.find(diff, fn op -> Enum.at(op, 0) == "upsert" end)
+      assert upsert_op != nil, "expected upsert op"
+      value = Enum.at(upsert_op, 2)
+
+      assert value["id"] == 1
+      assert value["name"] == "Alice"
+      assert value["__dom_id"] == "items-1"
+      refute Map.has_key?(value, "secret"), "sensitive field must not appear in stream diff"
+    end
+
+    test "struct encoding does not lose __dom_id even when only: [...] is used" do
+      item = %SecretItem{id: 42, name: "Bob", secret: "top_secret"}
+      stream = make_stream(inserts: [{"items-42", -1, item}])
+      assigns = base_assigns() |> Map.put(:items, stream)
+      html = render_html(assigns)
+      diff = decode_streams_diff(html)
+
+      upsert_op = Enum.find(diff, fn op -> Enum.at(op, 0) == "upsert" end)
+      value = Enum.at(upsert_op, 2)
+      assert value["__dom_id"] == "items-42", "__dom_id must always be present"
+    end
+
+    test "plain map stream items still work after encoder integration" do
+      item = %{id: 99, name: "Plain", extra: "visible"}
+      stream = make_stream(inserts: [{"items-99", -1, item}])
+      assigns = base_assigns() |> Map.put(:items, stream)
+      html = render_html(assigns)
+      diff = decode_streams_diff(html)
+
+      upsert_op = Enum.find(diff, fn op -> Enum.at(op, 0) == "upsert" end)
+      value = Enum.at(upsert_op, 2)
+      assert value["id"] == 99
+      assert value["name"] == "Plain"
+      assert value["extra"] == "visible"
+      assert value["__dom_id"] == "items-99"
+    end
+  end
+
+  describe "5-tuple inserts (update_only)" do
+    test "update_only: true generates replace op at $$dom_id path" do
+      stream = make_stream(inserts: [{"items-1", -1, %{id: 1, name: "Updated"}, nil, true}])
+      assigns = base_assigns() |> Map.put(:items, stream)
+      html = render_html(assigns)
+      diff = decode_streams_diff(html)
+
+      replace_op = Enum.find(diff, fn op ->
+        Enum.at(op, 0) == "replace" && String.contains?(Enum.at(op, 1) || "", "$$items-1")
+      end)
+      assert replace_op != nil, "expected replace op at $$dom_id path for update_only: true"
+      assert Enum.at(replace_op, 1) == "/items/$$items-1"
+
+      # Must NOT generate upsert for update_only: true
+      upsert_op = Enum.find(diff, fn op -> Enum.at(op, 0) == "upsert" end)
+      assert upsert_op == nil, "must NOT generate upsert when update_only: true"
+    end
+
+    test "update_only: false with 5-tuple generates upsert op" do
+      stream = make_stream(inserts: [{"items-2", -1, %{id: 2, name: "New"}, nil, false}])
+      assigns = base_assigns() |> Map.put(:items, stream)
+      html = render_html(assigns)
+      diff = decode_streams_diff(html)
+
+      upsert_op = Enum.find(diff, fn op -> Enum.at(op, 0) == "upsert" end)
+      assert upsert_op != nil, "expected upsert op when update_only: false"
+      assert Enum.at(upsert_op, 1) == "/items/-"
+    end
+
+    test "5-tuple with limit emits limit op" do
+      stream = make_stream(inserts: [{"items-1", -1, %{id: 1, name: "A"}, 5, false}])
+      assigns = base_assigns() |> Map.put(:items, stream)
+      html = render_html(assigns)
+      diff = decode_streams_diff(html)
+
+      limit_op = Enum.find(diff, fn op -> Enum.at(op, 0) == "limit" end)
+      assert limit_op != nil, "expected limit op"
+      assert Enum.at(limit_op, 1) == "/items"
+      assert Enum.at(limit_op, 2) == 5
+    end
+
+    test "5-tuple with nil limit does not emit limit op" do
+      stream = make_stream(inserts: [{"items-1", -1, %{id: 1, name: "A"}, nil, false}])
+      assigns = base_assigns() |> Map.put(:items, stream)
+      html = render_html(assigns)
+      diff = decode_streams_diff(html)
+
+      limit_op = Enum.find(diff, fn op -> Enum.at(op, 0) == "limit" end)
+      assert limit_op == nil, "must not emit limit op when limit is nil"
+    end
+
+    test "5-tuple with negative limit emits negative limit op (keep last N)" do
+      stream = make_stream(inserts: [{"items-1", -1, %{id: 1, name: "A"}, -3, false}])
+      assigns = base_assigns() |> Map.put(:items, stream)
+      html = render_html(assigns)
+      diff = decode_streams_diff(html)
+
+      limit_op = Enum.find(diff, fn op -> Enum.at(op, 0) == "limit" end)
+      assert limit_op != nil, "expected limit op"
+      assert Enum.at(limit_op, 1) == "/items"
+      assert Enum.at(limit_op, 2) == -3
+    end
+
+    test "update_only: true value includes __dom_id" do
+      stream = make_stream(inserts: [{"items-5", -1, %{id: 5, name: "X"}, nil, true}])
+      assigns = base_assigns() |> Map.put(:items, stream)
+      html = render_html(assigns)
+      diff = decode_streams_diff(html)
+
+      replace_op = Enum.find(diff, fn op ->
+        Enum.at(op, 0) == "replace" && String.contains?(Enum.at(op, 1) || "", "$$items-5")
+      end)
+      value = Enum.at(replace_op, 2)
+      assert value["__dom_id"] == "items-5"
+      assert value["id"] == 5
     end
   end
 
