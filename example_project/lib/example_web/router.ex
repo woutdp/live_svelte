@@ -42,6 +42,8 @@ defmodule ExampleWeb.Router do
     # Ecto Examples
     live "/live-notes-otp", LiveNotesOtp
     live "/live-form", LiveForm
+    live "/live-navigation", LiveNavigation
+    live "/live-navigation/:page", LiveNavigation
     # not referenced in app.html.heex:
     live "/live-composition", LiveComposition
   end

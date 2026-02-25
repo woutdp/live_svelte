@@ -27,7 +27,7 @@
     const isValid = liveForm.isValid
 </script>
 
-<div class="w-full min-w-sm mx-auto">
+<div class="w-full min-w-xs mx-auto">
     <form
         onsubmit={e => {
             e.preventDefault()

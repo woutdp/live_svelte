@@ -59,7 +59,9 @@ defmodule ExampleWeb.Layouts do
       %{
         label: "Composables",
         links: [
-          %{label: "Form (useLiveForm)", to: ~p"/live-form"}
+          %{label: "Form (useLiveForm)", to: ~p"/live-form"},
+          %{label: "Navigation (useLiveNavigation)", to: ~p"/live-navigation"},
+          %{label: "Composition (useLiveSvelte)", to: ~p"/live-composition"}
         ]
       }
     ]
