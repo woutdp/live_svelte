@@ -67,6 +67,7 @@ defmodule LiveSvelte.MixProject do
       {:jason, "~> 1.2", optional: true},
       {:lazy_html, ">= 0.1.0", only: :test},
       {:nodejs, "~> 3.1"},
+      {:telemetry, "~> 0.4 or ~> 1.0"},
       {:phoenix, ">= 1.7.0"},
       {:phoenix_html, ">= 3.3.1"},
       {:phoenix_live_view, ">= 0.18.0"}
