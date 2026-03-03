@@ -3,11 +3,7 @@
     "version": "0.17.4",
     "description": "",
     "license": "MIT",
-    "module": "./priv/static/live_svelte.esm.js",
-    "main": "./priv/static/live_svelte.cjs.js",
     "types": "./assets/js/live_svelte/types.d.ts",
-    "unpkg": "./priv/static/live_svelte.min.js",
-    "jsdelivr": "./priv/static/live_svelte.min.js",
     "author": "Wout De Puysseleir <contact@wout.space>",
     "scripts": {
         "format": "npx prettier --write ."
@@ -19,10 +15,8 @@
     },
     "exports": {
         ".": {
-            "svelte": "./assets/js/live_svelte/index.ts",
-            "types": "./assets/js/live_svelte/types.d.ts",
-            "import": "./priv/static/live_svelte.esm.js",
-            "require": "./priv/static/live_svelte.cjs.js"
+            "import": "./assets/js/live_svelte/index.ts",
+            "types": "./assets/js/live_svelte/types.d.ts"
         },
         "./vitePlugin": "./assets/js/live_svelte/vite_plugin.js"
     },
@@ -34,7 +28,6 @@
         "README.md",
         "LICENSE.md",
         "package.json",
-        "assets/js/live_svelte/*",
-        "priv/static/*"
+        "assets/js/live_svelte/*"
     ]
 }
