@@ -104,7 +104,9 @@ defmodule LiveSvelte.StreamsTest do
       diff = decode_streams_diff(html)
 
       # Initial render produces replace (empty) + upsert
-      replace_op = Enum.find(diff, fn op -> Enum.at(op, 0) == "replace" && Enum.at(op, 1) == "/items" end)
+      replace_op =
+        Enum.find(diff, fn op -> Enum.at(op, 0) == "replace" && Enum.at(op, 1) == "/items" end)
+
       assert replace_op != nil
       assert Enum.at(replace_op, 2) == []
 
@@ -113,9 +115,15 @@ defmodule LiveSvelte.StreamsTest do
       assert Enum.at(upsert_op, 1) == "/items/-"
 
       # Order matters: replace MUST come before upsert so the array exists before items are inserted
-      replace_idx = Enum.find_index(diff, fn op -> Enum.at(op, 0) == "replace" && Enum.at(op, 1) == "/items" end)
+      replace_idx =
+        Enum.find_index(diff, fn op ->
+          Enum.at(op, 0) == "replace" && Enum.at(op, 1) == "/items"
+        end)
+
       upsert_idx = Enum.find_index(diff, fn op -> Enum.at(op, 0) == "upsert" end)
-      assert replace_idx < upsert_idx, "replace [] must precede upsert ops (got replace at #{replace_idx}, upsert at #{upsert_idx})"
+
+      assert replace_idx < upsert_idx,
+             "replace [] must precede upsert ops (got replace at #{replace_idx}, upsert at #{upsert_idx})"
     end
 
     test "insert at 0 produces upsert with path /items/0" do
@@ -258,9 +266,11 @@ defmodule LiveSvelte.StreamsTest do
       html = render_html(assigns)
       diff = decode_streams_diff(html)
 
-      replace_op = Enum.find(diff, fn op ->
-        Enum.at(op, 0) == "replace" && String.contains?(Enum.at(op, 1) || "", "$$items-1")
-      end)
+      replace_op =
+        Enum.find(diff, fn op ->
+          Enum.at(op, 0) == "replace" && String.contains?(Enum.at(op, 1) || "", "$$items-1")
+        end)
+
       assert replace_op != nil, "expected replace op at $$dom_id path for update_only: true"
       assert Enum.at(replace_op, 1) == "/items/$$items-1"
 
@@ -320,9 +330,11 @@ defmodule LiveSvelte.StreamsTest do
       html = render_html(assigns)
       diff = decode_streams_diff(html)
 
-      replace_op = Enum.find(diff, fn op ->
-        Enum.at(op, 0) == "replace" && String.contains?(Enum.at(op, 1) || "", "$$items-5")
-      end)
+      replace_op =
+        Enum.find(diff, fn op ->
+          Enum.at(op, 0) == "replace" && String.contains?(Enum.at(op, 1) || "", "$$items-5")
+        end)
+
       value = Enum.at(replace_op, 2)
       assert value["__dom_id"] == "items-5"
       assert value["id"] == 5

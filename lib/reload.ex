@@ -31,14 +31,22 @@ defmodule LiveSvelte.Reload do
     assigns =
       assigns
       |> assign(:vite_host, vite_host)
-      |> assign(:stylesheets, for(path <- assigns.assets, String.ends_with?(path, ".css"), do: path))
-      |> assign(:javascripts, for(path <- assigns.assets, String.ends_with?(path, ".js"), do: path))
+      |> assign(
+        :stylesheets,
+        for(path <- assigns.assets, String.ends_with?(path, ".css"), do: path)
+      )
+      |> assign(
+        :javascripts,
+        for(path <- assigns.assets, String.ends_with?(path, ".js"), do: path)
+      )
 
     ~H"""
     <%= if @vite_host do %>
-      <script type="module" src={"#{@vite_host}/@vite/client"}></script>
+      <script type="module" src={"#{@vite_host}/@vite/client"}>
+      </script>
       <link :for={path <- @stylesheets} rel="stylesheet" href={"#{@vite_host}#{path}"} />
-      <script :for={path <- @javascripts} type="module" src={"#{@vite_host}#{path}"}></script>
+      <script :for={path <- @javascripts} type="module" src={"#{@vite_host}#{path}"}>
+      </script>
     <% else %>
       <%= render_slot(@inner_block) %>
     <% end %>

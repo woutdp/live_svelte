@@ -54,6 +54,7 @@ defmodule LiveSvelte.AutoIdTest do
       {:live_svelte_prev_props, _} = k -> Process.delete(k)
       _ -> :ok
     end)
+
     Process.delete(:live_svelte_counter_names)
     Process.delete(:live_svelte_total_counter)
     Process.delete(:live_svelte_expected_total)

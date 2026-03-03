@@ -414,3 +414,13 @@ export declare function useEventReply<T = unknown, P extends object | void = obj
   options?: UseEventReplyOptions<T>
 ): UseEventReplyReturn<T, P>;
 
+// ---------------------------------------------------------------------------
+// Virtual module type declaration
+// ---------------------------------------------------------------------------
+
+declare module "virtual:live-svelte-components" {
+  import type { Component } from "svelte";
+  const components: Record<string, Component>;
+  export default components;
+}
+
