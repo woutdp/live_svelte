@@ -45,7 +45,7 @@ defmodule LiveSvelte.MixProject do
         GitHub: @repo_url
       },
       files:
-        ~w(priv assets/copy assets/js lib mix.exs package.json .formatter.exs LICENSE.md README.md CHANGELOG.md)
+        ~w(assets/copy assets/js lib mix.exs package.json .formatter.exs LICENSE.md README.md CHANGELOG.md)
     ]
   end
 
@@ -75,9 +75,6 @@ defmodule LiveSvelte.MixProject do
   end
 
   defp aliases do
-    [
-      "assets.build": ["cmd --cd assets node build.js"],
-      "assets.watch": ["cmd --cd assets node build.js --watch"]
-    ]
+    []
   end
 end

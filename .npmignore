@@ -1,0 +1,2 @@
+# Exclude test files from published npm package
+assets/js/live_svelte/*.test.ts
