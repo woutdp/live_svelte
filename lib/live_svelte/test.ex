@@ -81,10 +81,12 @@ defmodule LiveSvelte.Test do
 
   defp decode_handlers(nil), do: %{}
   defp decode_handlers(""), do: %{}
-  defp decode_handlers(_str), do: %{}  # LiveSvelte does not emit data-handlers yet
+  # LiveSvelte does not emit data-handlers yet
+  defp decode_handlers(_str), do: %{}
 
   defp decode_slots(nil), do: %{}
   defp decode_slots(""), do: %{}
+
   defp decode_slots(str) do
     str
     |> Jason.decode!()
@@ -108,16 +110,20 @@ defmodule LiveSvelte.Test do
       Enum.reduce(opts, components_tree, fn
         {:id, id}, result ->
           filtered = Enum.filter(result, &(attr_from_tree(&1, "id") == id))
+
           if filtered == [] do
             raise "No Svelte component found with id=\"#{id}\". Available: #{available}"
           end
+
           filtered
 
         {:name, name}, result ->
           filtered = Enum.filter(result, &(attr_from_tree(&1, "data-name") == name))
+
           if filtered == [] do
             raise "No Svelte component found with name=\"#{name}\". Available: #{available}"
           end
+
           filtered
 
         {key, _}, _ ->

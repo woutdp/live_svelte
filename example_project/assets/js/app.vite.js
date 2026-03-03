@@ -9,17 +9,7 @@ import topbar from "../vendor/topbar"
 // TODO(Epic 9): remove createLiveJsonHooks once live_json dependency is removed
 import {createLiveJsonHooks} from "live_json"
 import {getHooks} from "live_svelte"
-
-// import.meta.glob returns Record<path, module> (e.g. {"../svelte/Counter.svelte": {default: ...}}).
-// getHooks expects Record<name, Component> (e.g. {"Counter": Component}).
-// Transform: strip path prefix and .svelte extension to get the component name.
-const rawComponents = import.meta.glob('../svelte/**/*.svelte', { eager: true })
-const Components = Object.fromEntries(
-  Object.entries(rawComponents).map(([path, mod]) => [
-    path.replace('../svelte/', '').replace('.svelte', ''),
-    mod.default,
-  ])
-)
+import Components from "virtual:live-svelte-components"
 
 function formatPayload(str) {
     if (!str || str === "—") return "—"

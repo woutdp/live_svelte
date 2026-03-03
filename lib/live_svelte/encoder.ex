@@ -91,7 +91,10 @@ defimpl LiveSvelte.Encoder, for: Phoenix.HTML.Form do
     defp maybe_enhance_error(%{value: %Ecto.Association.NotLoaded{}} = error) do
       Map.update!(error, :description, fn description ->
         [first | rest] = String.split(description, "\n\n")
-        addition = "\n\nEncode form with LiveSvelte.Encoder.encode(form, nilify_not_loaded: true) to avoid."
+
+        addition =
+          "\n\nEncode form with LiveSvelte.Encoder.encode(form, nilify_not_loaded: true) to avoid."
+
         Enum.join([first | [addition | rest]], "\n\n")
       end)
     end
@@ -105,37 +108,56 @@ defimpl LiveSvelte.Encoder, for: Phoenix.HTML.Form do
     @relations [:embed, :assoc]
 
     defp collect_changeset_values(%Ecto.Changeset{} = source, opts) do
-      data = Map.new(source.types, fn {field, type} -> {field, get_field_value(source, field, type, opts)} end)
+      data =
+        Map.new(source.types, fn {field, type} ->
+          {field, get_field_value(source, field, type, opts)}
+        end)
+
       result = if is_struct(source.data), do: Map.merge(source.data, data), else: data
       Map.delete(result, :__meta__)
     end
 
-    defp get_field_value(source, field, {tag, %{cardinality: :one}}, opts) when tag in @relations do
+    defp get_field_value(source, field, {tag, %{cardinality: :one}}, opts)
+         when tag in @relations do
       case Map.fetch(source.changes, field) do
-        {:ok, nil} -> nil
-        {:ok, %Ecto.Changeset{} = changeset} -> collect_changeset_values(changeset, opts)
+        {:ok, nil} ->
+          nil
+
+        {:ok, %Ecto.Changeset{} = changeset} ->
+          collect_changeset_values(changeset, opts)
+
         :error ->
           case Map.fetch!(source.data, field) do
             %Ecto.Association.NotLoaded{} = not_loaded ->
               if opts[:nilify_not_loaded], do: nil, else: not_loaded
-            %{__meta__: _} = value -> Map.delete(value, :__meta__)
-            value -> value
+
+            %{__meta__: _} = value ->
+              Map.delete(value, :__meta__)
+
+            value ->
+              value
           end
       end
     end
 
-    defp get_field_value(source, field, {tag, %{cardinality: :many}}, opts) when tag in @relations do
+    defp get_field_value(source, field, {tag, %{cardinality: :many}}, opts)
+         when tag in @relations do
       case Map.fetch(source.changes, field) do
         {:ok, changesets} ->
           changesets
           |> Enum.filter(&(&1.params != nil))
           |> Enum.map(&collect_changeset_values(&1, opts))
+
         :error ->
           case Map.fetch!(source.data, field) do
             %Ecto.Association.NotLoaded{} = not_loaded ->
               if opts[:nilify_not_loaded], do: nil, else: not_loaded
-            [%{__meta__: _} | _] = value -> Enum.map(value, &Map.delete(&1, :__meta__))
-            value -> value
+
+            [%{__meta__: _} | _] = value ->
+              Enum.map(value, &Map.delete(&1, :__meta__))
+
+            value ->
+              value
           end
       end
     end
@@ -164,6 +186,7 @@ defimpl LiveSvelte.Encoder, for: Phoenix.HTML.Form do
   if Code.ensure_loaded?(Ecto.Changeset) do
     defp collect_changeset_errors(%Ecto.Changeset{} = changeset) do
       errors = translate_errors(changeset.errors)
+
       Enum.reduce(changeset.changes, errors, fn {field, value}, acc ->
         case Map.get(changeset.types, field) do
           {tag, %{cardinality: :one}} when tag in @relations ->
@@ -178,9 +201,11 @@ defimpl LiveSvelte.Encoder, for: Phoenix.HTML.Form do
                 embed_errors = collect_changeset_errors(embed_changeset)
                 if embed_errors == %{}, do: nil, else: embed_errors
               end)
+
             if Enum.all?(list_errors, &is_nil/1), do: acc, else: Map.put(acc, field, list_errors)
 
-          _ -> acc
+          _ ->
+            acc
         end
       end)
     end
@@ -240,6 +265,7 @@ if Code.ensure_loaded?(Ecto.Changeset) do
                 embed_errors = changeset_errors_to_map(embed_cs)
                 if embed_errors == %{}, do: nil, else: embed_errors
               end)
+
             if Enum.all?(list_errors, &is_nil/1), do: acc, else: Map.put(acc, field, list_errors)
 
           {:assoc, %{cardinality: :one}} when is_struct(value, Ecto.Changeset) ->
@@ -254,6 +280,7 @@ if Code.ensure_loaded?(Ecto.Changeset) do
                 assoc_errors = changeset_errors_to_map(assoc_cs)
                 if assoc_errors == %{}, do: nil, else: assoc_errors
               end)
+
             if Enum.all?(list_errors, &is_nil/1), do: acc, else: Map.put(acc, field, list_errors)
 
           _ ->
@@ -270,7 +297,11 @@ if Code.ensure_loaded?(Ecto.Changeset) do
 
     defp error_tuple_to_message({msg, opts}) do
       Enum.reduce(opts, msg, fn {key, value}, acc ->
-        String.replace(acc, "%{#{key}}", value |> List.wrap() |> Enum.map_join(", ", &to_string/1))
+        String.replace(
+          acc,
+          "%{#{key}}",
+          value |> List.wrap() |> Enum.map_join(", ", &to_string/1)
+        )
       end)
     end
   end
@@ -344,6 +375,7 @@ defimpl LiveSvelte.Encoder, for: Any do
   # (matches @derive LiveSvelte.Encoder default; __meta__ stripped for Ecto schemas).
   def encode(%{__struct__: _module} = struct, opts) do
     keys = Map.keys(struct) -- [:__struct__, :__meta__]
+
     struct
     |> Map.take(keys)
     |> LiveSvelte.Encoder.encode(opts)
@@ -357,18 +389,22 @@ defimpl LiveSvelte.Encoder, for: Any do
     cond do
       only = Keyword.get(opts, :only) ->
         case only -- fields do
-          [] -> only
+          [] ->
+            only
+
           error_keys ->
             raise ArgumentError,
-              ":only specified keys (#{inspect(error_keys)}) not in defstruct: #{inspect(fields -- [:__struct__])}"
+                  ":only specified keys (#{inspect(error_keys)}) not in defstruct: #{inspect(fields -- [:__struct__])}"
         end
 
       except = Keyword.get(opts, :except) ->
         case except -- fields do
-          [] -> fields -- [:__struct__ | except]
+          [] ->
+            fields -- [:__struct__ | except]
+
           error_keys ->
             raise ArgumentError,
-              ":except specified keys (#{inspect(error_keys)}) not in defstruct: #{inspect(fields -- [:__struct__])}"
+                  ":except specified keys (#{inspect(error_keys)}) not in defstruct: #{inspect(fields -- [:__struct__])}"
         end
 
       true ->

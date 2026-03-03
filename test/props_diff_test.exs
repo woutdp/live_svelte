@@ -40,8 +40,10 @@ defmodule LiveSvelte.PropsDiffTest do
           encoded
           |> String.replace("&quot;", "\"")
           |> String.replace("&#39;", "'")
+
         # Use Erlang :json (same family as default LiveSvelte.JSON encoder)
         :json.decode(unescaped)
+
       _ ->
         nil
     end
@@ -86,11 +88,14 @@ defmodule LiveSvelte.PropsDiffTest do
 
     test "when enable_props_diff is false, always returns full props" do
       Application.put_env(:live_svelte, :enable_props_diff, false)
+
       try do
-        assigns = base_assigns(
-          props: %{"x" => 10, "y" => 20},
-          __changed__: %{props: %{"x" => 10, "y" => 0}}
-        )
+        assigns =
+          base_assigns(
+            props: %{"x" => 10, "y" => 20},
+            __changed__: %{props: %{"x" => 10, "y" => 0}}
+          )
+
         # In real component rendering, `diff` is present (default true). Ensure global config still wins.
         assigns = Map.put(assigns, :diff, true)
         result = LiveSvelte.props_for_payload(assigns)
@@ -109,7 +114,9 @@ defmodule LiveSvelte.PropsDiffTest do
           |> String.replace("&quot;", "\"")
           |> String.replace("&#39;", "'")
           |> String.replace("&#x2B;", "+")
+
         :json.decode(unescaped)
+
       _ ->
         nil
     end
@@ -179,7 +186,13 @@ defmodule LiveSvelte.PropsDiffTest do
   describe "Tier 3 - ID-based list diffing via object_hash" do
     test "inserting new item at front with id-list produces fewer ops than N replaces" do
       items_old = [%{id: 1, name: "Alice"}, %{id: 2, name: "Bob"}, %{id: 3, name: "Carol"}]
-      items_new = [%{id: 4, name: "Dave"}, %{id: 1, name: "Alice"}, %{id: 2, name: "Bob"}, %{id: 3, name: "Carol"}]
+
+      items_new = [
+        %{id: 4, name: "Dave"},
+        %{id: 1, name: "Alice"},
+        %{id: 2, name: "Bob"},
+        %{id: 3, name: "Carol"}
+      ]
 
       diff = LiveSvelte.calculate_props_diff(%{items: items_new}, %{items: items_old})
       content_ops = Enum.reject(diff, &(&1.op == "test"))

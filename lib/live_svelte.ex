@@ -62,7 +62,8 @@ defmodule LiveSvelte do
 
   attr :diff, :boolean,
     default: true,
-    doc: "When true (and config enable_props_diff is true), only changed props are sent on update. Set to false to always send full props."
+    doc:
+      "When true (and config enable_props_diff is true), only changed props are sent on update. Set to false to always send full props."
 
   slot :inner_block, doc: "Inner block of the Svelte component"
 
@@ -79,7 +80,8 @@ defmodule LiveSvelte do
     ssr_active = Application.get_env(:live_svelte, :ssr, true)
     use_diff = diff_enabled?(assigns)
 
-    svelte_id = assigns.id || key_based_id(assigns.name, assigns.key, assigns.props, assigns.__changed__)
+    svelte_id =
+      assigns.id || key_based_id(assigns.name, assigns.key, assigns.props, assigns.__changed__)
 
     # Snapshot previous props BEFORE props_for_payload/5 updates the process dict.
     # Used for JSON Patch diff computation (Tier 2 + 3).
@@ -148,31 +150,31 @@ defmodule LiveSvelte do
       <script>
         <%= raw(@ssr_render["head"]) %>
       </script>
-    <div
-      id={@svelte_id}
-      data-name={@name}
-      data-props={json(@props_to_send)}
-      data-props-diff={json(@props_diff)}
-      data-streams-diff={json(@streams_diff)}
-      data-use-diff={to_string(@use_diff)}
-      data-ssr={@ssr_render != nil}
-      data-live-json={
-        if @init, do: json(@live_json_props), else: @live_json_props |> Map.keys() |> json()
-      }
-      data-slots={@slots |> Slots.base_encode_64() |> json}
-      phx-hook="SvelteHook"
-      phx-update="ignore"
-      class={@class}
-    >
-      <div id={"#{@svelte_id}-target"} data-svelte-target>
-        <%= raw(@ssr_render["head"]) %>
-        <style>
-          <%= raw(@ssr_render["css"]["code"]) %>
-        </style>
-        <%= raw(@ssr_render["html"]) %>
-        <%= render_slot(@loading) %>
+      <div
+        id={@svelte_id}
+        data-name={@name}
+        data-props={json(@props_to_send)}
+        data-props-diff={json(@props_diff)}
+        data-streams-diff={json(@streams_diff)}
+        data-use-diff={to_string(@use_diff)}
+        data-ssr={@ssr_render != nil}
+        data-live-json={
+          if @init, do: json(@live_json_props), else: @live_json_props |> Map.keys() |> json()
+        }
+        data-slots={@slots |> Slots.base_encode_64() |> json}
+        phx-hook="SvelteHook"
+        phx-update="ignore"
+        class={@class}
+      >
+        <div id={"#{@svelte_id}-target"} data-svelte-target>
+          <%= raw(@ssr_render["head"]) %>
+          <style>
+            <%= raw(@ssr_render["css"]["code"]) %>
+          </style>
+          <%= raw(@ssr_render["html"]) %>
+          <%= render_slot(@loading) %>
+        </div>
       </div>
-    </div>
     </.live_json>
     """
   end
@@ -196,9 +198,14 @@ defmodule LiveSvelte do
     props = Map.get(assigns, :props, %{})
 
     cond do
-      init or dead or not use_diff -> props
-      is_map(assigns.__changed__[:props]) -> props_changed_only(props, assigns.__changed__[:props])
-      true -> props
+      init or dead or not use_diff ->
+        props
+
+      is_map(assigns.__changed__[:props]) ->
+        props_changed_only(props, assigns.__changed__[:props])
+
+      true ->
+        props
     end
   end
 
@@ -445,6 +452,7 @@ defmodule LiveSvelte do
       nil ->
         maybe_reset_id_counters_for_update(changed)
         counter_id(name)
+
       identity ->
         "#{name}-#{identity}"
     end
@@ -490,7 +498,11 @@ defmodule LiveSvelte do
 
   # Simple counter for standalone (non-loop) components that lack identity props.
   defp counter_id(name) do
-    Process.put(:live_svelte_counter_names, Enum.uniq([name | Process.get(:live_svelte_counter_names, [])]))
+    Process.put(
+      :live_svelte_counter_names,
+      Enum.uniq([name | Process.get(:live_svelte_counter_names, [])])
+    )
+
     Process.put(:live_svelte_total_counter, Process.get(:live_svelte_total_counter, 0) + 1)
     key = {:live_svelte_counter, name}
     count = Process.get(key, 0)

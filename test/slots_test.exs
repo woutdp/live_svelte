@@ -11,6 +11,7 @@ defmodule LiveSvelte.SlotsTest do
 
     test "filters out slot entries from assigns" do
       slot_entry = %{__slot__: :button, inner_block: fn -> "content" end}
+
       assigns = %{
         name: "Test",
         button: [slot_entry],

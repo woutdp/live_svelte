@@ -12,11 +12,14 @@ defmodule LiveSvelte.TestTest do
       "data-ssr": "false",
       "data-slots": ~s({"default":"PHA+c2xvdDwvcD4="})
     ]
+
     merged = Keyword.merge(default, attrs)
+
     attr_str =
       merged
       |> Enum.map(fn {k, v} -> ~s(#{k}='#{v}') end)
       |> Enum.join(" ")
+
     """
     <div #{attr_str} phx-hook="SvelteHook" phx-update="ignore">
       <div id="Counter-1-target"></div>
@@ -57,6 +60,7 @@ defmodule LiveSvelte.TestTest do
         <div id="A-1" data-name="A" data-props='{}' data-ssr="false" data-slots='{}' phx-hook="SvelteHook"></div>
         <div id="B-1" data-name="B" data-props='{"x":1}' data-ssr="false" data-slots='{}' phx-hook="SvelteHook"></div>
         """
+
       svelte = Test.get_svelte(html, name: "B")
       assert svelte.name == "B"
       assert svelte.props == %{"x" => 1}
@@ -64,6 +68,7 @@ defmodule LiveSvelte.TestTest do
 
     test "raises when name does not match" do
       html = svelte_root_html()
+
       assert_raise RuntimeError, ~r/No Svelte component found with name="NotFound"/, fn ->
         Test.get_svelte(html, name: "NotFound")
       end
@@ -77,6 +82,7 @@ defmodule LiveSvelte.TestTest do
         <div id="First" data-name="X" data-props='{}' data-ssr="false" data-slots='{}' phx-hook="SvelteHook"></div>
         <div id="Second" data-name="Y" data-props='{"y":2}' data-ssr="false" data-slots='{}' phx-hook="SvelteHook"></div>
         """
+
       svelte = Test.get_svelte(html, id: "Second")
       assert svelte.id == "Second"
       assert svelte.props == %{"y" => 2}
@@ -84,6 +90,7 @@ defmodule LiveSvelte.TestTest do
 
     test "raises when id does not match" do
       html = svelte_root_html()
+
       assert_raise RuntimeError, ~r/No Svelte component found with id="no-such"/, fn ->
         Test.get_svelte(html, id: "no-such")
       end
@@ -93,6 +100,7 @@ defmodule LiveSvelte.TestTest do
   describe "get_svelte from HTML with no Svelte components" do
     test "raises when no Svelte root present" do
       html = "<div>plain</div>"
+
       assert_raise RuntimeError, ~r/No Svelte components found/, fn ->
         Test.get_svelte(html)
       end
@@ -102,12 +110,17 @@ defmodule LiveSvelte.TestTest do
   describe "get_svelte from LiveView" do
     test "extracts Svelte component from rendered LiveView component" do
       html =
-        Phoenix.LiveViewTest.__render_component__(nil, &LiveSvelte.svelte/1, %{
-          name: "TestComponent",
-          props: %{value: 42},
-          ssr: false,
-          socket: nil
-        }, [])
+        Phoenix.LiveViewTest.__render_component__(
+          nil,
+          &LiveSvelte.svelte/1,
+          %{
+            name: "TestComponent",
+            props: %{value: 42},
+            ssr: false,
+            socket: nil
+          },
+          []
+        )
 
       svelte = Test.get_svelte(html)
       assert svelte.name == "TestComponent"
@@ -118,7 +131,12 @@ defmodule LiveSvelte.TestTest do
 
     test "get_svelte(html, name: ...) when HTML from render_component" do
       html =
-        Phoenix.LiveViewTest.__render_component__(nil, &LiveSvelte.svelte/1, %{name: "Demo", props: %{}, ssr: false, socket: nil}, [])
+        Phoenix.LiveViewTest.__render_component__(
+          nil,
+          &LiveSvelte.svelte/1,
+          %{name: "Demo", props: %{}, ssr: false, socket: nil},
+          []
+        )
 
       svelte = Test.get_svelte(html, name: "Demo")
       assert svelte.name == "Demo"
@@ -128,6 +146,7 @@ defmodule LiveSvelte.TestTest do
   describe "invalid option" do
     test "raises on unknown option" do
       html = svelte_root_html()
+
       assert_raise ArgumentError, ~r/invalid keyword option/, fn ->
         Test.get_svelte(html, foo: "bar")
       end

@@ -121,8 +121,8 @@ defmodule LiveSvelte.EncoderTest do
         use Ecto.Schema
 
         schema "users" do
-          field :name, :string
-          field :email, :string
+          field(:name, :string)
+          field(:email, :string)
         end
       end
 
@@ -134,7 +134,9 @@ defmodule LiveSvelte.EncoderTest do
           |> Ecto.Changeset.apply_action(:validate)
 
         case cs do
-          {:ok, _} -> flunk("expected invalid changeset")
+          {:ok, _} ->
+            flunk("expected invalid changeset")
+
           {:error, changeset} ->
             encoded = Encoder.encode(changeset, [])
             assert encoded.valid? == false

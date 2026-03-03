@@ -2,51 +2,52 @@ defmodule ExampleWeb.Router do
   use ExampleWeb, :router
 
   pipeline :browser do
-    plug :accepts, ["html"]
-    plug :fetch_session
-    plug :fetch_live_flash
-    plug :put_root_layout, {ExampleWeb.Layouts, :root}
-    plug :protect_from_forgery
-    plug :put_secure_browser_headers
+    plug(:accepts, ["html"])
+    plug(:fetch_session)
+    plug(:fetch_live_flash)
+    plug(:put_root_layout, {ExampleWeb.Layouts, :root})
+    plug(:protect_from_forgery)
+    plug(:put_secure_browser_headers)
   end
 
   pipeline :api do
-    plug :accepts, ["json"]
+    plug(:accepts, ["json"])
   end
 
   scope "/", ExampleWeb do
-    pipe_through :browser
+    pipe_through(:browser)
 
-    get "/", PageController, :home
+    get("/", PageController, :home)
     # same order as in app.html.heex:
-    get "/hello-world", PageController, :hello_world
-    get "/lodash", PageController, :lodash
-    live "/live-struct", LiveStruct
-    live "/live-simple-counter", LiveSimpleCounter
-    live "/live-lights", LiveLights
-    live "/live-sigil", LiveSigil
-    get "/plus-minus-svelte", PageController, :plus_minus_svelte
-    live "/live-plus-minus", LivePlusMinus
-    live "/live-plus-minus-hybrid", LivePlusMinusHybrid
-    live "/live-static-color", LiveStaticColor
-    live "/live-log-list", LiveLogList
-    live "/live-breaking-news", LiveBreakingNews
-    live "/live-chat", LiveChat
-    live "/live-json", LiveJson
-    live "/live-props-diff", LivePropsDiff
-    live "/streams", Streams
-    live "/live-id-list-diff", LiveIdListDiff
-    live "/live-slots-simple", LiveSlotsSimple
-    live "/live-slots-dynamic", LiveSlotsDynamic
-    live "/live-client-side-loading", LiveClientSideLoading
+    get("/hello-world", PageController, :hello_world)
+    get("/lodash", PageController, :lodash)
+    live("/live-struct", LiveStruct)
+    live("/live-simple-counter", LiveSimpleCounter)
+    live("/live-lights", LiveLights)
+    live("/live-sigil", LiveSigil)
+    get("/plus-minus-svelte", PageController, :plus_minus_svelte)
+    live("/live-plus-minus", LivePlusMinus)
+    live("/live-plus-minus-hybrid", LivePlusMinusHybrid)
+    live("/live-static-color", LiveStaticColor)
+    live("/live-log-list", LiveLogList)
+    live("/live-breaking-news", LiveBreakingNews)
+    live("/live-chat", LiveChat)
+    live("/live-json", LiveJson)
+    live("/live-props-diff", LivePropsDiff)
+    live("/streams", Streams)
+    live("/live-id-list-diff", LiveIdListDiff)
+    live("/live-slots-simple", LiveSlotsSimple)
+    live("/live-slots-dynamic", LiveSlotsDynamic)
+    live("/live-slots-nested", LiveSlotsNested)
+    live("/live-client-side-loading", LiveClientSideLoading)
     # Ecto Examples
-    live "/live-notes-otp", LiveNotesOtp
-    live "/live-form", LiveForm
-    live "/live-upload", LiveUpload
-    live "/live-event-reply", LiveEventReply
-    live "/live-navigation", LiveNavigation
-    live "/live-navigation/:page", LiveNavigation
-    live "/live-composition", LiveComposition
+    live("/live-notes-otp", LiveNotesOtp)
+    live("/live-form", LiveForm)
+    live("/live-upload", LiveUpload)
+    live("/live-event-reply", LiveEventReply)
+    live("/live-navigation", LiveNavigation)
+    live("/live-navigation/:page", LiveNavigation)
+    live("/live-composition", LiveComposition)
   end
 
   # Other scopes may use custom stacks.
@@ -64,10 +65,10 @@ defmodule ExampleWeb.Router do
     import Phoenix.LiveDashboard.Router
 
     scope "/dev" do
-      pipe_through :browser
+      pipe_through(:browser)
 
-      live_dashboard "/dashboard", metrics: ExampleWeb.Telemetry
-      forward "/mailbox", Plug.Swoosh.MailboxPreview
+      live_dashboard("/dashboard", metrics: ExampleWeb.Telemetry)
+      forward("/mailbox", Plug.Swoosh.MailboxPreview)
     end
   end
 end
