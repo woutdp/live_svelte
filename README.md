@@ -105,7 +105,7 @@ defp aliases do
   [
     setup: ["deps.get", "ecto.setup", "cmd --cd assets npm install"],
     ...,
-    "assets.deploy": ["tailwind <app_name> --minify", "cmd --cd assets node build.js --deploy", "phx.digest"]
+    "assets.deploy": ["tailwind <app_name> --minify", "cmd --cd assets npx vite build", "phx.digest"]
   ]
 end
 ```
@@ -143,17 +143,7 @@ end
 
 ### What did we do?
 
-Phoenix's default configuration of esbuild (via the Elixir wrapper) [does not allow you to use esbuild plugins](https://hexdocs.pm/phoenix/asset_management.html#esbuild-plugins). The standard Elixir `esbuild` package works great for simple projects with Phoenix hooks, but to use LiveSvelte we need a more complex setup.
-
-To use plugins, Phoenix recommends replacing the default build system with a build script. So, in setup, we go from using the standard `esbuild` package to using `esbuild` directly as a `node_module`.
-
-As a result, you'll notice some related changes:
-
--   A bunch of files get created in `/assets`.
--   There are some code changes in `/lib`.
--   We no longer use the standard Elixir `esbuild` watcher, as we created a new watcher that does the same thing.
-
-The setup process commented out some lines of code, like configuration in `dev.exs`. It's safe to delete commented-out code if you desire.
+LiveSvelte uses [Vite](https://vite.dev/) as its build tool with `@sveltejs/vite-plugin-svelte` for Svelte compilation. The `mix live_svelte.setup` task sets up the necessary Vite configuration in your `assets/` directory.
 
 ## Usage
 
@@ -204,17 +194,12 @@ Most of the `/example_project` examples are visible in the [YouTube demo video](
 
 I recommend cloning `live_svelte` and running the example project in `/example_project` by running the following commands:
 
-```
+```bash
 git clone https://github.com/woutdp/live_svelte.git
-# compile live_svelte
-cd live_svelte
-mix deps.get
-npm install --prefix assets
-mix assets.build
 # set up and run the example project
-cd example_project
-mix deps.get
-npm install --prefix assets
+cd live_svelte/example_project
+mix setup
+mix assets.js
 mix phx.server
 ```
 
@@ -362,7 +347,7 @@ def live_view do
 end
 ```
 
-2. Ignore build files in your `.gitignore`. The sigil will create Svelte files that are then picked up by `esbuild`, these files don't need to be included in your git repo:
+2. Ignore build files in your `.gitignore`. The sigil will create Svelte files that are then picked up by Vite, these files don't need to be included in your git repo:
 
 ```gitignore
 # Ignore automatically generated Svelte files by the ~V sigil
@@ -792,25 +777,29 @@ Inside `assets/package.json`
 "live_svelte": "file:../../live_svelte",
 ```
 
-### Building Static Files
+### Development Workflow
 
-Make the changes in `/assets/js` and run:
+LiveSvelte ships TypeScript source directly — there are no pre-built distribution files. Consumers compile the library source through their own Vite pipeline via the `live_svelte` package alias.
+
+When working on the library source in `assets/js/live_svelte/`, changes are picked up automatically by the example project's Vite builds:
 
 ```bash
-mix assets.build
+# From example_project/ — rebuild after library source changes:
+mix assets.js && mix compile
 ```
 
-Or run the watcher:
-
+For live development with HMR:
 ```bash
-mix assets.build --watch
+# Terminal 1: Phoenix server
+cd example_project && mix phx.server
+# Terminal 2: Vite dev server (HMR for Svelte + library changes)
+cd example_project/assets && npx vite
 ```
 
 **Type checking:** The LiveSvelte client library is written in TypeScript with a type-safe public API (no `any` in exported types). Consumers get type hints via the package `types` entry. From the library repo, run `npm run typecheck` in `live_svelte/assets` to run `tsc --noEmit`.
 
 ### Releasing
 
--   Make sure you've built the latest assets with `mix assets.build`
 -   Update the version in `README.md`
 -   Update the version in `package.json`
 -   Update the version in `mix.exs`
@@ -923,16 +912,15 @@ To migrate your project from `0.14.0` to `0.15.0` you need to follow the followi
 {:live_svelte, "0.15.0"}`
 ```
 
-2. Update to the latest Svelte 5 and `esbuild-svelte` version in your package.json
+2. Update to the latest Svelte 5 in your package.json
 
 ```javascript
   // package.json
- "esbuild-svelte": "^0.9.0",
  "svelte": "^5",
 ```
 
-3. Update your build.js file.
-Which you can find [here](https://github.com/woutdp/live_svelte/blob/master/assets/copy/build.js)
+3. Update your Vite configuration to use `@sveltejs/vite-plugin-svelte` with Svelte 5.
+Refer to the installation guide for the current Vite setup.
 
 
 ## Credits
