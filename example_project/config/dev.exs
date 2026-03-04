@@ -12,7 +12,8 @@ config :example, Example.Repo,
 #
 # The watchers configuration can be used to run external
 # watchers to your application. For example, we use it
-# with esbuild to bundle .js and .css sources.
+# with tailwind to rebuild CSS. For JS/Svelte assets, run
+# `cd assets && npx vite` in a separate terminal (see comment below).
 config :example, ExampleWeb.Endpoint,
   # Binding to loopback ipv4 address prevents access from other machines.
   # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
@@ -21,11 +22,8 @@ config :example, ExampleWeb.Endpoint,
   code_reloader: true,
   debug_errors: true,
   secret_key_base: "cZ19cfxyAQ7Nr/qlKBKxr/jRRgW6wk8MQEgJrMNFjfOPEo6hSY1v50sFb0vIjv3P",
-  # NOTE: When using Vite dev server (see vite_host config below), comment out
-  # the `node:` watcher — Vite handles JS compilation. Run `cd assets && npx vite`
-  # in a separate terminal instead.
+  # JS assets: run `cd assets && npx vite` in a separate terminal for HMR.
   watchers: [
-    node: ["build.js", "--watch", cd: Path.expand("../assets", __DIR__)],
     tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]}
   ]
 

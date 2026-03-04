@@ -1,6 +1,6 @@
-// Vite dev server entry point for HMR development.
-// Replaces the esbuild-plugin-import-glob syntax in app.js with Vite's native
-// import.meta.glob. The esbuild build (app.js) remains unchanged for production.
+// Client-side entry point for both Vite dev server (HMR) and production builds.
+// Uses virtual:live-svelte-components (provided by liveSveltePlugin) instead of
+// the esbuild-plugin-import-glob glob syntax used by the old esbuild app.js entry.
 
 import "phoenix_html"
 import {Socket} from "phoenix"
