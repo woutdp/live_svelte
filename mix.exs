@@ -45,7 +45,7 @@ defmodule LiveSvelte.MixProject do
         GitHub: @repo_url
       },
       files:
-        ~w(assets/copy assets/js lib mix.exs package.json .formatter.exs LICENSE.md README.md CHANGELOG.md)
+        ~w(assets/copy/tsconfig.json assets/js lib mix.exs package.json .formatter.exs LICENSE.md README.md CHANGELOG.md)
     ]
   end
 
@@ -61,6 +61,8 @@ defmodule LiveSvelte.MixProject do
   defp deps do
     [
       {:ex_doc, "~> 0.37.3", only: :dev, runtime: false},
+      {:igniter, "~> 0.6", optional: true},
+      {:phoenix_vite, "~> 0.4"},
       {:jsonpatch, "~> 2.3"},
       {:ecto, ">= 3.0.0", optional: true},
       {:phoenix_ecto, ">= 4.0.0", optional: true},
@@ -70,7 +72,7 @@ defmodule LiveSvelte.MixProject do
       {:telemetry, "~> 0.4 or ~> 1.0"},
       {:phoenix, ">= 1.7.0"},
       {:phoenix_html, ">= 3.3.1"},
-      {:phoenix_live_view, ">= 0.18.0"}
+      {:phoenix_live_view, "~> 1.0"}
     ]
   end
 
