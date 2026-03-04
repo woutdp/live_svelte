@@ -70,13 +70,18 @@ defmodule Example.MixProject do
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
-      "assets.js": ["cmd --cd assets node build.js"],
+      "assets.js": [
+        "cmd --cd assets npx vite build",
+        "cmd --cd assets npx vite build --config vite.ssr.config.js",
+        "tailwind default"
+      ],
       "test.e2e": ["assets.js", "ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.setup": ["tailwind.install --if-missing"],
       "assets.build": ["tailwind default"],
       "assets.deploy": [
+        "cmd --cd assets npx vite build",
+        "cmd --cd assets npx vite build --config vite.ssr.config.js",
         "tailwind default --minify",
-        "cmd --cd assets node build.js --deploy",
         "phx.digest"
       ]
     ]
