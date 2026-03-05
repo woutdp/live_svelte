@@ -81,6 +81,8 @@ Make sure you have it installed in production too. You might be using `node` in 
 
 You can make sure you have `node` installed by running `node --version` in your project directory.
 
+You can also use **Bun** instead of Node.js/npm for installing dependencies and running Vite (see [Installation](#installation)); production SSR still uses Node.js.
+
 If you don't want SSR, you can disable it by not setting `NodeJS.Supervisor` in `application.ex`. More on that in the [SSR](#ssr-server-side-rendering) section of this document.
 
 ## Installation
@@ -91,7 +93,7 @@ LiveSvelte uses [Vite](https://vite.dev/) for building and [phoenix_vite](https:
 
 ### Option A — Igniter installer (recommended)
 
-Requires Phoenix 1.8+ and Node.js 19+.
+Requires Phoenix 1.8+ and Node.js 19+ (or Bun for package management and builds).
 
 #### New project
 
@@ -142,17 +144,20 @@ With phoenix_vite, the layout uses `PhoenixVite.Components.assets` and the endpo
 
 Visit `http://localhost:4000/svelte_demo` to confirm the demo Svelte component is working.
 
-Add `--bun` to use Bun instead of npm/npx:
+#### Using Bun
 
-```bash
-mix igniter.install live_svelte --bun
-```
+Use the `--bun` flag to use Bun instead of npm/npx:
+
+- **Existing project:** `mix igniter.install live_svelte --bun`
+- **New project:** `mix igniter.new my_app --with phx.new --install live_svelte --bun`
 
 ---
 
 ### Option B — Manual installation
 
 Use this if you prefer not to use Igniter, or need full control over the configuration.
+
+To use **Bun** instead of npm when installing manually, add the `bun` dependency, set `config :phoenix_vite, PhoenixVite.Bun, ...`, and use `phoenix_vite.bun` in mix aliases and `PhoenixVite.Bun` in the Vite watcher. See the [Installation guide](https://hexdocs.pm/live_svelte/installation.html) for details.
 
 **1.** Add dependencies to `mix.exs`:
 

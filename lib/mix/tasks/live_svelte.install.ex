@@ -68,7 +68,7 @@ defmodule Mix.Tasks.LiveSvelte.Install do
         "config.exs",
         :phoenix_vite,
         [PhoenixVite.Npm, :assets],
-        {:code, Sourceror.parse_string!(~s|[args: [], cd: __DIR__]|)}
+        {:code, Sourceror.parse_string!(~s|[args: [], cd: Path.expand("..", __DIR__)]|)}
       )
     end
 
@@ -370,7 +370,7 @@ defmodule Mix.Tasks.LiveSvelte.Install do
               content,
               ~r/([ \t]*)(children = \[)/,
               "\\1node_js_children =\n" <>
-                "\\1  if Application.compile_env(:live_svelte, :ssr_module, nil) == LiveSvelte.SSR.NodeJS do\n" <>
+                "\\1  if Application.get_env(:live_svelte, :ssr_module, nil) == LiveSvelte.SSR.NodeJS do\n" <>
                 "\\1    [{NodeJS.Supervisor, [path: LiveSvelte.SSR.NodeJS.server_path(), pool_size: 4]}]\n" <>
                 "\\1  else\n" <>
                 "\\1    []\n" <>

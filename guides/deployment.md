@@ -4,7 +4,7 @@ Deploying a LiveSvelte application requires Node.js on the server for SSR (serve
 
 ## Requirements
 
-- **Node.js 19+** on the production server (for `LiveSvelte.SSR.NodeJS`)
+- **Node.js 19+** on the production server (for `LiveSvelte.SSR.NodeJS`). If you use Bun for local builds, the production server still needs Node.js 19+ for SSR (the SSR bundle is run by Node.js).
 - Standard Phoenix/Elixir deployment tooling (releases, Docker, etc.)
 
 ## Build Steps

@@ -4,7 +4,7 @@ LiveSvelte uses [Vite](https://vitejs.dev/) for both client and SSR builds, repl
 
 ## Prerequisites
 
-- **Node.js 19+** — required for SSR (server-side rendering)
+- **Node.js 19+ or Bun** — for package management and Vite builds. Production SSR (when using `LiveSvelte.SSR.NodeJS`) still requires Node.js 19+ on the server.
 - **Elixir 1.17+**
 - **Phoenix 1.8+** — required for the Igniter installer
 - **Igniter** — the installation scaffolding tool
@@ -31,11 +31,14 @@ For a **new** project with LiveSvelte pre-installed:
 mix igniter.new my_app --with phx.new --install live_svelte
 ```
 
-Use the `--bun` flag to use `bun` instead of `npm`:
+#### Using Bun
 
-```bash
-mix igniter.install live_svelte --bun
-```
+To use **Bun** instead of Node.js/npm for package management and Vite:
+
+- **Existing project:** `mix igniter.install live_svelte --bun`
+- **New project:** `mix igniter.new my_app --with phx.new --install live_svelte --bun`
+
+After install, `mix assets.setup` and `mix assets.build` use Bun (e.g. `bun install`, phoenix_vite's Bun task) instead of npm.
 
 ### Step 3: Install JS dependencies and build
 
@@ -54,7 +57,7 @@ Running `mix igniter.install live_svelte` makes the following changes to your pr
 **`package.json`** (at project root) — the installer moves it from `assets/` and adds:
 - `live_svelte`, `phoenix_vite: "file:./deps/phoenix_vite"` (dev), and Svelte-related deps
 
-**`config/config.exs`** — adds `config :phoenix_vite, PhoenixVite.Npm, ...`
+**`config/config.exs`** — adds `config :phoenix_vite, PhoenixVite.Npm, ...` (when using `--bun`, the installer configures `PhoenixVite.Bun` and Bun-based aliases instead).
 
 **`assets/vite.config.mjs`** — adds the Svelte plugin, `liveSveltePlugin`, and `ssr: { noExternal: ... }`. A single config is used for both client and SSR builds (no separate `vite.ssr.config.js`); the SSR build is run via `phoenix_vite.npm vite build --ssr js/server.js --outDir ../priv/svelte`.
 
@@ -142,6 +145,19 @@ If you must install manually (e.g. Phoenix < 1.8), the overall steps mirror the 
 6. Add `NodeJS.Supervisor` to `application.ex`
 7. Configure SSR in `config/`
 8. **For instant Svelte/CSS HMR with phoenix_vite:** In `config/dev.exs`, add to your endpoint `static_url: [host: "localhost", port: 5173]` and in `watchers` add `vite: {PhoenixVite.Npm, :run, [:vite, ~w(dev)]}`. Without these, the layout serves built assets and changes to Svelte components will not hot-reload.
+
+#### Using Bun with manual installation
+
+To use **Bun** instead of npm when installing manually:
+
+1. Add the optional dependency in `mix.exs`: `{:bun, ">= 1.5.1 and < 2.0.0-0"}`
+2. In `config/config.exs`, use `config :phoenix_vite, PhoenixVite.Bun, ...` (with the same options you would use for `PhoenixVite.Npm`; see [phoenix_vite](https://hexdocs.pm/phoenix_vite) for the Bun API).
+3. In `mix.exs` aliases, use `phoenix_vite.bun` instead of `phoenix_vite.npm`:
+   - `"assets.setup": ["phoenix_vite.bun assets install", "tailwind.install --if-missing"]`
+   - `"assets.build"`: same two `phoenix_vite.bun vite build ...` commands as in the npm version.
+4. In `config/dev.exs` watchers, use `vite: {PhoenixVite.Bun, :run, [:vite, ~w(dev)]}`.
+
+Production SSR still uses Node.js (`LiveSvelte.SSR.NodeJS`); the server must have Node.js 19+ installed.
 
 ## Disabling SSR
 

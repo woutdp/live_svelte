@@ -146,12 +146,12 @@ defmodule Mix.Tasks.LiveSvelte.InstallTest do
       assert content =~ "NodeJS.Supervisor"
     end
 
-    test "NodeJS.Supervisor is wrapped in compile_env guard, not unconditional" do
+    test "NodeJS.Supervisor is wrapped in get_env guard, not unconditional" do
       result = run_installer()
       content = file_content(result, "lib/test/application.ex")
 
-      assert content =~ "Application.compile_env(:live_svelte, :ssr_module",
-             "NodeJS.Supervisor must be wrapped in a compile_env guard so it only starts in prod"
+      assert content =~ "Application.get_env(:live_svelte, :ssr_module",
+             "NodeJS.Supervisor must be wrapped in a get_env guard so it only starts in prod"
 
       refute content =~ ~r/children\s*=\s*\[\s*\{NodeJS\.Supervisor/,
              "NodeJS.Supervisor must not be a bare unconditional entry in the children list"
