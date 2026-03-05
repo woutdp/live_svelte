@@ -10,10 +10,8 @@ config :example, Example.Repo,
 # For development, we disable any cache and enable
 # debugging and code reloading.
 #
-# The watchers configuration can be used to run external
-# watchers to your application. For example, we use it
-# with tailwind to rebuild CSS. For JS/Svelte assets, run
-# `cd assets && npx vite` in a separate terminal (see comment below).
+# The watchers configuration runs Tailwind and Vite (phoenix_vite);
+# Vite provides HMR for JS/Svelte/CSS.
 config :example, ExampleWeb.Endpoint,
   # Binding to loopback ipv4 address prevents access from other machines.
   # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
@@ -22,9 +20,10 @@ config :example, ExampleWeb.Endpoint,
   code_reloader: true,
   debug_errors: true,
   secret_key_base: "cZ19cfxyAQ7Nr/qlKBKxr/jRRgW6wk8MQEgJrMNFjfOPEo6hSY1v50sFb0vIjv3P",
-  # JS assets: run `cd assets && npx vite` in a separate terminal for HMR.
+  static_url: [host: "localhost", port: 5173],
   watchers: [
-    tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]}
+    tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]},
+    vite: {PhoenixVite.Npm, :run, [:vite, ~w(dev)]}
   ]
 
 # ## SSL Support
@@ -62,21 +61,6 @@ config :example, ExampleWeb.Endpoint,
 
 # Enable dev routes for dashboard and mailbox
 config :example, dev_routes: true
-
-# To use Vite dev server for HMR + SSR during development:
-#
-#   1. Install Vite deps (one-time):
-#        cd assets && npm install
-#
-#   2. Start Vite dev server (in a separate terminal):
-#        cd assets && npx vite
-#
-#   3. Enable Vite in config (uncomment below):
-# config :live_svelte, ssr_module: LiveSvelte.SSR.ViteJS
-# config :live_svelte, vite_host: "http://localhost:5173"
-#
-# With :vite_host set, LiveSvelte.Reload.vite_assets/1 in root.html.heex
-# automatically serves assets from Vite (with HMR) instead of compiled files.
 
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"
