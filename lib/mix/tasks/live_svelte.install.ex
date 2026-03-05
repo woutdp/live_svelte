@@ -48,6 +48,7 @@ defmodule Mix.Tasks.LiveSvelte.Install do
       igniter
       |> Igniter.compose_task("phoenix_vite.install", igniter.args.argv)
       |> configure_environments(app_name)
+      |> update_phoenix_vite_config()
       |> add_live_svelte_to_html_helpers(app_name)
       |> update_javascript_configuration()
       |> configure_tailwind_for_svelte()
@@ -59,7 +60,16 @@ defmodule Mix.Tasks.LiveSvelte.Install do
       |> add_svelte_demo_route()
       |> update_home_template()
       |> update_gitignore()
-      |> create_ssr_vite_config()
+    end
+
+    defp update_phoenix_vite_config(igniter) do
+      Config.configure(
+        igniter,
+        "config.exs",
+        :phoenix_vite,
+        [PhoenixVite.Npm, :assets],
+        {:code, Sourceror.parse_string!(~s|[args: [], cd: __DIR__]|)}
+      )
     end
 
     # Configure environments (config.exs, dev.exs, prod.exs)
@@ -196,8 +206,6 @@ defmodule Mix.Tasks.LiveSvelte.Install do
     end
 
     # Update vite.config.mjs to add Svelte plugin and liveSveltePlugin.
-    # Note: ssr.noExternal is intentionally NOT added here — it only applies to SSR
-    # builds and is already set in the separate vite.ssr.config.js.
     defp update_vite_configuration(igniter) do
       Igniter.update_file(igniter, "assets/vite.config.mjs", fn source ->
         Rewrite.Source.update(source, :content, fn content ->
@@ -205,8 +213,21 @@ defmodule Mix.Tasks.LiveSvelte.Install do
           |> add_svelte_vite_imports()
           |> update_vite_optimized_deps()
           |> update_vite_plugins()
+          |> add_ssr_vite_entry()
         end)
       end)
+    end
+
+    defp add_ssr_vite_entry(content) do
+      if String.contains?(content, "noExternal") do
+        content
+      else
+        String.replace(
+          content,
+          ~r/build: \{/s,
+          "ssr: { noExternal: process.env.NODE_ENV === \"production\" ? true : undefined },\n    build: {"
+        )
+      end
     end
 
     defp add_svelte_vite_imports(content) do
@@ -245,18 +266,33 @@ defmodule Mix.Tasks.LiveSvelte.Install do
       end
     end
 
-    # Update package.json with Svelte dependencies
-    # phoenix_vite.install creates assets/package.json; npm runs from assets/
+    # Move package.json to root (like live_vue) and add Svelte + phoenix_vite dependencies.
+    # phoenix_vite.install creates assets/package.json; we move to root and patch.
     defp update_package_json_for_svelte(igniter) do
       igniter
-      |> Igniter.update_file("assets/package.json", fn source ->
+      |> Igniter.move_file("assets/package.json", "package.json")
+      |> Igniter.update_file("package.json", fn source ->
         Rewrite.Source.update(source, :content, fn content ->
           content
           |> add_module_type()
           |> add_svelte_dependency()
           |> add_svelte_dev_dependencies()
+          |> add_phoenix_vite_dev_dependency()
         end)
       end)
+    end
+
+    defp add_phoenix_vite_dev_dependency(content) do
+      if String.contains?(content, "\"phoenix_vite\"") do
+        content
+      else
+        String.replace(
+          content,
+          ~s("vite":),
+          ~s("phoenix_vite": "file:./deps/phoenix_vite",\n    "vite":),
+          global: false
+        )
+      end
     end
 
     defp add_svelte_dependency(content) do
@@ -349,65 +385,21 @@ defmodule Mix.Tasks.LiveSvelte.Install do
       end)
     end
 
-    # Update mix.exs aliases in the consumer app to use Vite
+    # Update mix.exs aliases: replace single phoenix_vite.npm vite build with two-step (client + SSR).
     defp update_mix_aliases(igniter) do
-      bun? = igniter.args.options[:bun] || false
-      pm = if bun?, do: "bunx", else: "npx"
-
       Igniter.update_file(igniter, "mix.exs", fn source ->
         Rewrite.Source.update(source, :content, fn content ->
-          if String.contains?(content, ~s("assets.js":)) do
+          if String.contains?(content, "js/server.js") do
             content
           else
-            content
-            |> add_assets_js_alias(pm)
-            |> update_assets_deploy_alias(pm)
+            String.replace(
+              content,
+              ~s("phoenix_vite.npm vite build"),
+              ~s("phoenix_vite.npm vite build --manifest --emptyOutDir true", "phoenix_vite.npm vite build --ssrManifest --emptyOutDir false --ssr js/server.js --outDir ../priv/svelte")
+            )
           end
         end)
       end)
-    end
-
-    defp add_assets_js_alias(content, pm) do
-      if String.contains?(content, "\"assets.js\"") do
-        content
-      else
-        String.replace(
-          content,
-          ~r/("assets\.setup":)/,
-          ~s("assets.js": [\n        "assets.build",\n        "cmd --cd assets #{pm} vite build --config vite.ssr.config.js"\n      ],\n      \\1)
-        )
-      end
-    end
-
-    defp update_assets_deploy_alias(content, pm) do
-      ssr_cmd = ~s("cmd --cd assets #{pm} vite build --config vite.ssr.config.js --mode production")
-
-      cond do
-        # Guard: SSR step already present in assets.deploy (idempotent).
-        # Check for --mode production which is unique to the deploy command;
-        # assets.js also references vite.ssr.config.js so a generic check would
-        # fire immediately after add_assets_js_alias runs, skipping the deploy update.
-        String.contains?(content, "vite.ssr.config.js --mode production") ->
-          content
-
-        # phoenix_vite.install pattern: assets.deploy is a list containing "assets.build".
-        # Use dotall regex so inline and multi-line list formats both match.
-        Regex.match?(~r/"assets\.deploy":\s*\[/s, content) ->
-          String.replace(
-            content,
-            ~r/("assets\.deploy":\s*\[)(.*?)(\s*\])/s,
-            "\\1\\2,\n        #{ssr_cmd}\\3",
-            global: false
-          )
-
-        # Legacy esbuild pattern — replace with vite production builds
-        true ->
-          String.replace(
-            content,
-            ~r/"esbuild default[^"]*"/,
-            ~s("cmd --cd assets #{pm} vite build --mode production", #{ssr_cmd})
-          )
-      end
     end
 
     # Add svelte_demo route to router
@@ -467,23 +459,19 @@ defmodule Mix.Tasks.LiveSvelte.Install do
       end)
     end
 
-    # Add gitignore entries for Svelte build artifacts under a named section.
+    # Add gitignore entries; with package.json at root, node_modules is at project root.
     defp update_gitignore(igniter) do
       Igniter.update_file(igniter, ".gitignore", fn source ->
         Rewrite.Source.update(source, :content, fn content ->
-          if String.contains?(content, "/priv/svelte/") do
-            content
-          else
-            String.trim_trailing(content) <>
-              "\n\n# LiveSvelte build artifacts\n/assets/svelte/_build/\n/priv/svelte/\n"
-          end
+          content
+          |> then(fn c ->
+            if String.contains?(c, "/assets/node_modules"), do: String.replace(c, "/assets/node_modules", "node_modules"), else: c
+          end)
+          |> then(fn c ->
+            if String.contains?(c, "/priv/svelte/"), do: c, else: String.trim_trailing(c) <> "\n\n# LiveSvelte build artifacts\n/assets/svelte/_build/\n/priv/svelte/\n"
+          end)
         end)
       end)
-    end
-
-    # Create the SSR Vite config file
-    defp create_ssr_vite_config(igniter) do
-      Igniter.create_new_file(igniter, "assets/vite.ssr.config.js", ssr_vite_config_content())
     end
 
     # Content helpers
@@ -493,26 +481,6 @@ defmodule Mix.Tasks.LiveSvelte.Install do
       import { getRender } from "live_svelte"
       import Components from "virtual:live-svelte-components"
       export const render = getRender(Components)
-      """
-    end
-
-    defp ssr_vite_config_content do
-      """
-      import { defineConfig } from "vite"
-      import { svelte } from "@sveltejs/vite-plugin-svelte"
-      import liveSveltePlugin from "live_svelte/vitePlugin"
-
-      export default defineConfig({
-        plugins: [svelte(), liveSveltePlugin({ entrypoint: "./js/server.js" })],
-        ssr: { noExternal: true },
-        build: {
-          ssr: "./js/server.js",
-          outDir: "../priv/svelte",
-          rollupOptions: {
-            output: { entryFileNames: "server.js", format: "es" }
-          }
-        }
-      })
       """
     end
 

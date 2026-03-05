@@ -9,7 +9,7 @@
     <p class="text-sm text-base-content/50">This text was rendered by the server before JavaScript loaded.</p>
     <div class="flex items-center justify-center gap-4">
         <button data-testid="ssr-increment" class="btn btn-sm bg-brand text-white border-0 hover:opacity-90 w-fit" onclick={() => clicks++}>
-            Click me
+            Click me !!!
         </button>
         <span data-testid="click-count" class="font-mono">{clicks}</span>
     </div>

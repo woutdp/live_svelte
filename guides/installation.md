@@ -40,8 +40,8 @@ mix igniter.install live_svelte --bun
 ### Step 3: Install JS dependencies and build
 
 ```bash
-cd assets && npm install && cd ..
-mix assets.js
+mix assets.setup    # phoenix_vite.npm assets install (or: mix setup)
+mix assets.build
 mix phx.server
 ```
 
@@ -51,21 +51,12 @@ Visit `/svelte_demo` to verify the installation with the generated demo componen
 
 Running `mix igniter.install live_svelte` makes the following changes to your project:
 
-**`assets/package.json`** — adds:
-- `live_svelte: "file:../deps/live_svelte"` (dependency)
-- `svelte: "^5.0.0"` (dev dependency)
-- `@sveltejs/vite-plugin-svelte` (dev dependency)
+**`package.json`** (at project root) — the installer moves it from `assets/` and adds:
+- `live_svelte`, `phoenix_vite: "file:./deps/phoenix_vite"` (dev), and Svelte-related deps
 
-**`assets/vite.config.mjs`** — adds the Svelte plugin and `liveSveltePlugin`:
-```js
-import { svelte } from "@sveltejs/vite-plugin-svelte"
-import { liveSveltePlugin } from "live_svelte/vitePlugin"
+**`config/config.exs`** — adds `config :phoenix_vite, PhoenixVite.Npm, ...`
 
-// ...
-plugins: [svelte(), liveSveltePlugin()],
-```
-
-**`assets/vite.ssr.config.js`** — new file for the SSR bundle (Node.js server rendering)
+**`assets/vite.config.mjs`** — adds the Svelte plugin, `liveSveltePlugin`, and `ssr: { noExternal: ... }`. A single config is used for both client and SSR builds (no separate `vite.ssr.config.js`); the SSR build is run via `phoenix_vite.npm vite build --ssr js/server.js --outDir ../priv/svelte`.
 
 **`assets/js/app.js`** — adds hook wiring:
 ```js
@@ -104,12 +95,12 @@ config :live_svelte,
   ssr: true
 ```
 
-**`mix.exs`** — adds the `assets.js` alias that runs both Vite builds plus Tailwind:
+**`mix.exs`** — adds phoenix_vite-driven aliases: `assets.setup`, `assets.build` (client + SSR via `phoenix_vite.npm vite build`):
 ```elixir
-"assets.js": [
-  "cmd npx vite build",
-  "cmd npx vite build --config vite.ssr.config.js",
-  "tailwind default"
+"assets.setup": ["phoenix_vite.npm assets install", "tailwind.install --if-missing"],
+"assets.build": [
+  "phoenix_vite.npm vite build --manifest --emptyOutDir true",
+  "phoenix_vite.npm vite build --ssrManifest --emptyOutDir false --ssr js/server.js --outDir ../priv/svelte"
 ]
 ```
 

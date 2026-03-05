@@ -53,62 +53,32 @@ defmodule Mix.Tasks.LiveSvelte.InstallTest do
     end
   end
 
-  describe "H2 regression: update_assets_deploy_alias/2" do
-    test "assets.deploy includes SSR vite build step" do
+  describe "H2: phoenix_vite two-step assets.build" do
+    test "assets.build includes phoenix_vite.npm client and SSR build steps" do
       result = run_installer()
       content = file_content(result, "mix.exs")
 
-      assert content =~ "vite.ssr.config.js",
-             "assets.deploy is missing the SSR build step:\n\n#{content}"
-    end
+      assert content =~ "phoenix_vite.npm vite build --manifest --emptyOutDir true",
+             "assets.build missing client step:\n\n#{content}"
 
-    test "assets.deploy SSR step uses npx by default" do
-      result = run_installer()
-      content = file_content(result, "mix.exs")
+      assert content =~ "phoenix_vite.npm vite build --ssrManifest",
+             "assets.build missing SSR step:\n\n#{content}"
 
-      assert content =~
-               ~r/npx vite build --config vite\.ssr\.config\.js --mode production/,
-             "Expected npx SSR build in assets.deploy"
-    end
+      assert content =~ "--ssr js/server.js",
+             "assets.build SSR step must use js/server.js entry:\n\n#{content}"
 
-    test "assets.deploy SSR step uses bunx with --bun flag" do
-      result = run_installer(bun: true)
-      content = file_content(result, "mix.exs")
-
-      assert content =~
-               ~r/bunx vite build --config vite\.ssr\.config\.js --mode production/,
-             "Expected bunx SSR build in assets.deploy with --bun"
+      assert content =~ "--outDir ../priv/svelte",
+             "assets.build SSR step must output to priv/svelte:\n\n#{content}"
     end
   end
 
-  describe "assets.js alias" do
-    test "assets.js alias is added with client and SSR build steps" do
-      result = run_installer()
-      content = file_content(result, "mix.exs")
-
-      assert content =~ ~s("assets.js":),
-             "assets.js alias is missing from mix.exs"
-
-      assert content =~ ~r/"assets\.js".*vite\.ssr\.config\.js/s,
-             "assets.js alias missing SSR step"
-    end
-  end
-
-  describe "M2: vite config — no noExternal in client config" do
-    test "client vite.config.mjs does not contain noExternal" do
+  describe "M2: vite config — ssr noExternal in main config" do
+    test "vite.config.mjs contains ssr noExternal for production" do
       result = run_installer()
       content = file_content(result, "assets/vite.config.mjs")
 
-      refute content =~ "noExternal",
-             "ssr.noExternal must NOT appear in client vite.config.mjs (belongs only in vite.ssr.config.js)"
-    end
-
-    test "SSR vite.ssr.config.js correctly contains noExternal" do
-      result = run_installer()
-      content = file_content(result, "assets/vite.ssr.config.js")
-
-      assert content =~ "noExternal: true",
-             "vite.ssr.config.js must have ssr.noExternal: true"
+      assert content =~ "noExternal",
+             "vite.config.mjs must have ssr.noExternal for SSR build"
     end
   end
 
@@ -133,9 +103,10 @@ defmodule Mix.Tasks.LiveSvelte.InstallTest do
   end
 
   describe "config files" do
-    test "config.exs sets ssr: true" do
+    test "config.exs sets phoenix_vite and live_svelte ssr" do
       result = run_installer()
       content = file_content(result, "config/config.exs")
+      assert content =~ ~r/:phoenix_vite.*PhoenixVite\.Npm/s
       assert content =~ ~r/:live_svelte.*ssr.*true/s
     end
 
@@ -152,16 +123,17 @@ defmodule Mix.Tasks.LiveSvelte.InstallTest do
     end
   end
 
-  describe "package.json" do
-    test "live_svelte dependency added" do
+  describe "package.json (root)" do
+    test "package.json is at project root with live_svelte dependency" do
       result = run_installer()
-      content = file_content(result, "assets/package.json")
+      content = file_content(result, "package.json")
       assert content =~ "live_svelte"
     end
 
-    test "svelte dev dependencies added" do
+    test "phoenix_vite and svelte dev dependencies added" do
       result = run_installer()
-      content = file_content(result, "assets/package.json")
+      content = file_content(result, "package.json")
+      assert content =~ "phoenix_vite"
       assert content =~ "@sveltejs/vite-plugin-svelte"
       assert content =~ ~s("svelte":)
     end
@@ -226,11 +198,6 @@ defmodule Mix.Tasks.LiveSvelte.InstallTest do
   end
 
   describe "created files" do
-    test "assets/vite.ssr.config.js is created" do
-      result = run_installer()
-      assert_creates(result, "assets/vite.ssr.config.js")
-    end
-
     test "assets/js/server.js is created" do
       result = run_installer()
       assert_creates(result, "assets/js/server.js")

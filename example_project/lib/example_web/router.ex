@@ -37,7 +37,7 @@ defmodule ExampleWeb.Router do
     live("/live-id-list-diff", LiveIdListDiff)
     live("/live-slots-simple", LiveSlotsSimple)
     live("/live-slots-dynamic", LiveSlotsDynamic)
-    live("/live-slots-nested", LiveSlotsNested)
+    # live("/live-slots-nested", LiveSlotsNested)
     live("/live-client-side-loading", LiveClientSideLoading)
     # Ecto Examples
     live("/live-notes-otp", LiveNotesOtp)

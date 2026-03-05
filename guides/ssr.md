@@ -28,7 +28,7 @@ config :live_svelte,
 
 The SSR bundle is built by:
 ```bash
-mix assets.js  # runs: npx vite build --config vite.ssr.config.js
+mix assets.build  # runs phoenix_vite.npm vite build (client + SSR)
 ```
 
 This produces `priv/svelte/server.js`, which the NodeJS supervisor loads on application start.
@@ -79,7 +79,7 @@ Components with `ssr={false}` render a loading slot or nothing on the first pain
 
 When running with `LiveSvelte.SSR.ViteJS`, changes to Svelte files trigger automatic hot module replacement. The `SvelteHook` re-mounts affected components without a full page reload.
 
-Add the `LiveSvelte.Reload` module to your layouts to enable this:
+When using phoenix_vite, the layout uses `PhoenixVite.Components.assets` and the Vite dev server is integrated automatically. When not using phoenix_vite, add the `LiveSvelte.Reload` module to your layouts to enable this:
 
 ```elixir
 # config/dev.exs — added by the Igniter installer
@@ -87,13 +87,13 @@ config :live_svelte,
   vite_host: "http://localhost:5173"
 ```
 
-Use `vite_assets/0` in your layout to include Vite's HMR client:
+When not using phoenix_vite, use `LiveSvelte.Reload.vite_assets/1` in your layout to include Vite's HMR client and production fallback:
 
 ```heex
-<!-- In your root layout (dev only) -->
-<%= if Application.get_env(:live_svelte, :ssr_module) == LiveSvelte.SSR.ViteJS do %>
-  <LiveSvelte.Reload.vite_assets path="/assets/js/app.js" />
-<% end %>
+<LiveSvelte.Reload.vite_assets assets={["/js/app.js"]}>
+  <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
+  <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}></script>
+</LiveSvelte.Reload.vite_assets>
 ```
 
 ## Loading Slot
