@@ -88,62 +88,224 @@ If you don't want SSR, you can disable it by not setting `NodeJS.Supervisor` in 
 
 _If you're updating from an older version, make sure to check the `CHANGELOG.md` for breaking changes._
 
-1. Add `live_svelte` to your list of dependencies of your Phoenix app in `mix.exs`:
+LiveSvelte uses [Vite](https://vite.dev/) as its build tool with `@sveltejs/vite-plugin-svelte` for Svelte compilation. The recommended way to install is via the [Igniter](https://github.com/ash-project/igniter) installer, which automates all configuration steps.
+
+### Option A — Igniter installer (recommended)
+
+Requires Phoenix 1.8+ and Node.js 19+.
+
+#### New project
+
+```bash
+mix archive.install hex igniter_new
+mix igniter.new my_app --with phx.new --install live_svelte
+cd my_app
+mix setup
+mix phx.server
+```
+
+#### Existing project
+
+Igniter must be present in the project's deps before the installer can run.
+
+1. Add igniter to `mix.exs`:
 
 ```elixir
 defp deps do
   [
-    {:live_svelte, "~> 0.17.4"}
+    # ... existing deps ...
+    {:igniter, "~> 0.6"}
   ]
 end
 ```
 
-2. Adjust the `setup` and `assets.deploy` aliases in `mix.exs`:
-
-```elixir
-defp aliases do
-  [
-    setup: ["deps.get", "ecto.setup", "cmd --cd assets npm install"],
-    ...,
-    "assets.deploy": ["tailwind <app_name> --minify", "cmd --cd assets npx vite build", "phx.digest"]
-  ]
-end
-```
-
-Note: `tailwind <app_name> --minify` is only required in the `assets.deploy` alias if you're using Tailwind. If you are not using Tailwind, you can remove it from the list.
-
-3. Run the following in your terminal
+2. Fetch and run the installer (this adds `live_svelte`, configures Vite, app.js, html_helpers, SSR, and more):
 
 ```bash
 mix deps.get
-mix live_svelte.setup
+mix igniter.install live_svelte
 ```
 
-4. Add `import LiveSvelte` in `html_helpers/0` inside `/lib/<app_name>_web.ex` like so:
+3. Install npm packages and build assets:
+
+```bash
+npm install          # from the assets/ directory, or:
+# cd assets && npm install && cd ..
+mix assets.js        # runs both Vite builds (client + SSR) + Tailwind
+```
+
+4. Start the server:
+
+```bash
+mix phx.server
+```
+
+Visit `http://localhost:4000/svelte_demo` to confirm the demo Svelte component is working.
+
+Add `--bun` to use Bun instead of npm/npx:
+
+```bash
+mix igniter.install live_svelte --bun
+```
+
+---
+
+### Option B — Manual installation
+
+Use this if you prefer not to use Igniter, or need full control over the configuration.
+
+**1.** Add dependencies to `mix.exs`:
 
 ```elixir
-# /lib/<app_name>_web.ex
+defp deps do
+  [
+    {:live_svelte, "~> 0.17"}
+  ]
+end
+```
 
+**2.** Fetch deps:
+
+```bash
+mix deps.get
+```
+
+**3.** Add `import LiveSvelte` in `html_helpers/0` inside `lib/<app_name>_web.ex`:
+
+```elixir
 defp html_helpers do
   quote do
-
     # ...
-
-    import LiveSvelte  # <-- Add this line
-
+    import LiveSvelte
     # ...
-
   end
 end
 ```
 
-5. For tailwind support, add `@source "../svelte";` in the `app.css` file
+**4.** Add the `assets.js` alias and update `assets.deploy` in `mix.exs`:
 
-6. Finally, remove the `esbuild` configuration from `config/config.exs` and remove the dependency from the `deps` function in your `mix.exs`, and you are done!
+```elixir
+defp aliases do
+  [
+    # ...
+    "assets.js": [
+      "cmd --cd assets npx vite build",
+      "cmd --cd assets npx vite build --config vite.ssr.config.js",
+      "tailwind default"
+    ],
+    "assets.deploy": [
+      "cmd --cd assets npx vite build --mode production",
+      "cmd --cd assets npx vite build --config vite.ssr.config.js --mode production",
+      "phx.digest"
+    ]
+  ]
+end
+```
 
-### What did we do?
+**5.** Update `assets/vite.config.mjs` to add the Svelte and LiveSvelte plugins:
 
-LiveSvelte uses [Vite](https://vite.dev/) as its build tool with `@sveltejs/vite-plugin-svelte` for Svelte compilation. The `mix live_svelte.setup` task sets up the necessary Vite configuration in your `assets/` directory.
+```js
+import { svelte } from "@sveltejs/vite-plugin-svelte"
+import liveSveltePlugin from "live_svelte/vitePlugin"
+
+// Inside defineConfig plugins array:
+plugins: [
+  svelte({ compilerOptions: { css: "injected" } }),
+  liveSveltePlugin({ entrypoint: "./js/server.js" }),
+  // ... existing plugins
+]
+```
+
+**6.** Create `assets/vite.ssr.config.js`:
+
+```js
+import { defineConfig } from "vite"
+import { svelte } from "@sveltejs/vite-plugin-svelte"
+import liveSveltePlugin from "live_svelte/vitePlugin"
+
+export default defineConfig({
+  plugins: [svelte(), liveSveltePlugin({ entrypoint: "./js/server.js" })],
+  ssr: { noExternal: true },
+  build: {
+    ssr: "./js/server.js",
+    outDir: "../priv/svelte",
+    rollupOptions: {
+      output: { entryFileNames: "server.js", format: "es" }
+    }
+  }
+})
+```
+
+**7.** Create `assets/js/server.js`:
+
+```js
+import { getRender } from "live_svelte"
+import Components from "virtual:live-svelte-components"
+export const render = getRender(Components)
+```
+
+**8.** Update `assets/js/app.js` to wire in the LiveSvelte hooks:
+
+```js
+import { getHooks } from "live_svelte"
+import Components from "virtual:live-svelte-components"
+
+// Update your LiveSocket hooks:
+let liveSocket = new LiveSocket("/live", Socket, {
+  hooks: { ...getHooks(Components) },
+  // ...
+})
+```
+
+**9.** Update `assets/package.json` to add Svelte dependencies:
+
+```json
+{
+  "dependencies": {
+    "live_svelte": "file:./deps/live_svelte"
+  },
+  "devDependencies": {
+    "svelte": "^5.0.0",
+    "@sveltejs/vite-plugin-svelte": "^5.0.0"
+  }
+}
+```
+
+**10.** Add SSR configuration to `config/config.exs`, `config/dev.exs`, and `config/prod.exs`:
+
+```elixir
+# config/config.exs
+config :live_svelte, ssr: true
+
+# config/dev.exs
+config :live_svelte,
+  ssr_module: LiveSvelte.SSR.ViteJS,
+  vite_host: "http://localhost:5173"
+
+# config/prod.exs
+config :live_svelte,
+  ssr_module: LiveSvelte.SSR.NodeJS,
+  ssr: true
+```
+
+**11.** Add `NodeJS.Supervisor` to `lib/<app_name>/application.ex`:
+
+```elixir
+children = [
+  {NodeJS.Supervisor, [path: LiveSvelte.SSR.NodeJS.server_path(), pool_size: 4]},
+  # ... existing children
+]
+```
+
+**12.** For Tailwind support, add `@source "../svelte";` to `assets/css/app.css`.
+
+**13.** Install npm packages and build:
+
+```bash
+cd assets && npm install && cd ..
+mix assets.js
+mix phx.server
+```
 
 ## Usage
 
