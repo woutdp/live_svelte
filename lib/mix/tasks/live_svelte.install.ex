@@ -16,6 +16,14 @@ defmodule Mix.Tasks.LiveSvelte.Install do
 
   """
 
+  # Force-load Igniter from the BEAM path before the with_igniter macro expands.
+  # Code.ensure_loaded?/1 only checks modules already in memory; when Mix compiles
+  # live_svelte as a newly-fetched dep, Igniter's BEAM files are on the path but not
+  # yet loaded into the runtime, causing ensure_loaded? to return false and the else
+  # (plain Mix.Task) branch to compile. ensure_compiled/1 loads the module from disk
+  # if it hasn't been loaded yet, so ensure_loaded? will return true in with_igniter.
+  Code.ensure_compiled(Igniter)
+
   import Mix.Tasks.PhoenixVite.Install.Helper
 
   with_igniter do
@@ -75,25 +83,44 @@ defmodule Mix.Tasks.LiveSvelte.Install do
           if String.contains?(content, "import LiveSvelte") do
             content
           else
-            # Add after the use Gettext or import ...Gettext line in html_helpers
-            web_module_name = web_module |> Module.split() |> Enum.join(".")
-
+            # Primary anchor: `import Phoenix.HTML` is unique to the html_helpers block.
+            # Using `use Gettext` as anchor is unsafe — it appears in both controller/0
+            # and html_helpers/0, causing `import LiveSvelte` to be injected in both.
             result =
               String.replace(
                 content,
-                ~r/(use Gettext, backend: #{Regex.escape(web_module_name)}\.Gettext)/,
-                "\\1\n\n      import LiveSvelte"
+                "import Phoenix.HTML",
+                "import LiveSvelte\n\n      import Phoenix.HTML",
+                global: false
               )
 
-            # Fallback: try matching import ...Gettext pattern
-            if result == content do
-              String.replace(
-                content,
-                ~r/(import #{Regex.escape(web_module_name)}\.Gettext)/,
-                "\\1\n\n      import LiveSvelte"
-              )
-            else
+            if result != content do
               result
+            else
+              # Fallback: use Gettext pattern with global: false so only the first
+              # occurrence is replaced. html_helpers is not guaranteed to use
+              # `use Gettext` — older Phoenix versions use `import ...Gettext`.
+              web_module_name = web_module |> Module.split() |> Enum.join(".")
+
+              result =
+                String.replace(
+                  content,
+                  ~r/(use Gettext, backend: #{Regex.escape(web_module_name)}\.Gettext)/,
+                  "\\1\n\n      import LiveSvelte",
+                  global: false
+                )
+
+              if result != content do
+                result
+              else
+                # Last resort: old-style `import ...Gettext` pattern
+                String.replace(
+                  content,
+                  ~r/(import #{Regex.escape(web_module_name)}\.Gettext)/,
+                  "\\1\n\n      import LiveSvelte",
+                  global: false
+                )
+              end
             end
           end
         end)
@@ -124,11 +151,25 @@ defmodule Mix.Tasks.LiveSvelte.Install do
     end
 
     defp update_live_socket_hooks(content) do
-      String.replace(
-        content,
-        "hooks: {...colocatedHooks},",
-        "hooks: {...colocatedHooks, ...getHooks(Components)},"
-      )
+      cond do
+        String.contains?(content, "getHooks(Components)") ->
+          content
+
+        # Phoenix 1.8+ with colocated hooks (most common target)
+        String.contains?(content, "hooks: {...colocatedHooks},") ->
+          String.replace(
+            content,
+            "hooks: {...colocatedHooks},",
+            "hooks: {...colocatedHooks, ...getHooks(Components)},"
+          )
+
+        # Fallback: older Phoenix apps with empty hooks object
+        String.contains?(content, "hooks: {},") ->
+          String.replace(content, "hooks: {},", "hooks: {...getHooks(Components)},")
+
+        true ->
+          content
+      end
     end
 
     # Configure Tailwind to include Svelte files (add @source "../svelte"; to app.css)
@@ -139,11 +180,13 @@ defmodule Mix.Tasks.LiveSvelte.Install do
             if String.contains?(content, "@source \"../svelte\";") do
               content
             else
-              String.replace(
-                content,
-                "@source \"../js\";",
-                ~s(@source "../js";\n@source "../svelte";)
-              )
+              result = String.replace(content, "@source \"../js\";", ~s(@source "../js";\n@source "../svelte";))
+              # Fallback: single-quote variant used by some generators
+              if result == content do
+                String.replace(content, "@source '../js';", ~s(@source '../js';\n@source "../svelte";))
+              else
+                result
+              end
             end
           end)
         end)
@@ -152,7 +195,9 @@ defmodule Mix.Tasks.LiveSvelte.Install do
       end
     end
 
-    # Update vite.config.mjs to add Svelte plugin and liveSveltePlugin
+    # Update vite.config.mjs to add Svelte plugin and liveSveltePlugin.
+    # Note: ssr.noExternal is intentionally NOT added here — it only applies to SSR
+    # builds and is already set in the separate vite.ssr.config.js.
     defp update_vite_configuration(igniter) do
       Igniter.update_file(igniter, "assets/vite.config.mjs", fn source ->
         Rewrite.Source.update(source, :content, fn content ->
@@ -160,7 +205,6 @@ defmodule Mix.Tasks.LiveSvelte.Install do
           |> add_svelte_vite_imports()
           |> update_vite_optimized_deps()
           |> update_vite_plugins()
-          |> add_ssr_config()
         end)
       end)
     end
@@ -201,25 +245,14 @@ defmodule Mix.Tasks.LiveSvelte.Install do
       end
     end
 
-    defp add_ssr_config(content) do
-      if String.contains?(content, "noExternal") do
-        content
-      else
-        String.replace(
-          content,
-          ~r/build: \{/s,
-          "ssr: { noExternal: process.env.NODE_ENV === \"production\" ? true : undefined },\n    build: {"
-        )
-      end
-    end
-
     # Update package.json with Svelte dependencies
+    # phoenix_vite.install creates assets/package.json; npm runs from assets/
     defp update_package_json_for_svelte(igniter) do
       igniter
-      |> Igniter.move_file("assets/package.json", "package.json")
-      |> Igniter.update_file("package.json", fn source ->
+      |> Igniter.update_file("assets/package.json", fn source ->
         Rewrite.Source.update(source, :content, fn content ->
           content
+          |> add_module_type()
           |> add_svelte_dependency()
           |> add_svelte_dev_dependencies()
         end)
@@ -230,11 +263,13 @@ defmodule Mix.Tasks.LiveSvelte.Install do
       if String.contains?(content, "\"live_svelte\"") do
         content
       else
-        # Add live_svelte to dependencies section
-        String.replace(
+        # Capture the deps prefix (e.g. "file:../deps" or "file:./deps") from the phoenix entry
+        # to match whatever convention the existing package.json uses
+        Regex.replace(
+          ~r/"phoenix":\s*"(file:[^"]*deps)\/phoenix"/,
           content,
-          ~s("phoenix": "file:./deps/phoenix"),
-          ~s("live_svelte": "file:./deps/live_svelte",\n    "phoenix": "file:./deps/phoenix")
+          ~s("live_svelte": "\\1/live_svelte",\n    "phoenix": "\\1/phoenix"),
+          global: false
         )
       end
     end
@@ -243,11 +278,24 @@ defmodule Mix.Tasks.LiveSvelte.Install do
       if String.contains?(content, "\"@sveltejs/vite-plugin-svelte\"") do
         content
       else
-        String.replace(
-          content,
-          ~s("typescript":),
-          ~s("@sveltejs/vite-plugin-svelte": "^5.0.0",\n    "svelte": "^5.0.0",\n    "typescript":)
-        )
+        svelte_deps = ~s("@sveltejs/vite-plugin-svelte": "^5.0.0",\n    "svelte": "^5.0.0",\n    )
+
+        result = String.replace(content, ~s("typescript":), svelte_deps <> ~s("typescript":))
+
+        # Fallback: insert before "vite" which is always present in phoenix_vite output
+        if result == content do
+          String.replace(content, ~s("vite":), svelte_deps <> ~s("vite":))
+        else
+          result
+        end
+      end
+    end
+
+    defp add_module_type(content) do
+      if String.contains?(content, "\"type\": \"module\"") do
+        content
+      else
+        String.replace(content, "{\n", "{\n  \"type\": \"module\",\n", global: false)
       end
     end
 
@@ -258,7 +306,6 @@ defmodule Mix.Tasks.LiveSvelte.Install do
 
       igniter
       |> Igniter.mkdir("assets/svelte")
-      |> Igniter.mkdir("lib/#{web_folder}/live")
       |> Igniter.create_new_file("assets/js/server.js", server_js_content())
       |> Igniter.create_new_file(
         "assets/svelte/.gitignore",
@@ -266,7 +313,7 @@ defmodule Mix.Tasks.LiveSvelte.Install do
       )
       |> Igniter.create_new_file("assets/svelte/SvelteDemo.svelte", demo_svelte_content())
       |> Igniter.create_new_file(
-        "lib/#{web_folder}/live/svelte_demo_live.ex",
+        "lib/#{web_folder}/svelte_demo_live.ex",
         demo_live_view_content(igniter)
       )
     end
@@ -298,7 +345,7 @@ defmodule Mix.Tasks.LiveSvelte.Install do
 
       Igniter.update_file(igniter, "mix.exs", fn source ->
         Rewrite.Source.update(source, :content, fn content ->
-          if String.contains?(content, "vite build") do
+          if String.contains?(content, ~s("assets.js":)) do
             content
           else
             content
@@ -316,25 +363,46 @@ defmodule Mix.Tasks.LiveSvelte.Install do
         String.replace(
           content,
           ~r/("assets\.setup":)/,
-          ~s("assets.js": [\n        "cmd --cd assets #{pm} vite build",\n        "cmd --cd assets #{pm} vite build --config vite.ssr.config.js",\n        "tailwind default"\n      ],\n      \\1)
+          ~s("assets.js": [\n        "assets.build",\n        "cmd --cd assets #{pm} vite build --config vite.ssr.config.js"\n      ],\n      \\1)
         )
       end
     end
 
     defp update_assets_deploy_alias(content, pm) do
-      # Replace esbuild references in assets.deploy with Vite commands
-      String.replace(
-        content,
-        ~r/"esbuild default[^"]*"/,
-        ~s("cmd --cd assets #{pm} vite build --mode production", "cmd --cd assets #{pm} vite build --config vite.ssr.config.js --mode production")
-      )
+      ssr_cmd = ~s("cmd --cd assets #{pm} vite build --config vite.ssr.config.js --mode production")
+
+      cond do
+        # Guard: SSR step already present in assets.deploy (idempotent).
+        # Check for --mode production which is unique to the deploy command;
+        # assets.js also references vite.ssr.config.js so a generic check would
+        # fire immediately after add_assets_js_alias runs, skipping the deploy update.
+        String.contains?(content, "vite.ssr.config.js --mode production") ->
+          content
+
+        # phoenix_vite.install pattern: assets.deploy is a list containing "assets.build".
+        # Use dotall regex so inline and multi-line list formats both match.
+        Regex.match?(~r/"assets\.deploy":\s*\[/s, content) ->
+          String.replace(
+            content,
+            ~r/("assets\.deploy":\s*\[)(.*?)(\s*\])/s,
+            "\\1\\2,\n        #{ssr_cmd}\\3",
+            global: false
+          )
+
+        # Legacy esbuild pattern — replace with vite production builds
+        true ->
+          String.replace(
+            content,
+            ~r/"esbuild default[^"]*"/,
+            ~s("cmd --cd assets #{pm} vite build --mode production", #{ssr_cmd})
+          )
+      end
     end
 
     # Add svelte_demo route to router
     defp add_svelte_demo_route(igniter) do
       web_module = Phoenix.web_module(igniter)
       web_folder = Macro.underscore(web_module)
-      web_module_name = web_module |> Module.split() |> Enum.join(".")
       router_file = Path.join(["lib", web_folder, "router.ex"])
 
       Igniter.update_file(igniter, router_file, fn source ->
@@ -342,19 +410,12 @@ defmodule Mix.Tasks.LiveSvelte.Install do
           if String.contains?(content, "live \"/svelte_demo\"") do
             content
           else
-            if String.contains?(content, "live_dashboard") do
-              String.replace(
-                content,
-                ~r/(live_dashboard.*)/,
-                "\\1\n      live \"/svelte_demo\", #{web_module_name}.SvelteDemoLive"
-              )
-            else
-              String.replace(
-                content,
-                ~r/(pipe_through :browser.*)/,
-                "\\1\n      live \"/dev/svelte_demo\", #{web_module_name}.SvelteDemoLive"
-              )
-            end
+            String.replace(
+              content,
+              ~r/(pipe_through[( ]:?browser\)?.*)/,
+              "\\1\n    live \"/svelte_demo\", SvelteDemoLive",
+              global: false
+            )
           end
         end)
       end)
@@ -419,9 +480,10 @@ defmodule Mix.Tasks.LiveSvelte.Install do
       """
       import { defineConfig } from "vite"
       import { svelte } from "@sveltejs/vite-plugin-svelte"
+      import liveSveltePlugin from "live_svelte/vitePlugin"
 
       export default defineConfig({
-        plugins: [svelte()],
+        plugins: [svelte(), liveSveltePlugin({ entrypoint: "./js/server.js" })],
         ssr: { noExternal: true },
         build: {
           ssr: "./js/server.js",
