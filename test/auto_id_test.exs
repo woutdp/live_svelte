@@ -14,7 +14,6 @@ defmodule LiveSvelte.AutoIdTest do
       id: Keyword.get(opts, :id),
       key: Keyword.get(opts, :key),
       props: Keyword.get(opts, :props, %{}),
-      live_json_props: %{},
       ssr: false,
       class: nil,
       loading: [],
@@ -298,18 +297,8 @@ defmodule LiveSvelte.AutoIdTest do
   end
 
   # ---------------------------------------------------------------------------
-  # Tests — live_json and phx-update (unchanged from before)
+  # Tests — phx-update
   # ---------------------------------------------------------------------------
-
-  describe "live_json id derivation" do
-    test "live_json div id is prefixed with lj- and uses the svelte id" do
-      html = render_html(base_assigns("Counter", props: %{x: 1}))
-
-      # When live_json_props is empty, no lj- div is rendered.
-      # Verify the component id is still correct.
-      assert extract_id(html) == "Counter"
-    end
-  end
 
   describe "phx-update attribute" do
     test "outer hook container has phx-update=ignore to protect Svelte DOM" do

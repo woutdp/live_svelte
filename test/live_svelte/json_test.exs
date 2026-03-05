@@ -145,7 +145,7 @@ defmodule LiveSvelte.JSONTest do
       assert decoded["2"] == "b"
     end
 
-    test "encodes large maps with integer keys (LiveJson scenario)" do
+    test "encodes large maps with integer keys" do
       data = for i <- 1..100, into: %{}, do: {i, i * 2}
       result = JSON.encode!(data)
       decoded = :json.decode(result)

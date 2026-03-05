@@ -36,8 +36,6 @@ defmodule Example.MixProject do
       {:ecto_sql, "~> 3.12"},
       {:gettext, "~> 0.20"},
       {:json_diff_ex, "~> 0.6", override: true},
-      {:jsonpatch, "~> 2.3", override: true},
-      {:live_json, "~> 0.4.5"},
       {:live_svelte, path: ".."},
       # {:live_svelte, "~> 0.17.4"},
       {:phoenix, "~> 1.8.0"},

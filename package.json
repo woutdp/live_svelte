@@ -9,9 +9,9 @@
         "format": "npx prettier --write ."
     },
     "devDependencies": {
-        "prettier": "3.3.3",
-        "prettier-plugin-svelte": "^3.2.7",
-        "svelte": "^5.1.13"
+        "prettier": "^3.8.1",
+        "prettier-plugin-svelte": "^3.5.1",
+        "svelte": "^5.53.7"
     },
     "exports": {
         ".": {

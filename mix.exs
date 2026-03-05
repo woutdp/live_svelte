@@ -26,12 +26,44 @@ defmodule LiveSvelte.MixProject do
         source_ref: "v#{@version}",
         source_url: @repo_url,
         homepage_url: @repo_url,
-        main: "LiveSvelte",
+        main: "readme",
         logo: "logo_3.png",
         links: %{
           "GitHub" => @repo_url,
           "Sponsor" => "https://github.com/sponsors/woutdp"
-        }
+        },
+        extras: [
+          "README.md": [title: "LiveSvelte"],
+
+          # Getting Started
+          "guides/installation.md": [title: "Installation"],
+          "guides/basic_usage.md": [title: "Basic Usage"],
+
+          # Core Usage
+          "guides/forms.md": [title: "Forms and Validation"],
+          "guides/uploads.md": [title: "File Uploads"],
+          "guides/streams.md": [title: "Phoenix Streams"],
+          "guides/ssr.md": [title: "Server-Side Rendering"],
+          "guides/configuration.md": [title: "Configuration"],
+
+          # Reference
+          "guides/api_reference.md": [title: "API Reference"],
+
+          # Advanced Topics
+          "guides/introduction.md": [title: "Introduction"],
+          "guides/testing.md": [title: "Testing"],
+          "guides/deployment.md": [title: "Deployment"],
+
+          # Help & Troubleshooting
+          "guides/troubleshooting.md": [title: "Troubleshooting"]
+        ],
+        groups_for_extras: [
+          "Getting Started": ~r/guides\/(installation|basic_usage)/,
+          "Core Usage": ~r/guides\/(forms|uploads|streams|ssr|configuration)/,
+          Reference: ~r/guides\/api_reference/,
+          "Advanced Topics": ~r/guides\/(introduction|testing|deployment)/,
+          "Help & Troubleshooting": ~r/guides\/troubleshooting/
+        ]
       ]
     ]
   end
@@ -45,7 +77,7 @@ defmodule LiveSvelte.MixProject do
         GitHub: @repo_url
       },
       files:
-        ~w(assets/copy/tsconfig.json assets/js lib mix.exs package.json .formatter.exs LICENSE.md README.md CHANGELOG.md)
+        ~w(assets/copy/tsconfig.json assets/js guides lib mix.exs package.json .formatter.exs LICENSE.md README.md CHANGELOG.md)
     ]
   end
 

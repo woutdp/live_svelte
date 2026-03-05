@@ -26,7 +26,6 @@ Svelte inside Phoenix LiveView with seamless end-to-end reactivity
 -   ⭐ **Svelte Preprocessing** Support with [svelte-preprocess](https://github.com/sveltejs/svelte-preprocess)
 -   🦄 **Tailwind** Support
 -   💀 **Dead View** Support
--   🤏 **live_json** Support
 -   🦥 **Slot Interoperability**
 -   📘 **TypeScript** — client assets in TypeScript; public API is type-safe with exported type definitions for consumers
 
@@ -734,42 +733,7 @@ end
 
 Phoenix.HTML.Form, Ecto.Changeset, and Phoenix LiveView upload structs have built-in encoders. Date/Time types are encoded as ISO8601 strings.
 
-### live_json
-
-LiveSvelte has support for [live_json](https://github.com/Miserlou/live_json).
-
-By default, LiveSvelte sends your entire json object over the wire through LiveView. This can be expensive if your json object is big and changes frequently.
-
-`live_json` on the other hand allows you to only send a _diff_ of the json to Svelte. This is very useful the bigger your json objects get.
-
-Counterintuitively, you don't always want to use `live_json`. Sometimes it's cheaper to send your entire object again. Although diffs are small, they do add a little bit of data to your json. So if your json is relatively small, I'd recommend not using `live_json`, but it's something to experiment with for your use-case.
-
-#### Usage
-
-1. Install [live_json](https://github.com/Miserlou/live_json#installation)
-
-2. Use `live_json` in your project with LiveSvelte. For example:
-
-```elixir
-def render(assigns) do
-  ~H"""
-    <.svelte name="Component" live_json_props={%{my_prop: @ljmy_prop}} socket={@socket} />
-  """
-end
-
-def mount(_, _, socket) do
-  # Get `my_big_json_object` somehow
-  {:ok, LiveJson.initialize("my_prop", my_big_json_object)}
-end
-
-def handle_info(%Broadcast{event: "update", payload: my_big_json_object}, socket) do
-  {:noreply, LiveJson.push_patch(socket, "my_prop", my_big_json_object)}
-end
-```
-
-#### Example
-
-You can find an example [here](https://github.com/woutdp/live_svelte/blob/master/example_project/lib/example_web/live/live_json.ex).
+For efficient updates when only some props change, use the built-in **props diffing** (see [Configuration](https://hexdocs.pm/live_svelte/configuration.html)) and JSON Patch support; the former `live_json` integration has been removed.
 
 ### Structs and Ecto
 

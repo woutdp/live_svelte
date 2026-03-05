@@ -43,7 +43,7 @@ defmodule ExampleWeb do
         layouts: [html: ExampleWeb.Layouts]
 
       import Plug.Conn
-      import ExampleWeb.Gettext
+      use Gettext, backend: ExampleWeb.Gettext
 
       unquote(verified_routes())
     end
@@ -85,7 +85,7 @@ defmodule ExampleWeb do
       import Phoenix.HTML
       # Core UI components and translation
       import ExampleWeb.CoreComponents
-      import ExampleWeb.Gettext
+      use Gettext, backend: ExampleWeb.Gettext
 
       import LiveSvelte
 

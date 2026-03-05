@@ -32,7 +32,6 @@ defmodule ExampleWeb.Router do
     live("/live-log-list", LiveLogList)
     live("/live-breaking-news", LiveBreakingNews)
     live("/live-chat", LiveChat)
-    live("/live-json", LiveJson)
     live("/live-props-diff", LivePropsDiff)
     live("/streams", Streams)
     live("/live-id-list-diff", LiveIdListDiff)
@@ -47,6 +46,7 @@ defmodule ExampleWeb.Router do
     live("/live-event-reply", LiveEventReply)
     live("/live-navigation", LiveNavigation)
     live("/live-navigation/:page", LiveNavigation)
+    live("/live-ssr", LiveSsr)
     live("/live-composition", LiveComposition)
   end
 

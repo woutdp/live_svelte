@@ -7,7 +7,6 @@ defmodule LiveSvelte do
 
   use Phoenix.Component
   import Phoenix.HTML
-  import LiveSvelte.LiveJson
 
   alias Phoenix.LiveView
   alias Phoenix.LiveView.LiveStream
@@ -54,11 +53,6 @@ defmodule LiveSvelte do
   attr :socket, :map,
     default: nil,
     doc: "LiveView socket, only needed when ssr: true"
-
-  attr :live_json_props, :map,
-    default: %{},
-    doc: "LiveJson props to pass to the Svelte component",
-    examples: [%{my_big_data_set: %{some_data: 1}}]
 
   attr :diff, :boolean,
     default: true,
@@ -120,11 +114,7 @@ defmodule LiveSvelte do
     ssr_code =
       if init and dead and ssr_active and assigns.ssr do
         try do
-          props =
-            Map.merge(
-              Map.get(assigns, :props, %{}),
-              Map.get(assigns, :live_json_props, %{})
-            )
+          props = Map.get(assigns, :props, %{})
 
           SSR.render(assigns.name, props, slots)
         rescue
@@ -146,36 +136,31 @@ defmodule LiveSvelte do
       |> assign(:streams_diff, streams_diff)
 
     ~H"""
-    <.live_json live_json_props={@live_json_props} svelte_id={@svelte_id}>
-      <script>
+    <script>
+      <%= raw(@ssr_render["head"]) %>
+    </script>
+    <div
+      id={@svelte_id}
+      data-name={@name}
+      data-props={json(@props_to_send)}
+      data-props-diff={json(@props_diff)}
+      data-streams-diff={json(@streams_diff)}
+      data-use-diff={to_string(@use_diff)}
+      data-ssr={@ssr_render != nil}
+      data-slots={@slots |> Slots.base_encode_64() |> json}
+      phx-hook="SvelteHook"
+      phx-update="ignore"
+      class={@class}
+    >
+      <div id={"#{@svelte_id}-target"} data-svelte-target>
         <%= raw(@ssr_render["head"]) %>
-      </script>
-      <div
-        id={@svelte_id}
-        data-name={@name}
-        data-props={json(@props_to_send)}
-        data-props-diff={json(@props_diff)}
-        data-streams-diff={json(@streams_diff)}
-        data-use-diff={to_string(@use_diff)}
-        data-ssr={@ssr_render != nil}
-        data-live-json={
-          if @init, do: json(@live_json_props), else: @live_json_props |> Map.keys() |> json()
-        }
-        data-slots={@slots |> Slots.base_encode_64() |> json}
-        phx-hook="SvelteHook"
-        phx-update="ignore"
-        class={@class}
-      >
-        <div id={"#{@svelte_id}-target"} data-svelte-target>
-          <%= raw(@ssr_render["head"]) %>
-          <style>
-            <%= raw(@ssr_render["css"]["code"]) %>
-          </style>
-          <%= raw(@ssr_render["html"]) %>
-          <%= render_slot(@loading) %>
-        </div>
+        <style>
+          <%= raw(@ssr_render["css"]["code"]) %>
+        </style>
+        <%= raw(@ssr_render["html"]) %>
+        <%= render_slot(@loading) %>
       </div>
-    </.live_json>
+    </div>
     """
   end
 
