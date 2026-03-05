@@ -60,7 +60,7 @@ This injects Svelte component CSS directly into the JS bundle instead of extract
 
 **Cause:** The `liveSveltePlugin` is missing from one or both Vite configs.
 
-**Fix:** Ensure `liveSveltePlugin()` is in `vite.config.mjs` and that `ssr: { noExternal: ... }` is set. The same config is used for both client and SSR builds (via `phoenix_vite.npm vite build --ssr js/server.js ...`).
+**Fix:** Ensure `liveSveltePlugin()` is in `vite.config.mjs` and that `ssr: { noExternal: ... }` is set. The same config is used for both client and SSR builds (via `phoenix_vite.npm vite build --ssr js/server.js ...`). If you use Bun, the same steps apply with `phoenix_vite.bun` and `PhoenixVite.Bun`.
 
 ```js
 // assets/vite.config.mjs
@@ -236,4 +236,4 @@ config :my_app, MyAppWeb.Endpoint,
   ]
 ```
 
-Without these, the layout serves built assets from `priv/static` and Svelte/CSS changes do not hot-reload.
+(If you use Bun, use `PhoenixVite.Bun` and `phoenix_vite.bun` in aliases instead.) Without these, the layout serves built assets from `priv/static` and Svelte/CSS changes do not hot-reload.

@@ -49,4 +49,4 @@ Plain LiveView may be sufficient when:
 | Phoenix          | 1.7+ (1.8+ for Igniter installer) |
 | Phoenix LiveView | 1.0+                 |
 | Elixir           | 1.17+                |
-| Node.js          | 19+ (for SSR)        |
+| Node.js or Bun   | Node.js 19+ for SSR; Bun or Node.js 19+ for tooling |
