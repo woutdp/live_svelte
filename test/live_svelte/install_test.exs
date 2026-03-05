@@ -167,20 +167,61 @@ defmodule Mix.Tasks.LiveSvelte.InstallTest do
     end
   end
 
-  describe "application.ex" do
-    test "NodeJS.Supervisor added to children" do
+  describe "application.ex (M1: conditional NodeJS.Supervisor)" do
+    test "NodeJS.Supervisor is present in application.ex" do
       result = run_installer()
       content = file_content(result, "lib/test/application.ex")
       assert content =~ "NodeJS.Supervisor"
     end
+
+    test "NodeJS.Supervisor is wrapped in compile_env guard, not unconditional" do
+      result = run_installer()
+      content = file_content(result, "lib/test/application.ex")
+
+      assert content =~ "Application.compile_env(:live_svelte, :ssr_module",
+             "NodeJS.Supervisor must be wrapped in a compile_env guard so it only starts in prod"
+
+      refute content =~ ~r/children\s*=\s*\[\s*\{NodeJS\.Supervisor/,
+             "NodeJS.Supervisor must not be a bare unconditional entry in the children list"
+    end
+
+    test "node_js_children variable uses LiveSvelte.SSR.NodeJS as the condition" do
+      result = run_installer()
+      content = file_content(result, "lib/test/application.ex")
+      assert content =~ "LiveSvelte.SSR.NodeJS"
+    end
+
+    test "children list uses node_js_children ++ [" do
+      result = run_installer()
+      content = file_content(result, "lib/test/application.ex")
+      assert content =~ "node_js_children ++ ["
+    end
   end
 
-  describe "gitignore" do
+  describe "gitignore (L3: section header)" do
     test "svelte build artifacts are gitignored" do
       result = run_installer()
       content = file_content(result, ".gitignore")
       assert content =~ "/assets/svelte/_build/"
       assert content =~ "/priv/svelte/"
+    end
+
+    test "gitignore entries are grouped under a LiveSvelte section comment" do
+      result = run_installer()
+      content = file_content(result, ".gitignore")
+
+      assert content =~ "# LiveSvelte build artifacts",
+             "Gitignore entries should be under a named section comment"
+    end
+
+    test "gitignore entries appear after the section comment" do
+      result = run_installer()
+      content = file_content(result, ".gitignore")
+
+      section_pos = :binary.match(content, "# LiveSvelte build artifacts") |> elem(0)
+      priv_pos = :binary.match(content, "/priv/svelte/") |> elem(0)
+
+      assert section_pos < priv_pos
     end
   end
 

@@ -318,7 +318,9 @@ defmodule Mix.Tasks.LiveSvelte.Install do
       )
     end
 
-    # Setup NodeJS SSR supervisor in application.ex
+    # Setup NodeJS SSR supervisor in application.ex — only when ssr_module is NodeJS.
+    # Generates a compile-env guard so the supervisor is not started in dev mode,
+    # where LiveSvelte.SSR.ViteJS is used instead.
     defp setup_ssr_for_production(igniter, _app_name) do
       app_module = igniter |> Igniter.Project.Application.app_name() |> to_string()
       app_file = "lib/#{Macro.underscore(app_module)}/application.ex"
@@ -326,10 +328,19 @@ defmodule Mix.Tasks.LiveSvelte.Install do
       Igniter.update_file(igniter, app_file, fn source ->
         Rewrite.Source.update(source, :content, fn content ->
           if String.contains?(content, "children = [") and not String.contains?(content, "NodeJS.Supervisor") do
+            # Capture the indentation of `children = [` so the generated code
+            # aligns with the surrounding function body regardless of indent style.
             String.replace(
               content,
-              ~r/(children = \[\s*\n)/,
-              "\\1      {NodeJS.Supervisor, [path: LiveSvelte.SSR.NodeJS.server_path(), pool_size: 4]},\n"
+              ~r/([ \t]*)(children = \[)/,
+              "\\1node_js_children =\n" <>
+                "\\1  if Application.compile_env(:live_svelte, :ssr_module, nil) == LiveSvelte.SSR.NodeJS do\n" <>
+                "\\1    [{NodeJS.Supervisor, [path: LiveSvelte.SSR.NodeJS.server_path(), pool_size: 4]}]\n" <>
+                "\\1  else\n" <>
+                "\\1    []\n" <>
+                "\\1  end\n\n" <>
+                "\\1children = node_js_children ++ [",
+              global: false
             )
           else
             content
@@ -421,7 +432,10 @@ defmodule Mix.Tasks.LiveSvelte.Install do
       end)
     end
 
-    # Update home template with LiveSvelte info
+    # Update home template with LiveSvelte info.
+    # The anchor strings are Phoenix version-specific; if they aren't found we
+    # warn rather than silently do nothing so the developer knows to add the link
+    # manually.
     defp update_home_template(igniter) do
       web_module = Phoenix.web_module(igniter)
       web_folder = Macro.underscore(web_module)
@@ -429,36 +443,42 @@ defmodule Mix.Tasks.LiveSvelte.Install do
 
       Igniter.update_file(igniter, home_template, fn source ->
         Rewrite.Source.update(source, :content, fn content ->
-          content
-          |> String.replace(
-            "Peace of mind from prototype to production.",
-            "End-to-end reactivity for your Live Svelte apps."
-          )
-          |> String.replace(
-            ~s(<div class="flex">),
-            ~s(<a href={~p"/svelte_demo"} class="btn btn-primary mt-4">Svelte Demo</a>\n    <div class="flex">)
-          )
+          updated =
+            content
+            |> String.replace(
+              "Peace of mind from prototype to production.",
+              "End-to-end reactivity for your Live Svelte apps."
+            )
+            |> String.replace(
+              ~s(<div class="flex">),
+              ~s(<a href={~p"/svelte_demo"} class="btn btn-primary mt-4">Svelte Demo</a>\n    <div class="flex">)
+            )
+
+          if updated == content do
+            Mix.shell().info(
+              "Note: home template (#{home_template}) was not modified — " <>
+                "the expected anchor text was not found (Phoenix home page may have changed). " <>
+                "Manually add a link to /svelte_demo if desired."
+            )
+          end
+
+          updated
         end)
       end)
     end
 
-    # Add gitignore entries for Svelte build artifacts
+    # Add gitignore entries for Svelte build artifacts under a named section.
     defp update_gitignore(igniter) do
       Igniter.update_file(igniter, ".gitignore", fn source ->
         Rewrite.Source.update(source, :content, fn content ->
-          content
-          |> add_gitignore_entry("/assets/svelte/_build/")
-          |> add_gitignore_entry("/priv/svelte/")
+          if String.contains?(content, "/priv/svelte/") do
+            content
+          else
+            String.trim_trailing(content) <>
+              "\n\n# LiveSvelte build artifacts\n/assets/svelte/_build/\n/priv/svelte/\n"
+          end
         end)
       end)
-    end
-
-    defp add_gitignore_entry(content, entry) do
-      if String.contains?(content, entry) do
-        content
-      else
-        content <> "\n#{entry}"
-      end
     end
 
     # Create the SSR Vite config file
