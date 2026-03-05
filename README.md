@@ -87,7 +87,7 @@ If you don't want SSR, you can disable it by not setting `NodeJS.Supervisor` in 
 
 _If you're updating from an older version, make sure to check the `CHANGELOG.md` for breaking changes._
 
-LiveSvelte uses [Vite](https://vite.dev/) as its build tool with `@sveltejs/vite-plugin-svelte` for Svelte compilation. The recommended way to install is via the [Igniter](https://github.com/ash-project/igniter) installer, which automates all configuration steps.
+LiveSvelte uses [Vite](https://vite.dev/) for building and [phoenix_vite](https://github.com/LostKobrakai/phoenix_vite) to integrate it with Phoenix. The layout uses `PhoenixVite.Components.assets`; in development the endpoint runs a Vite watcher and points asset URLs at the Vite dev server so Svelte and CSS changes hot-reload with no extra terminal. The recommended way to install is via the [Igniter](https://github.com/ash-project/igniter) installer, which configures phoenix_vite (including the dev watcher and `static_url`) and all LiveSvelte steps.
 
 ### Option A — Igniter installer (recommended)
 
@@ -208,6 +208,8 @@ config :phoenix_vite, PhoenixVite.Npm,
 
 Use `PhoenixVite.Components.assets` in your root layout and `import PhoenixVite.Plug` + `plug :favicon, dev_server: {PhoenixVite.Components, :has_vite_watcher?, [__MODULE__]}` in the endpoint. Without phoenix_vite, use `LiveSvelte.Reload.vite_assets` in the layout and run Vite manually.
 
+**For instant Svelte/CSS HMR**, add to your endpoint in `config/dev.exs`: `static_url: [host: "localhost", port: 5173]` and in `watchers` add `vite: {PhoenixVite.Npm, :run, [:vite, ~w(dev)]}`. The Igniter installer does this for you; if you add phoenix_vite or LiveSvelte manually, add these so the layout serves assets from the Vite dev server and HMR works.
+
 **5.** Update `assets/vite.config.mjs` to add the Svelte and LiveSvelte plugins:
 
 ```js
@@ -290,8 +292,8 @@ children = [
 **13.** Install npm packages and build:
 
 ```bash
-cd assets && npm install && cd ..
-mix assets.js
+mix assets.setup
+mix assets.build
 mix phx.server
 ```
 
@@ -349,11 +351,10 @@ git clone https://github.com/woutdp/live_svelte.git
 # set up and run the example project
 cd live_svelte/example_project
 mix setup
-mix assets.js
 mix phx.server
 ```
 
-Server will be running on `localhost:4000`. If you want to change the port, edit `example_project/config/dev.exs` and change the `http` config.
+The example project uses phoenix_vite: `mix phx.server` starts both Phoenix and the Vite dev server, so Svelte/CSS changes hot-reload. Server will be running on `localhost:4000`. If you want to change the port, edit `example_project/config/dev.exs` and change the `http` config.
 
 If you have examples you want to add, feel free to create a PR, I'd be happy to add them.
 
@@ -896,20 +897,14 @@ Inside `assets/package.json`
 
 LiveSvelte ships TypeScript source directly — there are no pre-built distribution files. Consumers compile the library source through their own Vite pipeline via the `live_svelte` package alias.
 
-When working on the library source in `assets/js/live_svelte/`, changes are picked up automatically by the example project's Vite builds:
+When working on the library source in `assets/js/live_svelte/`, rebuild the example project so Vite picks up the changes:
 
 ```bash
 # From example_project/ — rebuild after library source changes:
-mix assets.js && mix compile
+mix assets.build && mix compile
 ```
 
-For live development with HMR:
-```bash
-# Terminal 1: Phoenix server
-cd example_project && mix phx.server
-# Terminal 2: Vite dev server (HMR for Svelte + library changes)
-cd example_project/assets && npx vite
-```
+The example project uses phoenix_vite, so a single `mix phx.server` starts both Phoenix and the Vite dev server; Svelte and library changes hot-reload with no second terminal.
 
 **Type checking:** The LiveSvelte client library is written in TypeScript with a type-safe public API (no `any` in exported types). Consumers get type hints via the package `types` entry. From the library repo, run `npm run typecheck` in `live_svelte/assets` to run `tsc --noEmit`.
 

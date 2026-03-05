@@ -197,19 +197,24 @@ For containers that wrap multiple components, use `phx-update="ignore"` on the o
 
 **Cause:** `vite_host` is not reachable or Vite dev server isn't running.
 
-**Fix:** Ensure `mix phx.server` starts the Vite watcher. Check `config/dev.exs`:
+**Fix:** Ensure `mix phx.server` starts the Vite watcher and that asset URLs point at the Vite dev server. In `config/dev.exs` your endpoint must have:
+
+1. **`static_url: [host: "localhost", port: 5173]`** — so script/link tags and the HMR client load from Vite (port 5173).
+2. **A `:vite` watcher** — so the Vite dev server is started with `mix phx.server` and `PhoenixVite.Components.has_vite_watcher?/1` returns true.
+
+Example (phoenix_vite with npm):
 
 ```elixir
 config :live_svelte,
   ssr_module: LiveSvelte.SSR.ViteJS,
   vite_host: "http://localhost:5173"
-```
 
-And verify your `config/dev.exs` Phoenix watcher runs `vite`:
-
-```elixir
 config :my_app, MyAppWeb.Endpoint,
+  static_url: [host: "localhost", port: 5173],
   watchers: [
-    node: ["node_modules/.bin/vite", cd: Path.expand("../assets", __DIR__)]
+    tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]},
+    vite: {PhoenixVite.Npm, :run, [:vite, ~w(dev)]}
   ]
 ```
+
+Without these, the layout serves built assets from `priv/static` and Svelte/CSS changes do not hot-reload.

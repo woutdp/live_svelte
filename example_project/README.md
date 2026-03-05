@@ -1,7 +1,7 @@
 # LiveSvelte Example Project
 
 A working Phoenix application demonstrating LiveSvelte features — Svelte 5 components
-integrated with Phoenix LiveView.
+integrated with Phoenix LiveView. It uses [phoenix_vite](https://github.com/LostKobrakai/phoenix_vite) for Vite: one `mix phx.server` starts Phoenix and the Vite dev server, so Svelte and CSS changes hot-reload with no extra terminal.
 
 ## Setup
 
@@ -65,7 +65,7 @@ mix test
 
 **After changing JS/Svelte files**, rebuild before running tests:
 ```bash
-mix assets.js && mix test
+mix assets.build && mix test
 ```
 
 E2E tests require Chrome + ChromeDriver in PATH. Install with your OS package manager.
@@ -73,21 +73,17 @@ See `live_svelte/CLAUDE.md` for detailed testing guidance.
 
 ## SSR (Server-Side Rendering)
 
-SSR is disabled by default in development. To enable:
+In development the app uses `LiveSvelte.SSR.ViteJS`: SSR requests go to the Vite dev server (started by the `:vite` watcher in `config/dev.exs`). The endpoint’s `static_url` and `watchers` are set so that assets and HMR are served from Vite.
 
-**config/dev.exs:**
+**config/dev.exs** (already set in this project):
 ```elixir
-config :live_svelte, ssr: true, ssr_module: LiveSvelte.SSR.ViteJS
+config :live_svelte, ssr_module: LiveSvelte.SSR.ViteJS, vite_host: "http://localhost:5173"
+# Endpoint also has static_url: [host: "localhost", port: 5173] and watchers: [..., vite: {PhoenixVite.Npm, :run, [:vite, ~w(dev)]}]
 ```
 
-**For production**, use NodeJS SSR (already configured):
-```elixir
-config :live_svelte, ssr: true, ssr_module: LiveSvelte.SSR.NodeJS
-```
-
-Build the SSR bundle before SSR works:
+**For production**, NodeJS SSR is used (already configured); build the SSR bundle with:
 ```bash
-mix assets.js && mix compile
+mix assets.build && mix compile
 ```
 
 The SSR demo page (`/live-ssr`) uses `ssr={true}` on the component. NodeJS must be available for SSR in production; in test env SSR is disabled globally via `config :live_svelte, ssr: false`.

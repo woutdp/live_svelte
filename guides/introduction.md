@@ -25,7 +25,7 @@ handle_event/3              pushEvent/handleEvent          $props(), $state()
 - **Composables** — `useLiveSvelte`, `useLiveEvent`, `useLiveConnection`, `useLiveNavigation`, `useLiveForm`, `useLiveUpload`, `useEventReply`
 - **TypeScript** — Full type support across Elixir and JavaScript boundaries
 - **Igniter installer** — One-command setup with `mix igniter.install live_svelte`
-- **Vite** — Development HMR and optimized production builds
+- **phoenix_vite + Vite** — [phoenix_vite](https://github.com/LostKobrakai/phoenix_vite) integrates Vite with Phoenix: one `mix phx.server` starts both the app and the Vite dev server (when the installer’s `config/dev.exs` is used), giving instant Svelte/CSS HMR and optimized production builds
 
 ## When to Use LiveSvelte
 

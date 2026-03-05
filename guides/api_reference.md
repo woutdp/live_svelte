@@ -131,9 +131,9 @@ Without `@derive`, passing a struct as a prop will raise an error.
 
 ### `LiveSvelte.Reload` / `vite_assets/1`
 
-When using the Igniter installer with phoenix_vite, the layout uses `PhoenixVite.Components.assets` instead. Use `LiveSvelte.Reload.vite_assets/1` when not using phoenix_vite (e.g. manual setup).
+**With phoenix_vite:** The layout uses `PhoenixVite.Components.assets`; ensure `config/dev.exs` has the endpoint’s `static_url: [host: "localhost", port: 5173]` and `watchers: [..., vite: {PhoenixVite.Npm, :run, [:vite, ~w(dev)]}]` so the Vite dev server runs and HMR works. The Igniter installer adds these.
 
-HMR helper for development. Includes the Vite dev server client script.
+**Without phoenix_vite:** Use `LiveSvelte.Reload.vite_assets/1` in your layout. HMR helper for development; includes the Vite dev server client script.
 
 ```heex
 <!-- In root layout, development only -->

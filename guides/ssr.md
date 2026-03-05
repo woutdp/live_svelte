@@ -79,15 +79,9 @@ Components with `ssr={false}` render a loading slot or nothing on the first pain
 
 When running with `LiveSvelte.SSR.ViteJS`, changes to Svelte files trigger automatic hot module replacement. The `SvelteHook` re-mounts affected components without a full page reload.
 
-When using phoenix_vite, the layout uses `PhoenixVite.Components.assets` and the Vite dev server is integrated automatically. When not using phoenix_vite, add the `LiveSvelte.Reload` module to your layouts to enable this:
+**With phoenix_vite (recommended):** The layout uses `PhoenixVite.Components.assets`. The Igniter installer adds to your endpoint in `config/dev.exs` a `:vite` watcher and `static_url: [host: "localhost", port: 5173]`, so `mix phx.server` starts the Vite dev server and asset URLs point at it — Svelte and CSS then hot-reload with no extra terminal. See [Installation](installation.md) for the exact config; if you added phoenix_vite or LiveSvelte manually, add that endpoint config yourself.
 
-```elixir
-# config/dev.exs — added by the Igniter installer
-config :live_svelte,
-  vite_host: "http://localhost:5173"
-```
-
-When not using phoenix_vite, use `LiveSvelte.Reload.vite_assets/1` in your layout to include Vite's HMR client and production fallback:
+**Without phoenix_vite:** Use `LiveSvelte.Reload.vite_assets/1` in your layout to include Vite's HMR client and production fallback:
 
 ```heex
 <LiveSvelte.Reload.vite_assets assets={["/js/app.js"]}>

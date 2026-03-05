@@ -81,12 +81,24 @@ const liveSocket = new LiveSocket("/live", Socket, {
 config :live_svelte, ssr: true
 ```
 
-**`config/dev.exs`** — development SSR via Vite dev server:
+**`config/dev.exs`** — the installer composes `phoenix_vite.install` first, which adds to your **endpoint** the Vite dev server watcher and `static_url` so that assets and HMR are served from Vite (port 5173). LiveSvelte then adds the `live_svelte` app config. Together this gives you instant Svelte/CSS HMR when you run `mix phx.server`:
+
 ```elixir
+# From phoenix_vite.install (required for HMR):
+config :my_app, MyAppWeb.Endpoint,
+  static_url: [host: "localhost", port: 5173],
+  watchers: [
+    tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]},
+    vite: {PhoenixVite.Npm, :run, [:vite, ~w(dev)]}
+  ]
+
+# From live_svelte.install (development SSR):
 config :live_svelte,
   ssr_module: LiveSvelte.SSR.ViteJS,
   vite_host: "http://localhost:5173"
 ```
+
+If you add LiveSvelte or phoenix_vite **manually** (e.g. without running the Igniter installer), you must add the endpoint’s `static_url` and `:vite` watcher to `config/dev.exs` yourself; otherwise the layout will serve built assets and Svelte changes will not hot-reload.
 
 **`config/prod.exs`** — production SSR via NodeJS:
 ```elixir
@@ -129,6 +141,7 @@ If you must install manually (e.g. Phoenix < 1.8), the overall steps mirror the 
 5. Add `import LiveSvelte` to `html_helpers`
 6. Add `NodeJS.Supervisor` to `application.ex`
 7. Configure SSR in `config/`
+8. **For instant Svelte/CSS HMR with phoenix_vite:** In `config/dev.exs`, add to your endpoint `static_url: [host: "localhost", port: 5173]` and in `watchers` add `vite: {PhoenixVite.Npm, :run, [:vite, ~w(dev)]}`. Without these, the layout serves built assets and changes to Svelte components will not hot-reload.
 
 ## Disabling SSR
 
