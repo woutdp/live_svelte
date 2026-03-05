@@ -7,11 +7,12 @@
     <.live_title suffix=" · Phoenix Framework">
       {assigns[:page_title] || "Example"}
     </.live_title>
-    <LiveSvelte.Reload.vite_assets assets={["/js/app.vite.js"]}>
-      <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
-      <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
-      </script>
-    </LiveSvelte.Reload.vite_assets>
+    <PhoenixVite.Components.assets
+      names={["js/app.js", "css/app.css"]}
+      manifest={{:example, "priv/static/.vite/manifest.json"}}
+      dev_server={PhoenixVite.Components.has_vite_watcher?(ExampleWeb.Endpoint)}
+      to_url={fn p -> static_url(@conn, p) end}
+    />
   </head>
   <body class="bg-base-200 antialiased" data-theme="light">
     {@inner_content}

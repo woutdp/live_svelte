@@ -118,7 +118,7 @@ defp deps do
 end
 ```
 
-2. Fetch and run the installer (this adds `live_svelte`, configures Vite, app.js, html_helpers, SSR, and more):
+2. Fetch and run the installer (this adds `live_svelte`, configures [phoenix_vite](https://github.com/LostKobrakai/phoenix_vite), Vite, app.js, html_helpers, SSR, layout with `PhoenixVite.Components.assets`, and more):
 
 ```bash
 mix deps.get
@@ -128,9 +128,8 @@ mix igniter.install live_svelte
 3. Install npm packages and build assets:
 
 ```bash
-npm install          # from the assets/ directory, or:
-# cd assets && npm install && cd ..
-mix assets.js        # runs both Vite builds (client + SSR) + Tailwind
+mix assets.setup     # phoenix_vite.npm assets install
+mix assets.build     # Vite client + SSR builds (or run mix setup to do both)
 ```
 
 4. Start the server:
@@ -138,6 +137,8 @@ mix assets.js        # runs both Vite builds (client + SSR) + Tailwind
 ```bash
 mix phx.server
 ```
+
+With phoenix_vite, the layout uses `PhoenixVite.Components.assets` and the endpoint uses `PhoenixVite.Plug`; no separate Vite terminal is required for dev — phoenix_vite integrates the Vite dev server.
 
 Visit `http://localhost:4000/svelte_demo` to confirm the demo Svelte component is working.
 
@@ -181,25 +182,31 @@ defp html_helpers do
 end
 ```
 
-**4.** Add the `assets.js` alias and update `assets.deploy` in `mix.exs`:
+**4.** Add phoenix_vite and configure mix aliases (or use the Igniter installer which does this). With phoenix_vite:
 
 ```elixir
-defp aliases do
-  [
-    # ...
-    "assets.js": [
-      "cmd --cd assets npx vite build",
-      "cmd --cd assets npx vite build --config vite.ssr.config.js",
-      "tailwind default"
-    ],
-    "assets.deploy": [
-      "cmd --cd assets npx vite build --mode production",
-      "cmd --cd assets npx vite build --config vite.ssr.config.js --mode production",
-      "phx.digest"
-    ]
+# mix.exs deps
+{:phoenix_vite, "~> 0.4"}
+
+# config/config.exs
+config :phoenix_vite, PhoenixVite.Npm,
+  assets: [args: [], cd: __DIR__],
+  vite: [
+    args: ~w(exec -- vite),
+    cd: Path.expand("../assets", __DIR__),
+    env: %{"MIX_BUILD_PATH" => Mix.Project.build_path()}
   ]
-end
+
+# mix.exs aliases
+"assets.setup": ["phoenix_vite.npm assets install"],
+"assets.build": [
+  "phoenix_vite.npm vite build --manifest --emptyOutDir true",
+  "phoenix_vite.npm vite build --ssrManifest --emptyOutDir false --ssr js/server.js --outDir ../priv/svelte"
+],
+"assets.deploy": ["assets.build", "phx.digest"]
 ```
+
+Use `PhoenixVite.Components.assets` in your root layout and `import PhoenixVite.Plug` + `plug :favicon, dev_server: {PhoenixVite.Components, :has_vite_watcher?, [__MODULE__]}` in the endpoint. Without phoenix_vite, use `LiveSvelte.Reload.vite_assets` in the layout and run Vite manually.
 
 **5.** Update `assets/vite.config.mjs` to add the Svelte and LiveSvelte plugins:
 
@@ -215,25 +222,7 @@ plugins: [
 ]
 ```
 
-**6.** Create `assets/vite.ssr.config.js`:
-
-```js
-import { defineConfig } from "vite"
-import { svelte } from "@sveltejs/vite-plugin-svelte"
-import liveSveltePlugin from "live_svelte/vitePlugin"
-
-export default defineConfig({
-  plugins: [svelte(), liveSveltePlugin({ entrypoint: "./js/server.js" })],
-  ssr: { noExternal: true },
-  build: {
-    ssr: "./js/server.js",
-    outDir: "../priv/svelte",
-    rollupOptions: {
-      output: { entryFileNames: "server.js", format: "es" }
-    }
-  }
-})
-```
+**6.** Add `ssr: { noExternal: process.env.NODE_ENV === "production" ? true : undefined }` to the main `vite.config.mjs` so the same config is used for both client and SSR builds. The SSR build is run via `phoenix_vite.npm vite build --ssr js/server.js --outDir ../priv/svelte` (see aliases above). No separate `vite.ssr.config.js` is required when using phoenix_vite.
 
 **7.** Create `assets/js/server.js`:
 

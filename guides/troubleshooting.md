@@ -11,20 +11,20 @@ Common issues encountered when using LiveSvelte, and how to resolve them.
 **Fix:**
 ```bash
 cd example_project
-mix assets.js && mix compile
+mix assets.build && mix compile
 ```
 
-`mix assets.js` runs Vite builds (client + SSR). `mix compile` copies the updated SSR bundle into `_build/`. Both steps are required after any change to `assets/`.
+`mix assets.build` runs Vite builds (client + SSR). `mix compile` copies the updated SSR bundle into `_build/`. Both steps are required after any change to `assets/`.
 
 ## SSR Renders Stale HTML
 
 **Symptom:** Server-side rendered HTML shows old component output even after updating Svelte files.
 
-**Cause:** `_build/test/lib/example/priv/svelte/server.js` is a **copy** (not a symlink) of `priv/svelte/server.js`. It is updated by `mix compile`, not by `mix assets.js` alone.
+**Cause:** `_build/test/lib/example/priv/svelte/server.js` is a **copy** (not a symlink) of `priv/svelte/server.js`. It is updated by `mix compile`, not by `mix assets.build` alone.
 
 **Fix:**
 ```bash
-mix assets.js && mix compile
+mix assets.build && mix compile
 ```
 
 If you're seeing stale SSR in tests, ensure the `on_exit` cleanup properly resets SSR state.
@@ -60,16 +60,13 @@ This injects Svelte component CSS directly into the JS bundle instead of extract
 
 **Cause:** The `liveSveltePlugin` is missing from one or both Vite configs.
 
-**Fix:** Ensure `liveSveltePlugin()` is in **both** `vite.config.mjs` (client build) and `vite.ssr.config.js` (SSR build):
+**Fix:** Ensure `liveSveltePlugin()` is in `vite.config.mjs` and that `ssr: { noExternal: ... }` is set. The same config is used for both client and SSR builds (via `phoenix_vite.npm vite build --ssr js/server.js ...`).
 
 ```js
 // assets/vite.config.mjs
-import { liveSveltePlugin } from "live_svelte/vitePlugin"
-plugins: [svelte(), liveSveltePlugin()]
-
-// assets/vite.ssr.config.js
-import { liveSveltePlugin } from "live_svelte/vitePlugin"
-plugins: [svelte(), liveSveltePlugin()]
+import liveSveltePlugin from "live_svelte/vitePlugin"
+plugins: [svelte(), liveSveltePlugin({ entrypoint: "./js/server.js" })],
+ssr: { noExternal: process.env.NODE_ENV === "production" ? true : undefined },
 ```
 
 Also verify that your Svelte files are in `assets/svelte/` and have the `.svelte` extension.
@@ -96,7 +93,7 @@ npm install -g webdriver-manager
 webdriver-manager update
 ```
 
-Also ensure `mix assets.js` has been run before E2E tests — the browser needs the built JS to function.
+Also ensure `mix assets.build` has been run before E2E tests — the browser needs the built JS to function.
 
 ## `mix live_svelte.install` Says "Task Not Found"
 
@@ -171,7 +168,7 @@ For containers that wrap multiple components, use `phx-update="ignore"` on the o
 
 2. Ensure the SSR bundle was built:
    ```bash
-   MIX_ENV=prod mix assets.js && MIX_ENV=prod mix compile
+   MIX_ENV=prod mix assets.build && MIX_ENV=prod mix compile
    ```
 
 3. Check that `NodeJS.Supervisor` is in `application.ex`:

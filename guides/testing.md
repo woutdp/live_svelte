@@ -10,10 +10,10 @@ The LiveSvelte example project has two complementary test layers: fast server-si
 >
 > ```bash
 > cd example_project
-> mix assets.js && mix compile
+> mix assets.build && mix compile
 > ```
 >
-> `mix assets.js` runs Vite builds (client + SSR). `mix compile` copies the updated SSR bundle into `_build/`. Forgetting this step is the most common cause of "my JS changes have no effect" test failures.
+> `mix assets.build` runs Vite builds (client + SSR). `mix compile` copies the updated SSR bundle into `_build/`. Forgetting this step is the most common cause of "my JS changes have no effect" test failures.
 
 ## PhoenixTest (Server-Side, Fast)
 
@@ -121,13 +121,13 @@ sudo apt-get install chromium-driver
 
 ```bash
 # Server-side only (fast, no browser needed)
-mix assets.js && mix test --only phoenix_test
+mix assets.build && mix test --only phoenix_test
 
 # Browser E2E only
-mix assets.js && mix test --only e2e
+mix assets.build && mix test --only e2e
 
 # Everything
-mix assets.js && mix test
+mix assets.build && mix test
 ```
 
 ## `LiveSvelte.Test` — Component Introspection

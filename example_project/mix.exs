@@ -52,6 +52,7 @@ defmodule Example.MixProject do
       {:wallaby, "~> 0.30", runtime: false, only: :test},
       {:phoenix_test, "~> 0.9", only: :test},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
+      {:phoenix_vite, "~> 0.4"},
       {:tailwind, "~> 0.3", runtime: Mix.env() == :dev}
     ]
   end
@@ -64,24 +65,20 @@ defmodule Example.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
-      setup: ["deps.get", "ecto.setup", "cmd --cd assets npm install"],
+      setup: ["deps.get", "ecto.setup", "assets.setup", "assets.build"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
-      "assets.js": [
-        "cmd --cd assets npx vite build",
-        "cmd --cd assets npx vite build --config vite.ssr.config.js",
-        "tailwind default"
+      "assets.setup": ["phoenix_vite.npm assets install", "tailwind.install --if-missing"],
+      "assets.build": [
+        "phoenix_vite.npm vite build --manifest --emptyOutDir true",
+        "phoenix_vite.npm vite build --ssrManifest --emptyOutDir false --ssr js/server.js --outDir ../priv/svelte"
       ],
-      "test.e2e": ["assets.js", "ecto.create --quiet", "ecto.migrate --quiet", "test"],
-      "assets.setup": ["tailwind.install --if-missing"],
-      "assets.build": ["tailwind default"],
       "assets.deploy": [
-        "cmd --cd assets npx vite build",
-        "cmd --cd assets npx vite build --config vite.ssr.config.js",
-        "tailwind default --minify",
+        "assets.build",
         "phx.digest"
-      ]
+      ],
+      "test.e2e": ["assets.build", "ecto.create --quiet", "ecto.migrate --quiet", "test"]
     ]
   end
 end

@@ -7,6 +7,14 @@
 # General application configuration
 import Config
 
+config :phoenix_vite, PhoenixVite.Npm,
+  assets: [args: [], cd: __DIR__],
+  vite: [
+    args: ~w(exec -- vite),
+    cd: Path.expand("../assets", __DIR__),
+    env: %{"MIX_BUILD_PATH" => Mix.Project.build_path()}
+  ]
+
 config :example,
   ecto_repos: [Example.Repo]
 

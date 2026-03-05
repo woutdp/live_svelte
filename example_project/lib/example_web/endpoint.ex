@@ -1,5 +1,6 @@
 defmodule ExampleWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :example
+  import PhoenixVite.Plug
 
   # The session will be stored in the cookie and signed,
   # this means its contents can be read but not tampered with.
@@ -12,6 +13,8 @@ defmodule ExampleWeb.Endpoint do
   ]
 
   socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
+
+  plug :favicon, dev_server: {PhoenixVite.Components, :has_vite_watcher?, [__MODULE__]}
 
   # In test, prevent caching of assets so E2E always loads the latest app.js after mix assets.js
   if Mix.env() == :test do

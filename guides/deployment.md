@@ -11,26 +11,23 @@ Deploying a LiveSvelte application requires Node.js on the server for SSR (serve
 
 ```bash
 # 1. Build client bundle and SSR bundle
-mix assets.js
+mix assets.build
 
 # 2. Compile application (copies SSR bundle to _build)
 mix compile
 
 # OR in a single release command:
-MIX_ENV=prod mix assets.js && MIX_ENV=prod mix release
+MIX_ENV=prod mix assets.build && MIX_ENV=prod mix release
 ```
 
-### What `mix assets.js` Does
+### What `mix assets.build` Does
 
-The `assets.js` alias runs (in order):
+The `assets.build` alias runs (in order):
 
-1. `npx vite build` — builds the client JavaScript bundle to `priv/static/assets/`
-2. `npx vite build --config vite.ssr.config.js` — builds the SSR bundle to `priv/svelte/server.js`
-3. `tailwind default` — builds CSS to `priv/static/assets/app.css`
+1. `phoenix_vite.npm vite build --manifest --emptyOutDir true` — client bundle (and CSS when using Tailwind via Vite) to `priv/static/`
+2. `phoenix_vite.npm vite build --ssrManifest ... --ssr js/server.js --outDir ../priv/svelte` — SSR bundle to `priv/svelte/server.js`
 
-> #### Vite Must Run Before Tailwind {: .warning}
->
-> The Vite client build uses `emptyOutDir: true` and clears `priv/static/assets/` first. Always run Vite before Tailwind, or Tailwind's `app.css` will be deleted. The `mix assets.js` alias handles this order correctly.
+> The same `assets/vite.config.mjs` is used for both builds; phoenix_vite runs the second command with different CLI flags.
 
 ## NodeJS Supervisor
 
@@ -68,15 +65,15 @@ config :live_svelte,
 ## SSR Bundle
 
 The SSR bundle (`priv/svelte/server.js`) is:
-- Built from `assets/vite.ssr.config.js`
+- Built via the same `assets/vite.config.mjs` with `--ssr js/server.js --outDir ../priv/svelte`
 - Fully self-contained (all dependencies bundled, `ssr: { noExternal: true }`)
 - Required to be present at application start when `ssr_module: LiveSvelte.SSR.NodeJS`
 
-After `mix assets.js`, `mix compile` copies `priv/svelte/server.js` into `_build/`. This copy in `_build/` is what NodeJS.Supervisor actually loads at runtime.
+After `mix assets.build`, `mix compile` copies `priv/svelte/server.js` into `_build/`. This copy in `_build/` is what NodeJS.Supervisor actually loads at runtime.
 
 > #### Always Compile After Building SSR Bundle {: .info}
 >
-> After `mix assets.js`, run `mix compile` so `_build/` gets the updated SSR bundle. In a CI/CD pipeline, ensure both steps run.
+> After `mix assets.build`, run `mix compile` so `_build/` gets the updated SSR bundle. In a CI/CD pipeline, ensure both steps run.
 
 ## Docker Deployment
 
@@ -89,7 +86,7 @@ WORKDIR /app
 COPY assets/ assets/
 COPY deps/ deps/
 RUN cd assets && npm install
-RUN mix assets.js
+RUN mix assets.build
 
 FROM elixir:1.17-slim AS release-builder
 # ... standard Elixir release steps ...
@@ -159,5 +156,5 @@ When upgrading LiveSvelte versions:
 1. Update `{:live_svelte, "~> x.y"}` in `mix.exs`
 2. Run `mix deps.get`
 3. Check `CHANGELOG.md` for breaking changes
-4. Rebuild: `mix assets.js && mix compile`
+4. Rebuild: `mix assets.build && mix compile`
 5. Run tests: `mix test`
