@@ -84,18 +84,21 @@ export default defineConfig({
     svelte(),
     liveSveltePlugin({
       // Options (all optional):
-      paths: ["assets/svelte"],        // Directories to scan for .svelte files
-      entrypoint: "assets/js/app.js"  // Main app entry point
+      components: ["./svelte/**/*.svelte"],  // Glob(s) for component discovery (default)
+      entrypoint: "./js/server.js"           // SSR entry for /ssr_render (default)
     })
   ]
 })
 ```
 
-### Default Paths
+### Defaults
 
-By default, `liveSveltePlugin` discovers Svelte components in:
-- `assets/svelte/**/*.svelte`
-- `lib/**/*.svelte` (for colocated components next to LiveView modules)
+- **components** — `["./svelte/**/*.svelte"]`; patterns are relative to the Vite project root (where `vite.config.mjs` lives).
+- **entrypoint** — `"./js/server.js"`; used by the plugin’s `/ssr_render` middleware in development and by the SSR build.
+
+### Instant HMR with phoenix_vite
+
+When using phoenix_vite, the layout uses `PhoenixVite.Components.assets`. For Svelte/CSS changes to hot-reload, your endpoint in `config/dev.exs` must have `static_url: [host: "localhost", port: 5173]` and a `:vite` watcher (e.g. `vite: {PhoenixVite.Npm, :run, [:vite, ~w(dev)]}`). The Igniter installer adds these; see [Installation](installation.md) or [Troubleshooting](troubleshooting.md) if you set up manually.
 
 ## JSON Library
 
