@@ -71,6 +71,25 @@ ssr: { noExternal: process.env.NODE_ENV === "production" ? true : undefined },
 
 Also verify that your Svelte files are in `assets/svelte/` and have the `.svelte` extension.
 
+## Unknown component: MyComponent (NodeJS SSR)
+
+**Symptom:** `(NodeJS.Error) Unknown component: MyComponent` when using a newly added Svelte component in LiveView (e.g. after creating `assets/svelte/MyComponent.svelte` and using `<.svelte name="MyComponent" ...>`).
+
+**Cause:** When using NodeJS SSR, the component registry is baked into `priv/svelte/server.js` at build time. New `.svelte` files are not included until you rebuild the SSR bundle.
+
+**Fix (choose one):**
+
+1. **Development (recommended):** Use ViteJS for SSR so new components are discovered automatically. In `config/dev.exs` add:
+   ```elixir
+   config :live_svelte, ssr_module: LiveSvelte.SSR.ViteJS, vite_host: "http://localhost:5173"
+   ```
+   Restart the server and ensure the Vite dev server is running (e.g. via the `:vite` watcher when you run `mix phx.server`). The Igniter installer (`mix igniter.install live_svelte`) adds this for you.
+
+2. **After adding components when using NodeJS:** Rebuild the SSR bundle so the new component is included:
+   ```bash
+   mix assets.build
+   ```
+
 ## Wallaby E2E Tests Fail
 
 **Symptom:** Wallaby tests fail with a browser connection error or chromedriver not found.
