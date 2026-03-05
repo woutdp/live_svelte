@@ -29,25 +29,9 @@ function getSlots(ref) {
   return snippets
 }
 
-function getLiveJsonProps(ref) {
-  const json = getAttributeJson(ref, "data-live-json")
-
-  // On SSR, data-live-json is the full object we want
-  // After SSR, data-live-json is an array of keys, and we'll get the data from the window
-  if (!Array.isArray(json)) return json
-
-  const liveJsonData = {}
-  for (const liveJsonVariable of json) {
-    const data = window[liveJsonVariable]
-    if (data !== undefined) liveJsonData[liveJsonVariable] = data
-  }
-  return liveJsonData
-}
-
 function getProps(ref) {
   return {
     ...getAttributeJson(ref, "data-props"),
-    ...getLiveJsonProps(ref),
     ...getSlots(ref),
     live: ref,
   }
@@ -89,9 +73,7 @@ function update_state(ref) {
         else state[key] = payload[key]
       }
     }
-    // Always keep live ref, liveJson, and slots in sync
-    const liveJson = getLiveJsonProps(ref)
-    for (const key in liveJson) state[key] = liveJson[key]
+    // Always keep live ref and slots in sync
     const slots = getSlots(ref)
     for (const key in slots) state[key] = slots[key]
     state.live = ref
@@ -124,11 +106,6 @@ export function getHooks(components) {
 
       const Component = components[componentName]
       if (!Component) throw new Error(`Unable to find ${componentName} component.`)
-
-      for (const liveJsonElement of Object.keys(getAttributeJson(this, "data-live-json"))) {
-        window.addEventListener(`${liveJsonElement}_initialized`, (_event) => update_state(this), false)
-        window.addEventListener(`${liveJsonElement}_patched`, (_event) => update_state(this), false)
-      }
 
       // Mount into the inner phx-update="ignore" div so LiveView's DOM
       // patching won't destroy Svelte's rendered content on server updates.

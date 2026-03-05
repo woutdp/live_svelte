@@ -10,7 +10,6 @@ defmodule LiveSvelte.PropsDiffTest do
       id: nil,
       key: nil,
       props: Keyword.get(opts, :props, %{}),
-      live_json_props: %{},
       ssr: false,
       class: nil,
       loading: [],

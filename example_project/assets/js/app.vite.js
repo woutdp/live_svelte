@@ -6,8 +6,6 @@ import "phoenix_html"
 import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
 import topbar from "../vendor/topbar"
-// TODO(Epic 9): remove createLiveJsonHooks once live_json dependency is removed
-import {createLiveJsonHooks} from "live_json"
 import {getHooks} from "live_svelte"
 import Components from "virtual:live-svelte-components"
 
@@ -49,7 +47,6 @@ const PropsDiffPayloadDisplay = {
 }
 
 const Hooks = {
-    ...createLiveJsonHooks(),
     ...getHooks(Components),
     PropsDiffPayloadDisplay,
 }

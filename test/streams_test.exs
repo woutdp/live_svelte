@@ -31,7 +31,6 @@ defmodule LiveSvelte.StreamsTest do
       id: nil,
       key: nil,
       props: %{},
-      live_json_props: %{},
       ssr: false,
       class: nil,
       loading: [],

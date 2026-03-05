@@ -1,12 +1,12 @@
 {
   "type": "module",
   "devDependencies": {
-    "@vitest/coverage-v8": "^2.1.0",
-    "esbuild": "^0.24.0",
-    "esbuild-svelte": "^0.9.0",
+    "@vitest/coverage-v8": "^4.0.18",
+    "esbuild": "^0.27.3",
+    "esbuild-svelte": "^0.9.4",
     "jsdom": "^28.1.0",
-    "typescript": "^5.6.0",
-    "vitest": "^2.1.0"
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
   },
   "dependencies": {
     "phoenix": "file:../deps/phoenix",
