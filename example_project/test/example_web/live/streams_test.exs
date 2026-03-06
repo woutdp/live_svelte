@@ -90,6 +90,9 @@ defmodule ExampleWeb.StreamsTest do
       |> click(Query.css("[data-testid='clear-button']"))
       |> click(Query.css("[data-testid='reset-button-at-0']"))
 
+    # Wait for all 3 items to appear before checking order
+    session |> find(Query.css("[data-testid^='item-name-']", count: 3))
+
     # All 3 items back but in reversed order (each prepended at 0)
     names = all(session, Query.css("[data-testid^='item-name-']"))
     name_texts = Enum.map(names, &Wallaby.Element.text/1)

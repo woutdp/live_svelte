@@ -48,6 +48,7 @@ defmodule ExampleWeb.Router do
     live("/live-navigation", LiveNavigation)
     live("/live-navigation/:page", LiveNavigation)
     live("/live-editor", LiveEditor)
+    live("/live-runed", LiveRuned)
     live("/live-ssr", LiveSsr)
     live("/live-composition", LiveComposition)
   end

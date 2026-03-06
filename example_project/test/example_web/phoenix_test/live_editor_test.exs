@@ -1,7 +1,7 @@
 defmodule ExampleWeb.PhoenixTest.LiveEditorTest do
   @moduledoc """
   PhoenixTest (in-process) for LiveEditor (/live-editor).
-  Validates server-side rendering, data-props contract, and save_content event handling.
+  Validates server-side rendering, data-props contract, and sync_content event handling.
   Editor.js is browser-only; these tests skip SSR and validate the LiveView layer only.
   """
   use ExampleWeb.ConnCase, async: false
@@ -42,13 +42,13 @@ defmodule ExampleWeb.PhoenixTest.LiveEditorTest do
     |> assert_has("[data-testid='no-save-yet']")
   end
 
-  test "save_content event updates block count and removes no-save message", %{conn: conn} do
+  test "sync_content event updates block count and removes no-save message", %{conn: conn} do
     conn
     |> visit("/live-editor")
     |> assert_has("[data-testid='no-save-yet']")
     |> assert_has("[data-testid='block-count']", text: "2")
     |> unwrap(fn view ->
-      render_click(view, "save_content", %{
+      render_click(view, "sync_content", %{
         "blocks" => [
           %{"type" => "header", "data" => %{"text" => "Hello", "level" => 2}},
           %{"type" => "paragraph", "data" => %{"text" => "World"}},
@@ -60,11 +60,11 @@ defmodule ExampleWeb.PhoenixTest.LiveEditorTest do
     |> refute_has("[data-testid='no-save-yet']")
   end
 
-  test "save_content event with single block updates count to 1", %{conn: conn} do
+  test "sync_content event with single block updates count to 1", %{conn: conn} do
     conn
     |> visit("/live-editor")
     |> unwrap(fn view ->
-      render_click(view, "save_content", %{
+      render_click(view, "sync_content", %{
         "blocks" => [
           %{"type" => "header", "data" => %{"text" => "Only block", "level" => 2}}
         ]
