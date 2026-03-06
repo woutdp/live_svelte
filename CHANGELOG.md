@@ -5,11 +5,98 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## 0.18.0 - 2026-03-06
+
+> **Note:** Many of the features in this release were backported from
+> [live_vue](https://github.com/Valian/live_vue) by
+> [Jakub Skalecki](https://github.com/Valian). A huge thank you to Jakub
+> for the excellent architecture and implementation that served as the
+> foundation for props diffing, composables, streams support, Vite
+> integration, Igniter installer, and more.
+
+### Breaking Changes
+
+-   **esbuild removed** — LiveSvelte no longer supports esbuild. Migrate to
+    Vite + `phoenix_vite`. See the [Upgrade Guide](guides/upgrade_guide.html)
+    for step-by-step instructions.
+
+-   **live_json / live_json_props removed** — The `live_json` hex dependency
+    and `live_json_props` attribute have been removed. Replace with `props={...}`;
+    built-in JSON Patch diffing provides the same optimization by default.
+
+-   **phoenix_vite now required** — Add `{:phoenix_vite, "~> 0.4"}` to your
+    `mix.exs` dependencies.
+
+### Added
+
+-   **Vite integration** — Full Vite build pipeline replaces esbuild.
+    `phoenix_vite` handles client and SSR builds with a single `vite.config.mjs`.
+
+-   **Vite HMR** — Hot Module Replacement for Svelte components and CSS in
+    development. Zero extra config when using `phoenix_vite` — just run
+    `mix phx.server`.
+
+-   **ViteJS SSR mode** — New `LiveSvelte.SSR.ViteJS` backend sends SSR render
+    requests to the Vite dev server over HTTP. New `.svelte` files are picked up
+    immediately without running `mix assets.build`.
+
+-   **SSR telemetry** — SSR render events emit telemetry under
+    `[:live_svelte, :ssr, :render, :start]` / `[:live_svelte, :ssr, :render, :stop]`
+    for performance monitoring.
+
+-   **Igniter installer** — `mix live_svelte.install` (powered by
+    [Igniter](https://hex.pm/packages/igniter)) sets up LiveSvelte automatically
+    in an existing Phoenix project, including Vite config, endpoint changes, and
+    JavaScript entrypoint.
+
+-   **Props diffing (JSON Patch)** — Server-side props are diffed using RFC 6902
+    JSON Patch, sending only changed values to the client. Enabled by default;
+    disable with `config :live_svelte, enable_props_diff: false`.
+
+-   **Svelte encoder** — New `LiveSvelte.Encoder` protocol for custom JSON
+    serialization of Svelte props. Replaces the need for `@derive Jason.Encoder`
+    on Elixir structs.
+
+-   **Streams support** — Phoenix `stream/3` now works with Svelte components.
+    Stream operations are sent as JSON Patch ops via the `data-streams-diff`
+    attribute.
+
+-   **Live form support** — New `useLiveForm` composable for Ecto
+    changeset-backed forms in Svelte with server-side validation feedback.
+
+-   **File upload support** — New `useLiveUpload` composable for Phoenix
+    LiveView file uploads with progress tracking.
+
+-   **Event reply** — New `useEventReply` composable for handling `push_reply`
+    responses from the server.
+
+-   **Live navigation** — New `useLiveNavigation` composable exposing `patch()`
+    and `navigate()` for client-side routing from Svelte.
+
+-   **TypeScript rewrite** — Library source (`assets/js/live_svelte/*.ts`) is
+    now written in TypeScript with full type definitions exported via
+    `package.json`.
+
+-   **Hot-apply new components** — New `.svelte` files added during development
+    are automatically discovered by the ViteJS SSR mode and Vite plugin without
+    restarting the Phoenix server.
+
+-   **CI/CD** — GitHub Actions workflows for Elixir (tests + Coveralls coverage
+    reporting) and frontend (Vitest unit tests).
+
+-   **Documentation** — `ex_doc` integration; all public modules now have
+    HexDocs entries.
+
+-   **New examples** — Drag & Drop, Rich Text Editor (Editor.js), Runed state
+    management, Svelte Stores.
 
 ### Removed
 
--   **live_json** — The `live_json` hex dependency and `live_json_props` feature have been removed from the library and example project. Use built-in props diffing and JSON Patch (see Configuration) for efficient prop updates instead.
+-   **esbuild** — Removed `esbuild` mix dependency, `assets/build.js`, and all
+    related `config :esbuild` configuration.
+
+-   **live_json / live_json_props** — Removed in favor of built-in props
+    diffing (enabled by default).
 
 ## 0.17.4 - 2026-02-18
 

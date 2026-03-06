@@ -1,7 +1,7 @@
 defmodule LiveSvelte.MixProject do
   use Mix.Project
 
-  @version "0.17.4"
+  @version "0.18.0"
   @repo_url "https://github.com/woutdp/live_svelte"
 
   def project do
@@ -38,6 +38,7 @@ defmodule LiveSvelte.MixProject do
 
           # Getting Started
           "guides/installation.md": [title: "Installation"],
+          "guides/upgrade_guide.md": [title: "Upgrade Guide"],
           "guides/basic_usage.md": [title: "Basic Usage"],
 
           # Core Usage
@@ -59,7 +60,7 @@ defmodule LiveSvelte.MixProject do
           "guides/troubleshooting.md": [title: "Troubleshooting"]
         ],
         groups_for_extras: [
-          "Getting Started": ~r/guides\/(installation|basic_usage)/,
+          "Getting Started": ~r/guides\/(installation|upgrade_guide|basic_usage)/,
           "Core Usage": ~r/guides\/(forms|uploads|streams|ssr|configuration)/,
           Reference: ~r/guides\/api_reference/,
           "Advanced Topics": ~r/guides\/(introduction|testing|deployment)/,
