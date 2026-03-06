@@ -19,6 +19,16 @@ defmodule ExampleWeb.Endpoint do
   # In test, prevent caching of assets so E2E always loads the latest app.js after mix assets.js
   if Mix.env() == :test do
     plug :no_cache_assets
+
+    defp no_cache_assets(conn, _opts) do
+      Plug.Conn.register_before_send(conn, fn c ->
+        if String.starts_with?(c.request_path, "/assets/") do
+          Plug.Conn.put_resp_header(c, "cache-control", "no-store, no-cache, must-revalidate")
+        else
+          c
+        end
+      end)
+    end
   end
 
   # Serve at "/" the static files from "priv/static" directory.
@@ -57,13 +67,5 @@ defmodule ExampleWeb.Endpoint do
   plug Plug.Session, @session_options
   plug ExampleWeb.Router
 
-  defp no_cache_assets(conn, _opts) do
-    Plug.Conn.register_before_send(conn, fn c ->
-      if String.starts_with?(c.request_path, "/assets/") do
-        Plug.Conn.put_resp_header(c, "cache-control", "no-store, no-cache, must-revalidate")
-      else
-        c
-      end
-    end)
-  end
+
 end

@@ -2,6 +2,7 @@
   "type": "module",
   "dependencies": {
     "@editorjs/editorjs": "^2.31.0",
+    "lodash": "^4.17.21",
     "@editorjs/header": "^2.8.8",
     "@editorjs/list": "^2.0.2",
     "dynamic-marquee": "^2.6.5",
