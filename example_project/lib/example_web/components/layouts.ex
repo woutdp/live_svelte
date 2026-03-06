@@ -49,6 +49,7 @@ defmodule ExampleWeb.Layouts do
         links: [
           %{label: "Client Loading", to: ~p"/live-client-side-loading"},
           %{label: "Rich Editor (@attach)", to: ~p"/live-editor"},
+          %{label: "Runed Utilities", to: ~p"/live-runed"},
           %{label: "SSR Demo", to: ~p"/live-ssr"}
         ]
       },
