@@ -153,12 +153,12 @@ defmodule LiveSvelte do
       class={@class}
     >
       <div id={"#{@svelte_id}-target"} data-svelte-target>
-        <%= raw(@ssr_render["head"]) %>
+        {raw(@ssr_render["head"])}
         <style>
           <%= raw(@ssr_render["css"]["code"]) %>
         </style>
-        <%= raw(@ssr_render["html"]) %>
-        <%= render_slot(@loading) %>
+        {raw(@ssr_render["html"])}
+        {render_slot(@loading)}
       </div>
     </div>
     """
