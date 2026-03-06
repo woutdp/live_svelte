@@ -915,18 +915,15 @@ The example project uses phoenix_vite, so a single `mix phx.server` starts both 
 
 ### Releasing
 
--   Update the version in `README.md`
--   Update the version in `package.json`
--   Update the version in `mix.exs`
--   Update the changelog
-
-Run:
+For hex.pm releases of LiveSvelte itself, use the `easy_publish`-powered tasks:
 
 ```bash
-mix hex.publish
+mix release.patch    # Patch version bump
+mix release.minor    # Minor version bump
+mix release.major    # Major version bump
 ```
 
--   Publish a tag for the latest version
+These commands will bump the version, update the changelog, commit, tag, push, and publish to Hex in one step.
 
 ## Deployment
 

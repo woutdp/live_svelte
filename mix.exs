@@ -14,6 +14,7 @@ defmodule LiveSvelte.MixProject do
       consolidate_protocols: Mix.env() != :test,
       aliases: aliases(),
       deps: deps(),
+      test_coverage: [tool: ExCoveralls],
 
       # Hex
       description: "E2E reactivity for Svelte and LiveView",
@@ -68,6 +69,17 @@ defmodule LiveSvelte.MixProject do
     ]
   end
 
+  def cli do
+    [
+      preferred_envs: [
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test
+      ]
+    ]
+  end
+
   defp package() do
     [
       maintainers: ["Wout De Puysseleir"],
@@ -94,6 +106,7 @@ defmodule LiveSvelte.MixProject do
     [
       {:ex_doc, "~> 0.38", only: :dev, runtime: false, warn_if_outdated: true},
       {:makeup_html, "~> 0.1.0", only: :dev, runtime: false},
+      {:easy_publish, "~> 0.1", only: [:dev], runtime: false},
       {:igniter, "~> 0.6", optional: true},
       {:phoenix_vite, "~> 0.4"},
       {:jsonpatch, "~> 2.3"},
@@ -105,11 +118,16 @@ defmodule LiveSvelte.MixProject do
       {:telemetry, "~> 0.4 or ~> 1.0"},
       {:phoenix, ">= 1.7.0"},
       {:phoenix_html, ">= 3.3.1"},
-      {:phoenix_live_view, "~> 1.0"}
+      {:phoenix_live_view, "~> 1.0"},
+      {:excoveralls, "~> 0.18", only: :test}
     ]
   end
 
   defp aliases do
-    []
+    [
+      "release.patch": ["easy_publish.release patch --branch=main"],
+      "release.minor": ["easy_publish.release minor --branch=main"],
+      "release.major": ["easy_publish.release major --branch=main"]
+    ]
   end
 end
