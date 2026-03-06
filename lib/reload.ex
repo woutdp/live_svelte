@@ -48,7 +48,7 @@ defmodule LiveSvelte.Reload do
       <script :for={path <- @javascripts} type="module" src={"#{@vite_host}#{path}"}>
       </script>
     <% else %>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     <% end %>
     """
   end

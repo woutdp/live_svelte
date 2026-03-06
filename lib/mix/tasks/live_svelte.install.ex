@@ -76,9 +76,19 @@ defmodule Mix.Tasks.LiveSvelte.Install do
     defp configure_environments(igniter, _app_name) do
       igniter
       |> Config.configure("config.exs", :live_svelte, [:ssr], true)
-      |> Config.configure("dev.exs", :live_svelte, [:ssr_module], {:code, Sourceror.parse_string!("LiveSvelte.SSR.ViteJS")})
+      |> Config.configure(
+        "dev.exs",
+        :live_svelte,
+        [:ssr_module],
+        {:code, Sourceror.parse_string!("LiveSvelte.SSR.ViteJS")}
+      )
       |> Config.configure("dev.exs", :live_svelte, [:vite_host], "http://localhost:5173")
-      |> Config.configure("prod.exs", :live_svelte, [:ssr_module], {:code, Sourceror.parse_string!("LiveSvelte.SSR.NodeJS")})
+      |> Config.configure(
+        "prod.exs",
+        :live_svelte,
+        [:ssr_module],
+        {:code, Sourceror.parse_string!("LiveSvelte.SSR.NodeJS")}
+      )
       |> Config.configure("prod.exs", :live_svelte, [:ssr], true)
     end
 
@@ -190,10 +200,20 @@ defmodule Mix.Tasks.LiveSvelte.Install do
             if String.contains?(content, "@source \"../svelte\";") do
               content
             else
-              result = String.replace(content, "@source \"../js\";", ~s(@source "../js";\n@source "../svelte";))
+              result =
+                String.replace(
+                  content,
+                  "@source \"../js\";",
+                  ~s(@source "../js";\n@source "../svelte";)
+                )
+
               # Fallback: single-quote variant used by some generators
               if result == content do
-                String.replace(content, "@source '../js';", ~s(@source '../js';\n@source "../svelte";))
+                String.replace(
+                  content,
+                  "@source '../js';",
+                  ~s(@source '../js';\n@source "../svelte";)
+                )
               else
                 result
               end
@@ -363,7 +383,8 @@ defmodule Mix.Tasks.LiveSvelte.Install do
 
       Igniter.update_file(igniter, app_file, fn source ->
         Rewrite.Source.update(source, :content, fn content ->
-          if String.contains?(content, "children = [") and not String.contains?(content, "NodeJS.Supervisor") do
+          if String.contains?(content, "children = [") and
+               not String.contains?(content, "NodeJS.Supervisor") do
             # Capture the indentation of `children = [` so the generated code
             # aligns with the surrounding function body regardless of indent style.
             String.replace(
@@ -465,10 +486,16 @@ defmodule Mix.Tasks.LiveSvelte.Install do
         Rewrite.Source.update(source, :content, fn content ->
           content
           |> then(fn c ->
-            if String.contains?(c, "/assets/node_modules"), do: String.replace(c, "/assets/node_modules", "node_modules"), else: c
+            if String.contains?(c, "/assets/node_modules"),
+              do: String.replace(c, "/assets/node_modules", "node_modules"),
+              else: c
           end)
           |> then(fn c ->
-            if String.contains?(c, "/priv/svelte/"), do: c, else: String.trim_trailing(c) <> "\n\n# LiveSvelte build artifacts\n/assets/svelte/_build/\n/priv/svelte/\n"
+            if String.contains?(c, "/priv/svelte/"),
+              do: c,
+              else:
+                String.trim_trailing(c) <>
+                  "\n\n# LiveSvelte build artifacts\n/assets/svelte/_build/\n/priv/svelte/\n"
           end)
         end)
       end)
