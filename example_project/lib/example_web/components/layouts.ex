@@ -23,6 +23,7 @@ defmodule ExampleWeb.Layouts do
           %{label: "Plus/Minus (Static)", to: ~p"/plus-minus-svelte"},
           %{label: "Plus/Minus (Live)", to: ~p"/live-plus-minus"},
           %{label: "Hybrid Counter", to: ~p"/live-plus-minus-hybrid"},
+          %{label: "Drag & Drop", to: ~p"/live-drag-drop"},
           %{label: "Static + List", to: ~p"/live-static-color"}
         ]
       },
