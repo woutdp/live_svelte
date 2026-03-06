@@ -50,6 +50,7 @@ defmodule ExampleWeb.Layouts do
           %{label: "Client Loading", to: ~p"/live-client-side-loading"},
           %{label: "Rich Editor (@attach)", to: ~p"/live-editor"},
           %{label: "Runed Utilities", to: ~p"/live-runed"},
+          %{label: "Svelte Stores", to: ~p"/live-stores"},
           %{label: "SSR Demo", to: ~p"/live-ssr"}
         ]
       },
