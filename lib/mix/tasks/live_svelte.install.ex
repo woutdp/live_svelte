@@ -367,6 +367,7 @@ defmodule Mix.Tasks.LiveSvelte.Install do
         "assets/svelte/.gitignore",
         "# Ignore auto-generated Svelte files by ~V sigil\n_build/"
       )
+      |> Igniter.create_new_file("assets/svelte.config.js", svelte_config_content())
       |> Igniter.create_new_file("assets/svelte/SvelteDemo.svelte", demo_svelte_content())
       |> Igniter.create_new_file(
         "lib/#{web_folder}/svelte_demo_live.ex",
@@ -502,6 +503,16 @@ defmodule Mix.Tasks.LiveSvelte.Install do
     end
 
     # Content helpers
+
+    defp svelte_config_content do
+      """
+      import { vitePreprocess } from "@sveltejs/vite-plugin-svelte"
+
+      export default {
+        preprocess: vitePreprocess(),
+      }
+      """
+    end
 
     defp server_js_content do
       """
