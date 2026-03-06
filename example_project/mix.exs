@@ -4,8 +4,9 @@ defmodule Example.MixProject do
   def project do
     [
       app: :example,
-      version: "0.1.0",
-      elixir: "~> 1.16",
+      name: "LiveSvelte Example",
+      version: "0.18.0",
+      elixir: "~> 1.18",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       listeners: [Phoenix.CodeReloader],
@@ -37,7 +38,7 @@ defmodule Example.MixProject do
       {:gettext, "~> 0.20"},
       {:json_diff_ex, "~> 0.6", override: true},
       {:live_svelte, path: ".."},
-      # {:live_svelte, "~> 0.17.4"},
+      # {:live_svelte, "~> 0.18.0"},
       {:phoenix, "~> 1.8.0"},
       {:phoenix_ecto, "~> 4.4"},
       {:phoenix_html, "~> 4.1"},
