@@ -56,8 +56,14 @@ defmodule ExampleWeb.LiveForm do
     changeset = Schema.changeset(%Schema{}, attrs)
 
     if changeset.valid? do
-      # Successful submit — tell the client to reset, return a clean form.
-      {:reply, %{reset: true}, assign(socket, form: empty_form())}
+      name = attrs["name"] || ""
+      email = attrs["email"] || ""
+      msg = "Info submitted: #{name} (#{email})"
+      # Successful submit — show success toast, tell the client to reset, return a clean form.
+      {:reply, %{reset: true},
+       socket
+       |> put_flash(:info, msg)
+       |> assign(form: empty_form())}
     else
       form = changeset |> to_form(as: "form_data", action: :validate)
       {:reply, %{}, assign(socket, form: form)}
