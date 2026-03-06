@@ -1,13 +1,36 @@
 {
+  "../node_modules/@editorjs/editorjs/dist/editorjs.mjs": {
+    "file": "assets/editorjs-wYYatyLe.js",
+    "name": "editorjs",
+    "src": "../node_modules/@editorjs/editorjs/dist/editorjs.mjs",
+    "isDynamicEntry": true
+  },
+  "../node_modules/@editorjs/header/dist/header.mjs": {
+    "file": "assets/header-B174FzUh.js",
+    "name": "header",
+    "src": "../node_modules/@editorjs/header/dist/header.mjs",
+    "isDynamicEntry": true
+  },
+  "../node_modules/@editorjs/list/dist/editorjs-list.mjs": {
+    "file": "assets/editorjs-list-CzFPaX3H.js",
+    "name": "editorjs-list",
+    "src": "../node_modules/@editorjs/list/dist/editorjs-list.mjs",
+    "isDynamicEntry": true
+  },
   "css/app.css": {
-    "file": "assets/app-HULN4QXK.css",
+    "file": "assets/app-fZIL_d3Z.css",
     "src": "css/app.css",
     "isEntry": true
   },
   "js/app.js": {
-    "file": "assets/app-B6UNF5gU.js",
+    "file": "assets/app-EcY7_2bB.js",
     "name": "app",
     "src": "js/app.js",
-    "isEntry": true
+    "isEntry": true,
+    "dynamicImports": [
+      "../node_modules/@editorjs/editorjs/dist/editorjs.mjs",
+      "../node_modules/@editorjs/header/dist/header.mjs",
+      "../node_modules/@editorjs/list/dist/editorjs-list.mjs"
+    ]
   }
 }
