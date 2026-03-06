@@ -25,7 +25,9 @@ defmodule LiveSvelte.SSR.ViteJS do
   @behaviour LiveSvelte.SSR
 
   def render(name, props, slots) do
-    data = Jason.encode!(%{name: name, props: props, slots: slots})
+    prepared_props = LiveSvelte.JSON.prepare(props)
+    prepared_slots = LiveSvelte.JSON.prepare(slots)
+    data = Jason.encode!(%{name: name, props: prepared_props, slots: prepared_slots})
     url = vite_path("/ssr_render")
     params = {String.to_charlist(url), [], ~c"application/json", data}
 
