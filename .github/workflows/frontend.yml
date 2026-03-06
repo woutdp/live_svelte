@@ -1,0 +1,50 @@
+name: Frontend CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  frontend-tests:
+    name: Frontend tests Node.js ${{ matrix.node }}
+    runs-on: ubuntu-24.04
+
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ["20", "22", "24"]
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: "1.17"
+          otp-version: "27"
+
+      - name: Get Elixir dependencies
+        working-directory: live_svelte
+        run: mix deps.get
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+          cache-dependency-path: live_svelte/assets/package-lock.json
+
+      - name: Install npm dependencies
+        working-directory: live_svelte/assets
+        run: npm install
+
+      - name: Type check with TypeScript
+        working-directory: live_svelte/assets
+        run: npm run typecheck
+
+      - name: Run frontend tests
+        working-directory: live_svelte/assets
+        run: npm test
+

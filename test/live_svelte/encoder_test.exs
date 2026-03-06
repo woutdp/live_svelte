@@ -164,4 +164,41 @@ defmodule LiveSvelte.EncoderTest do
       assert Encoder.encode(s, []) == %{inner: %{x: 42}, tag: "outer"}
     end
   end
+
+  describe "default Any impl for arbitrary structs" do
+    defmodule PlainStruct do
+      defstruct [:a, :b, :__meta__]
+    end
+
+    test "encodes all keys except __struct__ and __meta__" do
+      value = %PlainStruct{a: 1, b: 2, __meta__: :ignored}
+      encoded = Encoder.encode(value, [])
+      assert encoded == %{a: 1, b: 2}
+      refute Map.has_key?(encoded, :__meta__)
+    end
+  end
+
+  describe "fields_to_encode validation for @derive options" do
+    defmodule DeriveInvalidOnly do
+      defstruct [:a]
+    end
+
+    defmodule DeriveInvalidExcept do
+      defstruct [:a]
+    end
+
+    test "raises when :only contains unknown keys" do
+      assert_raise ArgumentError, ~r/:only specified keys .* not in defstruct/, fn ->
+        Protocol.derive(Encoder, DeriveInvalidOnly, only: [:missing])
+      end
+    end
+
+    test "raises when :except contains unknown keys" do
+      assert_raise ArgumentError, ~r/:except specified keys .* not in defstruct/, fn ->
+        Protocol.derive(Encoder, DeriveInvalidExcept, except: [:missing])
+      end
+    end
+  end
+
+  # Note: Upload-related encoders are exercised indirectly in JSON/SSR tests.
 end

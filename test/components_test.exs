@@ -1,6 +1,7 @@
 defmodule LiveSvelte.ComponentsTest do
   use ExUnit.Case, async: true
 
+  alias LiveSvelte.Components
   alias LiveSvelte.Slots
 
   describe "slot handling in generated components" do
@@ -67,6 +68,26 @@ defmodule LiveSvelte.ComponentsTest do
 
       assert {:ok, json} = Jason.encode(props)
       assert is_binary(json)
+    end
+  end
+
+  describe "LiveSvelte.Components.get_svelte_components/0" do
+    test "returns an empty list when no Svelte files are present" do
+      # Ensure test does not depend on example_project layout
+      assert Components.get_svelte_components() == []
+    end
+
+    test "detects .svelte files in ./assets/svelte" do
+      assets_dir = Path.join(["assets", "svelte"])
+      File.mkdir_p!(assets_dir)
+
+      path = Path.join(assets_dir, "TestComponent.svelte")
+      File.write!(path, "<script>export let name;</script><div>{name}</div>")
+
+      on_exit(fn -> File.rm_rf!(assets_dir) end)
+
+      names = Components.get_svelte_components()
+      assert "TestComponent" in names
     end
   end
 end
