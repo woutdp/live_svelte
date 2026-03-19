@@ -126,9 +126,9 @@ defmodule LiveSvelte.MixProject do
 
   defp aliases do
     [
-      "release.patch": ["easy_publish.release patch --branch=main"],
-      "release.minor": ["easy_publish.release minor --branch=main"],
-      "release.major": ["easy_publish.release major --branch=main"]
+      "release.patch": ["easy_publish.release patch --branch=master"],
+      "release.minor": ["easy_publish.release minor --branch=master"],
+      "release.major": ["easy_publish.release major --branch=master"]
     ]
   end
 end
