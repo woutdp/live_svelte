@@ -20,28 +20,27 @@
       with pkgs;
       {
         devShells.default = mkShell {
-          buildInputs =
-            [
-              erlang_27
-              beam.packages.erlang_26.elixir_1_18
-              nodejs_22
-              gh
-            ]
-            ++ lib.optionals stdenv.isLinux [
-              # For ExUnit Notifier on Linux.
-              libnotify
+          buildInputs = [
+            erlang_27
+            beam.packages.erlang_27.elixir_1_18
+            nodejs_22
+            gh
+          ]
+          ++ lib.optionals stdenv.isLinux [
+            # For ExUnit Notifier on Linux.
+            libnotify
 
-              # For file_system on Linux.
-              inotify-tools
-            ]
-            ++ lib.optionals stdenv.isDarwin ([
-              # For ExUnit Notifier on macOS.
-              terminal-notifier
+            # For file_system on Linux.
+            inotify-tools
+          ]
+          ++ lib.optionals stdenv.isDarwin ([
+            # For ExUnit Notifier on macOS.
+            terminal-notifier
 
-              # For file_system on macOS.
-              darwin.apple_sdk.frameworks.CoreFoundation
-              darwin.apple_sdk.frameworks.CoreServices
-            ]);
+            # For file_system on macOS.
+            darwin.apple_sdk.frameworks.CoreFoundation
+            darwin.apple_sdk.frameworks.CoreServices
+          ]);
 
           shellHook = ''
             # allows mix to work on the local directory
