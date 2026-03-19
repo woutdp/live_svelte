@@ -120,7 +120,8 @@ defmodule LiveSvelte.MixProject do
       {:phoenix, ">= 1.7.0"},
       {:phoenix_html, ">= 3.3.1"},
       {:phoenix_live_view, "~> 1.0"},
-      {:excoveralls, "~> 0.18", only: :test}
+      {:excoveralls, "~> 0.18", only: :test},
+      {:phx_new, "~> 1.7", only: :test, runtime: false}
     ]
   end
 
