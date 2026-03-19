@@ -5,9 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 0.19.0 - 2026-03-19
+## UNRELEASED
 
-## 0.18.0 - 2026-03-06
+## 0.18.0-rc0 - 2026-03-06
 
 > **Note:** Many of the features in this release were backported from
 > [live_vue](https://github.com/Valian/live_vue) by
