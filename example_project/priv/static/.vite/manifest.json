@@ -1,29 +1,33 @@
 {
   "../node_modules/@editorjs/editorjs/dist/editorjs.mjs": {
-    "file": "assets/editorjs-wYYatyLe.js",
+    "file": "assets/editorjs-CuR69cEy.js",
     "name": "editorjs",
     "src": "../node_modules/@editorjs/editorjs/dist/editorjs.mjs",
     "isDynamicEntry": true
   },
   "../node_modules/@editorjs/header/dist/header.mjs": {
-    "file": "assets/header-B174FzUh.js",
+    "file": "assets/header-B78o3T0e.js",
     "name": "header",
     "src": "../node_modules/@editorjs/header/dist/header.mjs",
     "isDynamicEntry": true
   },
   "../node_modules/@editorjs/list/dist/editorjs-list.mjs": {
-    "file": "assets/editorjs-list-CzFPaX3H.js",
+    "file": "assets/editorjs-list-CeefkZap.js",
     "name": "editorjs-list",
     "src": "../node_modules/@editorjs/list/dist/editorjs-list.mjs",
     "isDynamicEntry": true
   },
   "css/app.css": {
-    "file": "assets/app-DpQuHjcm.css",
+    "file": "assets/app-CLO35oKD.css",
+    "name": "app",
+    "names": [
+      "app.css"
+    ],
     "src": "css/app.css",
     "isEntry": true
   },
   "js/app.js": {
-    "file": "assets/app-_huAwfxm.js",
+    "file": "assets/app-c-x9gCjQ.js",
     "name": "app",
     "src": "js/app.js",
     "isEntry": true,
