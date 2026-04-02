@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {sharedCount, sharedCountIsOdd} from "./store"
+    import {sharedCount, sharedCountIsOdd} from "./sharedStore"
 
     let {label, live}: {label: string; live: any} = $props()
 </script>
