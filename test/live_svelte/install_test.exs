@@ -137,6 +137,68 @@ defmodule Mix.Tasks.LiveSvelte.InstallTest do
       assert content =~ "@sveltejs/vite-plugin-svelte"
       assert content =~ ~s("svelte":)
     end
+
+    test "type module is set" do
+      result = run_installer()
+      content = file_content(result, "package.json")
+      assert content =~ ~s("type": "module"), "package.json must have \"type\": \"module\""
+    end
+
+    test "svelte plugin version is ^7.0.0, not older ^5.0.0" do
+      result = run_installer()
+      content = file_content(result, "package.json")
+
+      assert content =~ ~s("@sveltejs/vite-plugin-svelte": "^7.0.0"),
+             "Expected @sveltejs/vite-plugin-svelte ^7.0.0 (requires vite@8), got:\n#{content}"
+
+      refute content =~ ~s("@sveltejs/vite-plugin-svelte": "^5.0.0"),
+             "@sveltejs/vite-plugin-svelte ^5.0.0 is too old — use ^7.0.0 with vite@8"
+    end
+
+    test "vite version is ^8.0.0 to satisfy vite-plugin-svelte@7 peer dep" do
+      result = run_installer()
+      content = file_content(result, "package.json")
+
+      assert content =~ ~s("vite": "^8.0.0"),
+             "Expected vite ^8.0.0 (required by @sveltejs/vite-plugin-svelte@7), got:\n#{content}"
+
+      refute content =~ ~s("vite": "^6.3.0"),
+             "vite ^6.3.0 (phoenix_vite default) must be upgraded to ^8.0.0"
+    end
+
+    test "deps use ./deps/ paths, not ../deps/, after package.json is moved to project root" do
+      result = run_installer()
+      content = file_content(result, "package.json")
+
+      refute content =~ "file:../deps/",
+             "package.json at project root must use file:./deps/ paths, not file:../deps/:\n#{content}"
+
+      assert content =~ "file:./deps/",
+             "package.json must reference Elixir deps via file:./deps/ paths"
+    end
+  end
+
+  describe "tailwind source glob" do
+    test "app.css uses explicit svelte glob, not bare directory" do
+      result = run_installer()
+
+      case Rewrite.source(result.rewrite, "assets/css/app.css") do
+        {:ok, source} ->
+          content = Rewrite.Source.get(source, :content)
+
+          if content =~ "@source" do
+            refute content =~ ~s(@source "../svelte";),
+                   "app.css must not use bare @source \"../svelte\" — .svelte extension is not in Tailwind's default scan list"
+
+            assert content =~ ~s(@source "../svelte/**/*.svelte";),
+                   "app.css must use the explicit glob @source \"../svelte/**/*.svelte\""
+          end
+
+        {:error, _} ->
+          # app.css not modified by installer (no Tailwind in test project) — skip
+          :ok
+      end
+    end
   end
 
   describe "application.ex (M1: conditional NodeJS.Supervisor)" do

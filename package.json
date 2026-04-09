@@ -1,6 +1,7 @@
 {
     "name": "live_svelte",
     "version": "0.18.0-rc0",
+    "type": "module",
     "description": "",
     "license": "MIT",
     "types": "./assets/js/live_svelte/types.d.ts",

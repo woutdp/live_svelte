@@ -74,9 +74,16 @@ const liveSocket = new LiveSocket("/live", Socket, {
 
 **`lib/app_web.ex`** — adds `import LiveSvelte` to `html_helpers`
 
-**`lib/app/application.ex`** — adds NodeJS supervisor for production SSR:
+**`lib/app/application.ex`** — adds a conditional NodeJS supervisor that only starts in production (where `ssr_module` is `LiveSvelte.SSR.NodeJS`):
 ```elixir
-{NodeJS.Supervisor, [path: LiveSvelte.SSR.NodeJS.server_path(), pool_size: 4]}
+node_js_children =
+  if Application.get_env(:live_svelte, :ssr_module, nil) == LiveSvelte.SSR.NodeJS do
+    [{NodeJS.Supervisor, [path: LiveSvelte.SSR.NodeJS.server_path(), pool_size: 4]}]
+  else
+    []
+  end
+
+children = node_js_children ++ [...]
 ```
 
 **`config/config.exs`** — base SSR config:
@@ -91,7 +98,6 @@ config :live_svelte, ssr: true
 config :my_app, MyAppWeb.Endpoint,
   static_url: [host: "localhost", port: 5173],
   watchers: [
-    tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]},
     vite: {PhoenixVite.Npm, :run, [:vite, ~w(dev)]}
   ]
 
@@ -112,7 +118,7 @@ config :live_svelte,
 
 **`mix.exs`** — adds phoenix_vite-driven aliases: `assets.setup`, `assets.build` (client + SSR via `phoenix_vite.npm vite build`):
 ```elixir
-"assets.setup": ["phoenix_vite.npm assets install", "tailwind.install --if-missing"],
+"assets.setup": ["phoenix_vite.npm assets install"],
 "assets.build": [
   "phoenix_vite.npm vite build --manifest --emptyOutDir true",
   "phoenix_vite.npm vite build --ssrManifest --emptyOutDir false --ssr js/server.js --outDir ../priv/svelte"
@@ -121,7 +127,7 @@ config :live_svelte,
 
 **`assets/svelte/`** — creates the Svelte components directory with a demo component
 
-**`assets/app.css`** — adds `@source "../svelte";` if Tailwind is present
+**`assets/css/app.css`** — adds `@source "../svelte/**/*.svelte";` if Tailwind is present (a bare directory path does not include `.svelte` files by default)
 
 **`.gitignore`** — adds `/assets/svelte/_build/` and `/priv/svelte/`
 
@@ -135,16 +141,7 @@ config :live_svelte,
 >
 > Manual installation steps are complex and kept out-of-date as dependencies evolve. We strongly recommend using `mix igniter.install live_svelte` instead.
 
-If you must install manually (e.g. Phoenix < 1.8), the overall steps mirror the LiveVue manual installation process:
-
-1. Add `{:live_svelte, "~> 0.17"}` to `mix.exs` deps
-2. Configure Vite with the Svelte plugin and `liveSveltePlugin`
-3. Create `vite.ssr.config.js`
-4. Wire up `getHooks(Components)` in `app.js`
-5. Add `import LiveSvelte` to `html_helpers`
-6. Add `NodeJS.Supervisor` to `application.ex`
-7. Configure SSR in `config/`
-8. **For instant Svelte/CSS HMR with phoenix_vite:** In `config/dev.exs`, add to your endpoint `static_url: [host: "localhost", port: 5173]` and in `watchers` add `vite: {PhoenixVite.Npm, :run, [:vite, ~w(dev)]}`. Without these, the layout serves built assets and changes to Svelte components will not hot-reload.
+If you must install manually (e.g. Phoenix < 1.8), follow the **Option B — Manual installation** steps in the [README](https://github.com/woutdp/live_svelte#option-b--manual-installation). Those steps are the authoritative reference and kept up to date.
 
 #### Using Bun with manual installation
 
@@ -153,7 +150,7 @@ To use **Bun** instead of npm when installing manually:
 1. Add the optional dependency in `mix.exs`: `{:bun, ">= 1.5.1 and < 2.0.0-0"}`
 2. In `config/config.exs`, use `config :phoenix_vite, PhoenixVite.Bun, ...` (with the same options you would use for `PhoenixVite.Npm`; see [phoenix_vite](https://hexdocs.pm/phoenix_vite) for the Bun API).
 3. In `mix.exs` aliases, use `phoenix_vite.bun` instead of `phoenix_vite.npm`:
-   - `"assets.setup": ["phoenix_vite.bun assets install", "tailwind.install --if-missing"]`
+   - `"assets.setup": ["phoenix_vite.bun assets install"]`
    - `"assets.build"`: same two `phoenix_vite.bun vite build ...` commands as in the npm version.
 4. In `config/dev.exs` watchers, use `vite: {PhoenixVite.Bun, :run, [:vite, ~w(dev)]}`.
 
