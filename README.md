@@ -193,10 +193,11 @@ defp html_helpers do
 end
 ```
 
-**4.** Update `config/config.exs` — remove the esbuild config block and add phoenix_vite + live_svelte SSR:
+**4.** Update `config/config.exs` — remove the esbuild and tailwind config blocks, add phoenix_vite + live_svelte SSR:
 
 ```elixir
 # Remove the entire: config :esbuild, ...
+# Remove the entire: config :tailwind, ...  # if present
 
 config :phoenix_vite, PhoenixVite.Npm,
   assets: [args: [], cd: Path.expand("..", __DIR__)],
@@ -209,7 +210,7 @@ config :phoenix_vite, PhoenixVite.Npm,
 config :live_svelte, ssr: true
 ```
 
-**5.** Update `config/dev.exs` — remove the esbuild watcher, add the Vite dev server watcher and SSR config:
+**5.** Update `config/dev.exs` — remove the esbuild and tailwind watchers, add the Vite dev server watcher and SSR config:
 
 ```elixir
 config :<app_name>, <AppName>Web.Endpoint,
@@ -217,6 +218,7 @@ config :<app_name>, <AppName>Web.Endpoint,
   static_url: [host: "localhost", port: 5173],
   watchers: [
     # Remove: esbuild: {...}
+    # Remove: tailwind: {...}  # if present
     vite: {PhoenixVite.Npm, :run, [:vite, ~w(dev)]}
   ]
 
@@ -233,9 +235,11 @@ config :live_svelte,
   ssr: true
 ```
 
-**7.** Update `mix.exs` aliases — replace esbuild aliases with Vite:
+**7.** Update `mix.exs` aliases — replace esbuild/tailwind aliases with Vite:
 
 ```elixir
+# Remove: "assets.setup": ["esbuild.install --if-missing", ...]
+# Remove: "assets.build": ["esbuild ...", "tailwind ...", ...]
 "assets.setup": ["phoenix_vite.npm assets install"],
 "assets.build": [
   "phoenix_vite.npm vite build --manifest --emptyOutDir true",
@@ -244,7 +248,7 @@ config :live_svelte,
 "assets.deploy": ["assets.build", "phx.digest"]
 ```
 
-**8.** Create `package.json` in the **project root** (not in `assets/`):
+**8.** Create `package.json` in the **project root** (not in `assets/`). If your project uses Tailwind, add the Tailwind v4 npm packages:
 
 ```json
 {
@@ -260,17 +264,23 @@ config :live_svelte,
     "@sveltejs/vite-plugin-svelte": "^7.0.0",
     "phoenix_vite": "file:./deps/phoenix_vite",
     "svelte": "^5.0.0",
-    "vite": "^8.0.0"
+    "vite": "^8.0.0",
+    "@tailwindcss/vite": "^4.1.0",
+    "tailwindcss": "^4.1.0"
   }
 }
 ```
 
-**9.** Create `assets/vite.config.mjs`:
+_Without Tailwind, omit the last two `@tailwindcss/vite` and `tailwindcss` entries._
+
+**9.** Create `assets/vite.config.mjs`. If using Tailwind, import and add the `tailwindcss()` plugin:
 
 ```js
 import { defineConfig } from "vite"
 import { svelte } from "@sveltejs/vite-plugin-svelte"
 import liveSveltePlugin from "live_svelte/vitePlugin"
+// With Tailwind: add this import
+import tailwindcss from "@tailwindcss/vite"
 
 export default defineConfig({
   server: {
@@ -297,6 +307,7 @@ export default defineConfig({
     },
   },
   plugins: [
+    tailwindcss(), // With Tailwind: include this; remove if not using Tailwind
     svelte({ compilerOptions: { css: "injected" } }),
     liveSveltePlugin({ entrypoint: "./js/server.js" }),
   ],
@@ -373,11 +384,18 @@ end
 
 **15.** If `assets/css/app.css` does not exist, create it (Vite needs it as a build entry):
 
+Without Tailwind:
 ```css
 /* Application CSS */
 ```
 
-For Tailwind v4, use `@import "tailwindcss";` and add `@source "../svelte";` to include Svelte component styles.
+With Tailwind v4:
+```css
+@import "tailwindcss";
+@source "../svelte/**/*.svelte";
+```
+
+The `@source "../svelte/**/*.svelte"` glob tells Tailwind to scan Svelte components for class names. A bare directory path (`@source "../svelte"`) does not include `.svelte` files by default — the explicit glob is required.
 
 **16.** Install packages and build:
 
@@ -456,9 +474,8 @@ If you have examples you want to add, feel free to create a PR, I'd be happy to 
 <script>
     // The number prop is reactive,
     // this means if the server assigns the number, it will update in the frontend
-    export let number = 1
     // live contains all exported LiveView methods available to the frontend
-    export let live
+   let {number = 1, live} = $props();
 
     function increase() {
         // This pushes the event over the websocket
@@ -478,8 +495,8 @@ If you have examples you want to add, feel free to create a PR, I'd be happy to 
 </script>
 
 <p>The number is {number}</p>
-<button on:click={increase}>+</button>
-<button on:click={decrease}>-</button>
+<button onclick={increase}>+</button>
+<button onclick={decrease}>-</button>
 ```
 
 _Note: that here we use the `pushEvent` function, but you could also use `phx-click` and `phx-value-number` if you wanted._
@@ -546,10 +563,9 @@ defmodule ExampleWeb.LiveSigil do
   def render(assigns) do
     ~V"""
     <script>
-      export let number = 5
-      let other = 1
-
-      $: combined = other + number
+      let {number = 5} = $props();
+      let other = $state(1);
+      let combined = $derived(other + number);
     </script>
 
     <p>This is number: {number}</p>
@@ -557,7 +573,7 @@ defmodule ExampleWeb.LiveSigil do
     <p>This is other + number: {combined}</p>
 
     <button phx-click="increment">Increment</button>
-    <button on:click={() => other += 1}>Increment</button>
+    <button onclick={() => other += 1}>Increment</button>
     """
   end
 
