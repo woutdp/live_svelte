@@ -7,50 +7,88 @@ the `live_json` dependency. Follow the steps below to update your project.
 
 ### 1. Replace esbuild with Vite
 
-#### `mix.exs` — swap deps
+#### `mix.exs` — swap deps and update aliases
+
+Remove `:esbuild` (and `:tailwind` if present), add `phoenix_vite`:
 
 ```elixir
-# Remove:
-{:esbuild, "~> 0.8", runtime: Mix.env() == :dev}
-
-# Add:
-{:phoenix_vite, "~> 0.4"}
+defp deps do
+  [
+    # Remove: {:esbuild, ...}
+    # Remove: {:tailwind, ...}  # if present
+    {:live_svelte, "~> 0.18"},
+    {:phoenix_vite, "~> 0.4"},
+    # ... rest of deps unchanged
+  ]
+end
 ```
 
-Also remove any `config :esbuild` block from `config/config.exs`:
+Replace the esbuild/tailwind aliases with the two-step Vite build:
 
 ```elixir
-# Remove entirely:
-config :esbuild, :default,
-  args: ~w(js/app.js --bundle ...),
-  cd: Path.expand("../assets", __DIR__),
-  env: %{"NODE_PATH" => ...}
+defp aliases do
+  [
+    # Remove: "assets.setup": ["esbuild.install --if-missing", ...]
+    # Remove: "assets.build": ["esbuild ...", "tailwind ...", ...]
+    "assets.setup": ["phoenix_vite.npm assets install"],
+    "assets.build": [
+      "phoenix_vite.npm vite build --manifest --emptyOutDir true",
+      "phoenix_vite.npm vite build --ssrManifest --emptyOutDir false --ssr js/server.js --outDir ../priv/svelte"
+    ],
+    "assets.deploy": ["assets.build", "phx.digest"],
+    # ... rest of aliases unchanged
+  ]
+end
 ```
 
 Run `mix deps.get` after updating `mix.exs`.
 
-#### `assets/package.json` — add Vite and Svelte plugin
+#### `package.json` — create at the project root (not in `assets/`)
+
+If you had `assets/package.json`, delete it and create `package.json` at the
+project root. With Tailwind, include the `@tailwindcss/vite` packages:
 
 ```json
 {
+  "type": "module",
+  "dependencies": {
+    "live_svelte": "file:./deps/live_svelte",
+    "phoenix": "file:./deps/phoenix",
+    "phoenix_html": "file:./deps/phoenix_html",
+    "phoenix_live_view": "file:./deps/phoenix_live_view",
+    "topbar": "^3.0.0"
+  },
   "devDependencies": {
-    "vite": "^6.0.0",
-    "@sveltejs/vite-plugin-svelte": "^5.0.0",
-    "@tailwindcss/vite": "^4.0.0"
+    "@sveltejs/vite-plugin-svelte": "^7.0.0",
+    "phoenix_vite": "file:./deps/phoenix_vite",
+    "svelte": "^5.0.0",
+    "vite": "^8.0.0",
+    "@tailwindcss/vite": "^4.1.0",
+    "tailwindcss": "^4.1.0"
   }
 }
 ```
 
-Run `npm install` (or `cd assets && npm install`) after updating.
+_Without Tailwind, omit the last two `@tailwindcss/vite` and `tailwindcss` entries._
 
-#### Create `assets/vite.config.mjs`
+Also update `.gitignore` — since `package.json` is now at the project root,
+`node_modules` lives there too:
 
-Delete the old `assets/build.js` and create `assets/vite.config.mjs`:
+```
+# Remove: /assets/node_modules
+# Add:
+node_modules
+```
+
+#### `assets/vite.config.mjs` — create (or replace old config)
+
+Delete `assets/build.js` if it exists, then create `assets/vite.config.mjs`:
 
 ```javascript
 import { defineConfig } from "vite"
 import { svelte } from "@sveltejs/vite-plugin-svelte"
 import liveSveltePlugin from "live_svelte/vitePlugin"
+// With Tailwind: add this import
 import tailwindcss from "@tailwindcss/vite"
 
 export default defineConfig({
@@ -71,64 +109,104 @@ export default defineConfig({
     outDir: "../priv/static",
     emptyOutDir: true,
   },
+  // Required for Phoenix 1.8+ colocated JS hooks
+  resolve: {
+    alias: {
+      "phoenix-colocated": `${process.env.MIX_BUILD_PATH}/phoenix-colocated`,
+    },
+  },
   plugins: [
-    tailwindcss(),
+    tailwindcss(), // With Tailwind: include this; remove if not using Tailwind
     svelte({ compilerOptions: { css: "injected" } }),
     liveSveltePlugin({ entrypoint: "./js/server.js" }),
   ],
 })
 ```
 
-The `liveSveltePlugin` is exported from `live_svelte/vitePlugin` and handles
-SSR component discovery automatically — no separate SSR build config is needed.
+#### `assets/js/server.js` — create
 
-#### Update `config/dev.exs` — replace esbuild watcher with Vite
+```javascript
+import { getRender } from "live_svelte"
+import Components from "virtual:live-svelte-components"
+export const render = getRender(Components)
+```
+
+#### `assets/js/app.js` — update hooks and topbar import
+
+Change the topbar import from the vendor path to the npm package:
+
+```javascript
+// Before:
+import topbar from "../vendor/topbar"
+// After:
+import topbar from "topbar"
+```
+
+Add the LiveSvelte hooks:
+
+```javascript
+import {getHooks} from "live_svelte"
+import Components from "virtual:live-svelte-components"
+
+const liveSocket = new LiveSocket("/live", Socket, {
+  hooks: {...colocatedHooks, ...getHooks(Components)},
+  // ...
+})
+```
+
+_If your app doesn't use colocated hooks (older Phoenix), use `hooks: {...getHooks(Components)}`._
+
+#### `config/config.exs` — replace esbuild/tailwind config with phoenix_vite
 
 ```elixir
-# Remove from watchers:
-esbuild: {Esbuild, :install_and_run, [:default, ~w(--bundle ...)]}
+# Remove entirely:
+# config :esbuild, :default, ...
+# config :tailwind, :default, ...  # if present
 
-# Update the endpoint config block:
+# Add:
+config :phoenix_vite, PhoenixVite.Npm,
+  assets: [args: [], cd: Path.expand("..", __DIR__)],
+  vite: [
+    args: ~w(exec -- vite),
+    cd: Path.expand("../assets", __DIR__),
+    env: %{"MIX_BUILD_PATH" => Mix.Project.build_path()}
+  ]
+
+config :live_svelte, ssr: true
+```
+
+#### `config/dev.exs` — replace esbuild/tailwind watchers with Vite
+
+```elixir
 config :my_app, MyAppWeb.Endpoint,
-  http: [ip: {127, 0, 0, 1}, port: 4000],
-  check_origin: false,
-  code_reloader: true,
-  debug_errors: true,
-  secret_key_base: "...",
+  # ... existing config ...
   # Assets are now served by the Vite dev server on port 5173:
   static_url: [host: "localhost", port: 5173],
   watchers: [
-    tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]},
+    # Remove: esbuild: {...}
+    # Remove: tailwind: {...}  # if present — Vite handles Tailwind now
     vite: {PhoenixVite.Npm, :run, [:vite, ~w(dev)]}
   ]
+
+config :live_svelte,
+  ssr_module: LiveSvelte.SSR.ViteJS,
+  vite_host: "http://localhost:5173"
 ```
 
-Setting `static_url` to the Vite dev server port is important — it ensures
-LiveView generates asset URLs that point to the Vite dev server (which provides
-HMR) rather than Phoenix's static file serving.
-
-Add ViteJS SSR for development at the bottom of `config/dev.exs`. This means
-new `.svelte` files are discovered automatically without needing to rebuild assets
-after every addition:
+#### `config/prod.exs` — add NodeJS SSR
 
 ```elixir
-config :live_svelte, ssr_module: LiveSvelte.SSR.ViteJS, vite_host: "http://localhost:5173"
+config :live_svelte,
+  ssr_module: LiveSvelte.SSR.NodeJS,
+  ssr: true
 ```
 
-Production continues to use NodeJS SSR with the pre-built `priv/svelte/server.js`
-(the default), so no production config change is needed.
-
-#### Update `lib/my_app_web/endpoint.ex`
-
-Import `PhoenixVite.Plug` and add the favicon plug. The favicon plug proxies the
-browser favicon request to the Vite dev server in development:
+#### `lib/my_app_web/endpoint.ex` — add PhoenixVite.Plug
 
 ```elixir
 defmodule MyAppWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :my_app
   import PhoenixVite.Plug  # <-- add this
-
-  # ... socket declarations ...
 
   # Add before Plug.Static:
   plug :favicon, dev_server: {PhoenixVite.Components, :has_vite_watcher?, [__MODULE__]}
@@ -143,11 +221,9 @@ defmodule MyAppWeb.Endpoint do
 end
 ```
 
-#### Update `lib/my_app_web/components/layouts/root.html.heex`
+#### `lib/my_app_web/components/layouts/root.html.heex` — use Vite-aware assets
 
-Replace the static asset tags with `PhoenixVite.Components.assets`. This single
-component handles both development (proxying to the Vite dev server with HMR)
-and production (emitting hashed `<script>`/`<link>` tags from the Vite manifest):
+Replace the static asset tags:
 
 ```heex
 <%# Remove: %>
@@ -165,6 +241,41 @@ and production (emitting hashed `<script>`/`<link>` tags from the Vite manifest)
 
 Replace `:my_app` and `MyAppWeb.Endpoint` with your own OTP app name and
 endpoint module.
+
+#### `lib/my_app/application.ex` — add NodeJS.Supervisor for production SSR
+
+```elixir
+def start(_type, _args) do
+  node_js_children =
+    if Application.get_env(:live_svelte, :ssr_module, nil) == LiveSvelte.SSR.NodeJS do
+      [{NodeJS.Supervisor, [path: LiveSvelte.SSR.NodeJS.server_path(), pool_size: 4]}]
+    else
+      []
+    end
+
+  children = node_js_children ++ [
+    # ... your existing children
+  ]
+  # ...
+end
+```
+
+#### `assets/css/app.css` — update Tailwind config (if using Tailwind)
+
+Replace the old Tailwind v3 `@tailwind` directives with Tailwind v4 syntax and
+add the Svelte source glob. A bare directory path (`@source "../svelte"`) does
+not include `.svelte` files — the explicit glob is required:
+
+```css
+/* Remove: */
+/* @tailwind base; */
+/* @tailwind components; */
+/* @tailwind utilities; */
+
+/* Add: */
+@import "tailwindcss";
+@source "../svelte/**/*.svelte";
+```
 
 ### 2. Remove live_json (if used)
 
@@ -196,12 +307,12 @@ config :live_svelte, enable_props_diff: false
 
 ### 3. Verify the upgrade
 
-After completing the steps above:
-
 ```bash
 mix deps.get
-cd assets && npm install && cd ..
-mix phx.server   # Should start Phoenix + Vite dev server together
-mix test         # Library unit tests
-cd example_project && mix assets.build && mix test --only phoenix_test
+mix assets.setup     # npm install from project root
+mix assets.build     # two-step Vite build (client + SSR)
+mix phx.server       # Phoenix + Vite dev server start together
 ```
+
+Visit your app — Svelte components should render with HMR working in
+development and SSR working in both environments.
