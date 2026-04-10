@@ -8,7 +8,7 @@
 import Config
 
 config :phoenix_vite, PhoenixVite.Npm,
-  assets: [args: [], cd: __DIR__],
+  assets: [args: [], cd: Path.expand("..", __DIR__)],
   vite: [
     args: ~w(exec -- vite),
     cd: Path.expand("../assets", __DIR__),
@@ -37,17 +37,6 @@ config :example, ExampleWeb.Endpoint,
 # For production it's recommended to configure a different adapter
 # at the `config/runtime.exs`.
 config :example, Example.Mailer, adapter: Swoosh.Adapters.Local
-
-# Configure tailwind (the version is required)
-config :tailwind,
-  version: "4.1.10",
-  default: [
-    args: ~w(
-      --input=css/app.css
-      --output=../priv/static/assets/app.css
-    ),
-    cd: Path.expand("../assets", __DIR__)
-  ]
 
 # Configures Elixir's Logger
 config :logger, :console,

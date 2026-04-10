@@ -27,7 +27,11 @@ config :phoenix_test, :endpoint, ExampleWeb.Endpoint
 
 # Disable LiveSvelte SSR in test so E2E tests run against the client-side bundle.
 # Otherwise server-rendered HTML can mask client-only bugs (e.g. hardcoded props).
-config :live_svelte, ssr: false
+# Explicit ssr_module so NodeJS.Supervisor starts (needed by phoenix_test SSR tests
+# that temporarily enable SSR via Application.put_env/3).
+config :live_svelte,
+  ssr: false,
+  ssr_module: LiveSvelte.SSR.NodeJS
 
 # In test we don't send emails.
 config :example, Example.Mailer, adapter: Swoosh.Adapters.Test

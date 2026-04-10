@@ -22,7 +22,6 @@ config :example, ExampleWeb.Endpoint,
   secret_key_base: "cZ19cfxyAQ7Nr/qlKBKxr/jRRgW6wk8MQEgJrMNFjfOPEo6hSY1v50sFb0vIjv3P",
   static_url: [host: "localhost", port: 5173],
   watchers: [
-    tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]},
     vite: {PhoenixVite.Npm, :run, [:vite, ~w(dev)]}
   ]
 

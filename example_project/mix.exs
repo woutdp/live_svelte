@@ -53,8 +53,7 @@ defmodule Example.MixProject do
       {:wallaby, "~> 0.30", runtime: false, only: :test},
       {:phoenix_test, "~> 0.9", only: :test},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:phoenix_vite, "~> 0.4"},
-      {:tailwind, "~> 0.3", runtime: Mix.env() == :dev}
+      {:phoenix_vite, "~> 0.4"}
     ]
   end
 
@@ -70,7 +69,7 @@ defmodule Example.MixProject do
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
-      "assets.setup": ["phoenix_vite.npm assets install", "tailwind.install --if-missing"],
+      "assets.setup": ["phoenix_vite.npm assets install"],
       "assets.build": [
         "phoenix_vite.npm vite build --manifest --emptyOutDir true",
         "phoenix_vite.npm vite build --ssrManifest --emptyOutDir false --ssr js/server.js --outDir ../priv/svelte"
