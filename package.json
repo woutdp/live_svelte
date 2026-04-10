@@ -16,8 +16,8 @@
     },
     "exports": {
         ".": {
-            "import": "./assets/js/live_svelte/index.ts",
-            "types": "./assets/js/live_svelte/types.d.ts"
+            "types": "./assets/js/live_svelte/types.d.ts",
+            "import": "./assets/js/live_svelte/index.ts"
         },
         "./vitePlugin": "./assets/js/live_svelte/vite_plugin.js"
     },

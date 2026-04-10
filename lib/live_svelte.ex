@@ -45,6 +45,18 @@ defmodule LiveSvelte do
     doc: "Class to apply to the Svelte component",
     examples: ["my-class", "my-class another-class"]
 
+  attr :csp_nonce, :string,
+    default: nil,
+    doc: "A Content-Security-Policy nonce for the generated <script> and <style> tags"
+
+  attr :csp_script_nonce, :string,
+    default: nil,
+    doc: "A Content-Security-Policy nonce for the generated <script> tag"
+
+  attr :csp_style_nonce, :string,
+    default: nil,
+    doc: "A Content-Security-Policy nonce for the generated <style> tag"
+
   attr :ssr, :boolean,
     default: true,
     doc: "Whether to render the component via NodeJS on the server",
@@ -124,6 +136,8 @@ defmodule LiveSvelte do
 
     streams_diff = calculate_streams_diff(assigns, init or dead)
 
+    csp_attrs = if nonce = assigns.csp_nonce, do: [nonce: nonce]
+
     assigns =
       assigns
       |> assign(:init, init)
@@ -134,9 +148,17 @@ defmodule LiveSvelte do
       |> assign(:use_diff, use_diff)
       |> assign(:props_diff, props_diff)
       |> assign(:streams_diff, streams_diff)
+      |> assign(
+        :csp_script_attrs,
+        csp_attrs || if(nonce = assigns.csp_script_nonce, do: [nonce: nonce], else: [])
+      )
+      |> assign(
+        :csp_style_attrs,
+        csp_attrs || if(nonce = assigns.csp_style_nonce, do: [nonce: nonce], else: [])
+      )
 
     ~H"""
-    <script>
+    <script {@csp_script_attrs}>
       <%= raw(@ssr_render["head"]) %>
     </script>
     <div
@@ -154,7 +176,7 @@ defmodule LiveSvelte do
     >
       <div id={"#{@svelte_id}-target"} data-svelte-target>
         {raw(@ssr_render["head"])}
-        <style>
+        <style {@csp_style_attrs}>
           <%= raw(@ssr_render["css"]["code"]) %>
         </style>
         {raw(@ssr_render["html"])}
