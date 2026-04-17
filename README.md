@@ -168,7 +168,7 @@ defp deps do
   [
     # Remove: {:esbuild, ...}
     # Remove: {:tailwind, ...}  # if present
-    {:live_svelte, "~> 0.18.0-rc0"},
+    {:live_svelte, "~> 0.18.0"},
     {:phoenix_vite, "~> 0.4"},
     # ... rest of deps
   ]
