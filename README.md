@@ -798,7 +798,7 @@ Add the dependency to your `mix.exs`:
 # mix.exs
 defp deps do
   [
-    {:live_svelte, "~> 0.17"},
+    {:live_svelte, "~> 0.18"},
     {:jason, "~> 1.2"}  # or {:poison, "~> 5.0"}
   ]
 end
