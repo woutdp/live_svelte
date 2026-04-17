@@ -56,6 +56,7 @@ defmodule LiveSvelte.SSR.ViteJSTest do
   end
 
   test "implements LiveSvelte.SSR behaviour" do
+    Code.ensure_loaded!(LiveSvelte.SSR.ViteJS)
     assert function_exported?(LiveSvelte.SSR.ViteJS, :render, 3)
   end
 end
