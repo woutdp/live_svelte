@@ -13,7 +13,7 @@ When SSR is active, the initial (dead) render calls Node.js to execute Svelte's 
 
 ## SSR Modes
 
-LiveSvelte has two SSR modules for different environments:
+LiveSvelte has three SSR modules for different environments:
 
 ### NodeJS Mode (Production)
 
@@ -32,6 +32,44 @@ mix assets.build  # runs phoenix_vite.npm vite build (client + SSR)
 ```
 
 This produces `priv/svelte/server.js`, which the NodeJS supervisor loads on application start.
+
+### Deno Mode (Production)
+
+Uses [`deno_rider`](https://github.com/aglundahl/deno_rider) to run a Deno process that executes the SSR bundle. This is an alternative to NodeJS mode for applications already running Deno.
+
+Add `deno_rider` to your dependencies:
+
+```elixir
+# mix.exs
+{:deno_rider, "~> 0.2.0"}
+```
+
+```elixir
+# config/prod.exs
+config :live_svelte,
+  ssr_module: LiveSvelte.SSR.Deno,
+  ssr: true
+```
+
+Start the DenoRider process in your application supervisor:
+
+```elixir
+# lib/my_app/application.ex
+children = [
+  {DenoRider, [main_module_path: LiveSvelte.SSR.Deno.server_path() <> "/server.js"]},
+  ...
+]
+```
+
+The SSR bundle at `priv/svelte/server.js` is built the same way as for NodeJS mode:
+
+```bash
+mix assets.build
+```
+
+> #### Linux glibc requirement {: .warning}
+>
+> The precompiled `deno_rider` binaries require glibc >= 2.38 on Linux. This may not be available on older distributions (e.g. Ubuntu 22.04 ships glibc 2.35). Check your version with `ldd --version`.
 
 ### ViteJS Mode (Development)
 
@@ -63,6 +101,7 @@ Select SSR module:
 ```elixir
 config :live_svelte, ssr_module: LiveSvelte.SSR.NodeJS   # production (default)
 config :live_svelte, ssr_module: LiveSvelte.SSR.ViteJS   # development
+config :live_svelte, ssr_module: LiveSvelte.SSR.Deno     # production (Deno)
 ```
 
 ## Per-Component SSR Opt-Out

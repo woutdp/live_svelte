@@ -8,11 +8,13 @@ defmodule Mix.Tasks.LiveSvelte.Install do
   ## Options
 
     * `--bun` - Use Bun instead of Node.js/npm
+    * `--deno` - Use Deno (via deno_rider) for SSR instead of Node.js
 
   ## Examples
 
       mix igniter.install live_svelte
       mix igniter.install live_svelte --bun
+      mix igniter.install live_svelte --deno
 
   """
 
@@ -36,26 +38,30 @@ defmodule Mix.Tasks.LiveSvelte.Install do
     def info(_argv, _parent) do
       %Igniter.Mix.Task.Info{
         composes: ["phoenix_vite.install"],
-        schema: [bun: :boolean],
-        aliases: [b: :bun]
+        schema: [bun: :boolean, deno: :boolean],
+        aliases: [b: :bun, d: :deno]
       }
     end
 
     @impl Igniter.Mix.Task
     def igniter(igniter) do
       app_name = Igniter.Project.Application.app_name(igniter)
+      deno? = Keyword.get(igniter.args.options, :deno, false)
+
+      # Filter live_svelte-only flags before forwarding to phoenix_vite.install
+      vite_argv = Enum.reject(igniter.args.argv, &(&1 in ["--deno", "-d"]))
 
       igniter
-      |> Igniter.compose_task("phoenix_vite.install", igniter.args.argv)
-      |> configure_environments(app_name)
+      |> Igniter.compose_task("phoenix_vite.install", vite_argv)
+      |> configure_environments(app_name, deno?)
       |> update_phoenix_vite_config()
       |> add_live_svelte_to_html_helpers(app_name)
       |> update_javascript_configuration()
       |> configure_tailwind_for_svelte()
       |> update_vite_configuration()
       |> update_package_json_for_svelte()
-      |> create_svelte_files()
-      |> setup_ssr_for_production(app_name)
+      |> create_svelte_files(deno?)
+      |> setup_ssr_for_production(app_name, deno?)
       |> update_mix_aliases()
       |> add_svelte_demo_route()
       |> update_home_template()
@@ -73,7 +79,10 @@ defmodule Mix.Tasks.LiveSvelte.Install do
     end
 
     # Configure environments (config.exs, dev.exs, prod.exs)
-    defp configure_environments(igniter, _app_name) do
+    defp configure_environments(igniter, _app_name, deno?) do
+      prod_ssr_module =
+        if deno?, do: "LiveSvelte.SSR.Deno", else: "LiveSvelte.SSR.NodeJS"
+
       igniter
       |> Config.configure("config.exs", :live_svelte, [:ssr], true)
       |> Config.configure(
@@ -87,7 +96,7 @@ defmodule Mix.Tasks.LiveSvelte.Install do
         "prod.exs",
         :live_svelte,
         [:ssr_module],
-        {:code, Sourceror.parse_string!("LiveSvelte.SSR.NodeJS")}
+        {:code, Sourceror.parse_string!(prod_ssr_module)}
       )
       |> Config.configure("prod.exs", :live_svelte, [:ssr], true)
     end
@@ -371,13 +380,13 @@ defmodule Mix.Tasks.LiveSvelte.Install do
     end
 
     # Create Svelte project files
-    defp create_svelte_files(igniter) do
+    defp create_svelte_files(igniter, deno?) do
       web_module = Phoenix.web_module(igniter)
       web_folder = Macro.underscore(web_module)
 
       igniter
       |> Igniter.mkdir("assets/svelte")
-      |> Igniter.create_new_file("assets/js/server.js", server_js_content())
+      |> Igniter.create_new_file("assets/js/server.js", server_js_content(deno?))
       |> Igniter.create_new_file(
         "assets/svelte/.gitignore",
         "# Ignore auto-generated Svelte files by ~V sigil\n_build/"
@@ -390,29 +399,44 @@ defmodule Mix.Tasks.LiveSvelte.Install do
       )
     end
 
-    # Setup NodeJS SSR supervisor in application.ex — only when ssr_module is NodeJS.
-    # Generates a compile-env guard so the supervisor is not started in dev mode,
-    # where LiveSvelte.SSR.ViteJS is used instead.
-    defp setup_ssr_for_production(igniter, _app_name) do
+    # Setup SSR supervisor in application.ex.
+    # For NodeJS: adds a NodeJS.Supervisor guarded by a runtime ssr_module check.
+    # For Deno: adds a DenoRider supervisor guarded by the same check.
+    defp setup_ssr_for_production(igniter, _app_name, deno?) do
       app_module = igniter |> Igniter.Project.Application.app_name() |> to_string()
       app_file = "lib/#{Macro.underscore(app_module)}/application.ex"
+
+      {var_name, guard_module, supervisor_entry, already_present} =
+        if deno? do
+          {
+            "deno_rider_children",
+            "LiveSvelte.SSR.Deno",
+            ~s|{DenoRider, [main_module_path: LiveSvelte.SSR.Deno.server_path() <> "/server.js"]}|,
+            "DenoRider"
+          }
+        else
+          {
+            "node_js_children",
+            "LiveSvelte.SSR.NodeJS",
+            "{NodeJS.Supervisor, [path: LiveSvelte.SSR.NodeJS.server_path(), pool_size: 4]}",
+            "NodeJS.Supervisor"
+          }
+        end
 
       Igniter.update_file(igniter, app_file, fn source ->
         Rewrite.Source.update(source, :content, fn content ->
           if String.contains?(content, "children = [") and
-               not String.contains?(content, "NodeJS.Supervisor") do
-            # Capture the indentation of `children = [` so the generated code
-            # aligns with the surrounding function body regardless of indent style.
+               not String.contains?(content, already_present) do
             String.replace(
               content,
               ~r/([ \t]*)(children = \[)/,
-              "\\1node_js_children =\n" <>
-                "\\1  if Application.get_env(:live_svelte, :ssr_module, nil) == LiveSvelte.SSR.NodeJS do\n" <>
-                "\\1    [{NodeJS.Supervisor, [path: LiveSvelte.SSR.NodeJS.server_path(), pool_size: 4]}]\n" <>
+              "\\1#{var_name} =\n" <>
+                "\\1  if Application.get_env(:live_svelte, :ssr_module, nil) == #{guard_module} do\n" <>
+                "\\1    [#{supervisor_entry}]\n" <>
                 "\\1  else\n" <>
                 "\\1    []\n" <>
                 "\\1  end\n\n" <>
-                "\\1children = node_js_children ++ [",
+                "\\1children = #{var_name} ++ [",
               global: false
             )
           else
@@ -529,11 +553,13 @@ defmodule Mix.Tasks.LiveSvelte.Install do
       """
     end
 
-    defp server_js_content do
+    defp server_js_content(deno?) do
+      global_assign = if deno?, do: "\nglobalThis.render = render", else: ""
+
       """
       import { getRender } from "live_svelte"
       import Components from "virtual:live-svelte-components"
-      export const render = getRender(Components)
+      export const render = getRender(Components)#{global_assign}
       """
     end
 

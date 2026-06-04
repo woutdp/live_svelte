@@ -114,6 +114,7 @@ defmodule LiveSvelte.MixProject do
       {:ecto, ">= 3.0.0", optional: true},
       {:phoenix_ecto, ">= 4.0.0", optional: true},
       {:jason, "~> 1.2", optional: true},
+      {:deno_rider, "~> 0.2.0", optional: true},
       {:lazy_html, ">= 0.1.0", only: :test},
       {:nodejs, "~> 3.1"},
       {:telemetry, "~> 0.4 or ~> 1.0"},
