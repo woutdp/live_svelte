@@ -105,6 +105,7 @@ defmodule LiveSvelte.MixProject do
 
   defp deps do
     [
+      {:benchee, "~> 1.3", only: :dev, runtime: false},
       {:ex_doc, "~> 0.38", only: :dev, runtime: false, warn_if_outdated: true},
       {:makeup_html, "~> 0.1.0", only: :dev, runtime: false},
       {:easy_publish, "~> 0.2", only: [:dev], runtime: false},
