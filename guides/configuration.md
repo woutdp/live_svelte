@@ -7,7 +7,7 @@ All LiveSvelte configuration is set via `Application.put_env(:live_svelte, key, 
 | Key | Default | Description |
 |-----|---------|-------------|
 | `:ssr` | `true` | Enable server-side rendering globally |
-| `:ssr_module` | `LiveSvelte.SSR.NodeJS` | SSR module: `NodeJS` or `ViteJS` |
+| `:ssr_module` | `LiveSvelte.SSR.NodeJS` | SSR module: `NodeJS`, `ViteJS`, or `Deno` |
 | `:json_library` | `LiveSvelte.JSON` | JSON encoder (e.g. `Jason`) |
 | `:enable_props_diff` | `true` | Enable three-tier props diffing system |
 | `:gettext_backend` | `nil` | Gettext module for form error translation |
@@ -94,7 +94,7 @@ export default defineConfig({
 ### Defaults
 
 - **components** — `["./svelte/**/*.svelte"]`; patterns are relative to the Vite project root (where `vite.config.mjs` lives).
-- **entrypoint** — `"./js/server.js"`; used by the plugin’s `/ssr_render` middleware in development and by the SSR build.
+- **entrypoint** — `"./js/server.js"`; used by the plugin's `/ssr_render` middleware in development and by the SSR build.
 
 ### Instant HMR with phoenix_vite
 

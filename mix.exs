@@ -105,6 +105,7 @@ defmodule LiveSvelte.MixProject do
 
   defp deps do
     [
+      {:benchee, "~> 1.3", only: :dev, runtime: false},
       {:ex_doc, "~> 0.38", only: :dev, runtime: false, warn_if_outdated: true},
       {:makeup_html, "~> 0.1.0", only: :dev, runtime: false},
       {:easy_publish, "~> 0.2", only: [:dev], runtime: false},
@@ -114,6 +115,7 @@ defmodule LiveSvelte.MixProject do
       {:ecto, ">= 3.0.0", optional: true},
       {:phoenix_ecto, ">= 4.0.0", optional: true},
       {:jason, "~> 1.2", optional: true},
+      {:deno_rider, "~> 0.2.0", optional: true},
       {:lazy_html, ">= 0.1.0", only: :test},
       {:nodejs, "~> 3.1"},
       {:telemetry, "~> 0.4 or ~> 1.0"},

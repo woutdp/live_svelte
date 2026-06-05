@@ -14,18 +14,20 @@ defmodule Example.Application do
         []
       end
 
-    children = node_js_children ++ [
-      # Start the Telemetry supervisor
-      ExampleWeb.Telemetry,
-      # Start the Ecto repository
-      Example.Repo,
-      # Start the PubSub system
-      {Phoenix.PubSub, name: Example.PubSub},
-      # Start the Endpoint (http/https)
-      ExampleWeb.Endpoint
-      # Start a worker by calling: Example.Worker.start_link(arg)
-      # {Example.Worker, arg}
-    ]
+    children =
+      node_js_children ++
+        [
+          # Start the Telemetry supervisor
+          ExampleWeb.Telemetry,
+          # Start the Ecto repository
+          Example.Repo,
+          # Start the PubSub system
+          {Phoenix.PubSub, name: Example.PubSub},
+          # Start the Endpoint (http/https)
+          ExampleWeb.Endpoint
+          # Start a worker by calling: Example.Worker.start_link(arg)
+          # {Example.Worker, arg}
+        ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
