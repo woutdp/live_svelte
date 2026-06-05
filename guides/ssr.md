@@ -71,6 +71,21 @@ mix assets.build
 >
 > The precompiled `deno_rider` binaries require glibc >= 2.38 on Linux. This may not be available on older distributions (e.g. Ubuntu 22.04 ships glibc 2.35). Check your version with `ldd --version`.
 
+## Switching SSR Adapter
+
+If you installed LiveSvelte with the default Node.js adapter and want to switch to Deno (or back), use the `live_svelte.migrate` Igniter task instead of editing files manually:
+
+```bash
+mix live_svelte.migrate --ssr-node-to-deno
+mix live_svelte.migrate --ssr-deno-to-node
+```
+
+Each command updates `prod.exs`, `application.ex`, and `assets/js/server.js`. You will be asked before any dependency is removed, and reminded to run `mix deps.get` afterwards.
+
+> #### Requires Igniter {: .info}
+>
+> Install Igniter if it is not already a dependency: `mix igniter.install igniter`.
+
 ### ViteJS Mode (Development)
 
 Forwards SSR requests to the Vite dev server over HTTP. This provides instant HMR without rebuilding the SSR bundle on every change.

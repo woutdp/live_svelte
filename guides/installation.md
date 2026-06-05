@@ -40,6 +40,15 @@ To use **Bun** instead of Node.js/npm for package management and Vite:
 
 After install, `mix assets.setup` and `mix assets.build` use Bun (e.g. `bun install`, phoenix_vite's Bun task) instead of npm.
 
+#### Using Deno for SSR
+
+To use **Deno** (via [`deno_rider`](https://github.com/aglundahl/deno_rider)) for production SSR instead of Node.js:
+
+- **Existing project:** `mix igniter.install live_svelte --deno`
+- **New project:** `mix igniter.new my_app --with phx.new --install live_svelte --deno`
+
+To switch adapters on an already-installed project, see [Switching SSR Adapter](ssr.md#switching-ssr-adapter).
+
 ### Step 3: Install JS dependencies and build
 
 ```bash
