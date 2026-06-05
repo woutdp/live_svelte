@@ -53,7 +53,8 @@ defmodule Example.MixProject do
       {:wallaby, "~> 0.30", runtime: false, only: :test},
       {:phoenix_test, "~> 0.9", only: :test},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:phoenix_vite, "~> 0.4"}
+      {:phoenix_vite, "~> 0.4"},
+      {:igniter, "~> 0.6", only: :dev, runtime: false}
     ]
   end
 
