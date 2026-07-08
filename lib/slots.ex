@@ -12,19 +12,15 @@ defmodule LiveSvelte.Slots do
 
   @doc false
   def js_process(assigns) do
-    assigns
-    |> Enum.map(fn
+    Map.new(assigns, fn
       {:inner_block, value} -> {:default, value}
       key_value -> key_value
     end)
-    |> Enum.into(%{})
   end
 
   @doc false
   def base_encode_64(assigns) do
-    assigns
-    |> Enum.map(fn {key, value} -> {key, Base.encode64(value)} end)
-    |> Enum.into(%{})
+    Map.new(assigns, fn {key, value} -> {key, Base.encode64(value)} end)
   end
 
   @doc """
@@ -43,17 +39,13 @@ defmodule LiveSvelte.Slots do
       _ ->
         false
     end)
-    |> Enum.into(%{})
+    |> Map.new()
   end
 
-  @doc false
   defp render_slots(assigns) do
-    Enum.reduce(assigns, %{}, fn
-      {key, value}, acc -> Map.put(acc, key, render(%{slot: value}))
-    end)
+    Map.new(assigns, fn {key, value} -> {key, render(%{slot: value})} end)
   end
 
-  @doc false
   defp render(assigns) do
     ~H"""
     <%= if assigns[:slot] do %>

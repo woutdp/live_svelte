@@ -15,10 +15,7 @@ defmodule LiveSvelte.TestTest do
 
     merged = Keyword.merge(default, attrs)
 
-    attr_str =
-      merged
-      |> Enum.map(fn {k, v} -> ~s(#{k}='#{v}') end)
-      |> Enum.join(" ")
+    attr_str = Enum.map_join(merged, " ", fn {k, v} -> ~s(#{k}='#{v}') end)
 
     """
     <div #{attr_str} phx-hook="SvelteHook" phx-update="ignore">

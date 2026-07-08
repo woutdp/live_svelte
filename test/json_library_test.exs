@@ -2,6 +2,20 @@ defmodule LiveSvelte.JSONLibraryTest do
   # must be synchronous, tests are sensitive to config changes
   use ExUnit.Case, async: false
 
+  setup do
+    original_json_library = Application.get_env(:live_svelte, :json_library)
+
+    on_exit(fn ->
+      if original_json_library do
+        Application.put_env(:live_svelte, :json_library, original_json_library)
+      else
+        Application.delete_env(:live_svelte, :json_library)
+      end
+    end)
+
+    :ok
+  end
+
   describe "native JSON library (default)" do
     test "uses LiveSvelte.JSON by default when no config is provided" do
       Application.delete_env(:live_svelte, :json_library)

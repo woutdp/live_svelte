@@ -8,13 +8,13 @@ end
 defmodule LiveSvelte.StreamsTest do
   use ExUnit.Case, async: true
 
-  alias Phoenix.LiveView.LiveStream
   alias LiveSvelte.StreamsTest.SecretItem
+  alias Phoenix.LiveView.LiveStream
 
   # Build a %LiveStream{} compatible with library's phoenix_live_view 0.18.15.
   # Inserts are 3-tuples {dom_id, at, item} in 0.18.15 and 4-tuples {dom_id, at, item, limit}
   # in 1.0.x. We test the 3-tuple format here; limit + reset? are covered in example project tests.
-  defp make_stream(opts \\ []) do
+  defp make_stream(opts) do
     %LiveStream{
       name: :items,
       dom_id: fn item -> "items-#{item.id}" end,
@@ -163,7 +163,7 @@ defmodule LiveSvelte.StreamsTest do
       diff = decode_streams_diff(html)
 
       upsert_ops = Enum.filter(diff, fn op -> Enum.at(op, 0) == "upsert" end)
-      assert length(upsert_ops) == 2
+      assert [_a, _b] = upsert_ops
     end
 
     test "4-tuple insert with non-nil limit emits limit op" do
@@ -208,7 +208,7 @@ defmodule LiveSvelte.StreamsTest do
       diff = decode_streams_diff(html)
 
       remove_ops = Enum.filter(diff, fn op -> Enum.at(op, 0) == "remove" end)
-      assert length(remove_ops) == 2
+      assert [_a, _b] = remove_ops
     end
   end
 

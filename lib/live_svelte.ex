@@ -8,10 +8,10 @@ defmodule LiveSvelte do
   use Phoenix.Component
   import Phoenix.HTML
 
-  alias Phoenix.LiveView
-  alias Phoenix.LiveView.LiveStream
   alias LiveSvelte.Slots
   alias LiveSvelte.SSR
+  alias Phoenix.LiveView
+  alias Phoenix.LiveView.LiveStream
 
   # Override Phoenix's slot validation to accept arbitrary slot names.
   # This allows users to pass any named slot to Svelte components without

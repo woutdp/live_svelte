@@ -101,7 +101,7 @@ defmodule LiveSvelte.JSONTest do
       list = [%TestStruct{name: "a"}, %TestStruct{name: "b"}]
       result = JSON.encode!(list)
       decoded = :json.decode(result)
-      assert length(decoded) == 2
+      assert [_a, _b] = decoded
       assert Enum.at(decoded, 0)["name"] == "a"
       assert Enum.at(decoded, 1)["name"] == "b"
     end

@@ -14,8 +14,13 @@ defmodule LiveSvelte.SSR.NodeJSTest do
       original_ssr_node_env = Application.get_env(:live_svelte, :ssr_node_env)
 
       on_exit(fn ->
-        if original_node_env, do: System.put_env("NODE_ENV", original_node_env), else: System.delete_env("NODE_ENV")
-        if original_ssr_node_env, do: Application.put_env(:live_svelte, :ssr_node_env, original_ssr_node_env), else: Application.delete_env(:live_svelte, :ssr_node_env)
+        if original_node_env,
+          do: System.put_env("NODE_ENV", original_node_env),
+          else: System.delete_env("NODE_ENV")
+
+        if original_ssr_node_env,
+          do: Application.put_env(:live_svelte, :ssr_node_env, original_ssr_node_env),
+          else: Application.delete_env(:live_svelte, :ssr_node_env)
       end)
 
       System.delete_env("NODE_ENV")
@@ -30,8 +35,13 @@ defmodule LiveSvelte.SSR.NodeJSTest do
       original_ssr_node_env = Application.get_env(:live_svelte, :ssr_node_env)
 
       on_exit(fn ->
-        if original_node_env, do: System.put_env("NODE_ENV", original_node_env), else: System.delete_env("NODE_ENV")
-        if original_ssr_node_env, do: Application.put_env(:live_svelte, :ssr_node_env, original_ssr_node_env), else: Application.delete_env(:live_svelte, :ssr_node_env)
+        if original_node_env,
+          do: System.put_env("NODE_ENV", original_node_env),
+          else: System.delete_env("NODE_ENV")
+
+        if original_ssr_node_env,
+          do: Application.put_env(:live_svelte, :ssr_node_env, original_ssr_node_env),
+          else: Application.delete_env(:live_svelte, :ssr_node_env)
       end)
 
       System.put_env("NODE_ENV", "test")
@@ -46,8 +56,13 @@ defmodule LiveSvelte.SSR.NodeJSTest do
       original_ssr_node_env = Application.get_env(:live_svelte, :ssr_node_env)
 
       on_exit(fn ->
-        if original_node_env, do: System.put_env("NODE_ENV", original_node_env), else: System.delete_env("NODE_ENV")
-        if original_ssr_node_env, do: Application.put_env(:live_svelte, :ssr_node_env, original_ssr_node_env), else: Application.delete_env(:live_svelte, :ssr_node_env)
+        if original_node_env,
+          do: System.put_env("NODE_ENV", original_node_env),
+          else: System.delete_env("NODE_ENV")
+
+        if original_ssr_node_env,
+          do: Application.put_env(:live_svelte, :ssr_node_env, original_ssr_node_env),
+          else: Application.delete_env(:live_svelte, :ssr_node_env)
       end)
 
       System.delete_env("NODE_ENV")
