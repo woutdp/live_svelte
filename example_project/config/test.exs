@@ -31,7 +31,9 @@ config :phoenix_test, :endpoint, ExampleWeb.Endpoint
 # that temporarily enable SSR via Application.put_env/3).
 config :live_svelte,
   ssr: false,
-  ssr_module: LiveSvelte.SSR.NodeJS
+  ssr_module: LiveSvelte.SSR.NodeJS,
+  ssr_filepath: "./svelte/server.mjs",
+  ssr_node_env: "production"
 
 # In test we don't send emails.
 config :example, Example.Mailer, adapter: Swoosh.Adapters.Test

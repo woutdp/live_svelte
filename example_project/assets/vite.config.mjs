@@ -7,7 +7,7 @@ import path from "path"
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
-export default defineConfig({
+export default defineConfig(({ isSsrBuild }) => ({
   server: {
     host: "127.0.0.1",
     port: 5173,
@@ -23,6 +23,7 @@ export default defineConfig({
     ssrManifest: false,
     rollupOptions: {
       input: ["js/app.js", "css/app.css"],
+      output: isSsrBuild ? { entryFileNames: "[name].mjs" } : undefined,
     },
     outDir: "../priv/static",
     emptyOutDir: true,
@@ -36,6 +37,6 @@ export default defineConfig({
   plugins: [
     tailwindcss(),
     svelte({ compilerOptions: { css: "injected" } }),
-    liveSveltePlugin({ entrypoint: "./js/server.js" }),
+    liveSveltePlugin({ entrypoint: "./js/server.mjs" }),
   ],
-})
+}))

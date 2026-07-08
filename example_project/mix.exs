@@ -37,7 +37,8 @@ defmodule Example.MixProject do
       {:ecto_sql, "~> 3.12"},
       {:gettext, "~> 0.20"},
       {:json_diff_ex, "~> 0.6", override: true},
-      {:live_svelte, path: ".."},
+      {:live_svelte, path: "..", override: true},
+      # Use the local parent checkout (SSR fix). Do not switch to Hex for example/tests:
       # {:live_svelte, "~> 0.18.0"},
       {:phoenix, "~> 1.8.0"},
       {:phoenix_ecto, "~> 4.4"},
@@ -68,11 +69,11 @@ defmodule Example.MixProject do
       setup: ["deps.get", "ecto.setup", "assets.setup", "assets.build"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
+      test: ["assets.build", "compile", "ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.setup": ["phoenix_vite.npm assets install"],
       "assets.build": [
         "phoenix_vite.npm vite build --manifest --emptyOutDir true",
-        "phoenix_vite.npm vite build --ssrManifest --emptyOutDir false --ssr js/server.js --outDir ../priv/svelte"
+        "phoenix_vite.npm vite build --ssrManifest --emptyOutDir false --ssr js/server.mjs --outDir ../priv/svelte"
       ],
       "assets.deploy": [
         "assets.build",

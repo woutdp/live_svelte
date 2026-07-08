@@ -50,7 +50,7 @@ config :example, ExampleWeb.Endpoint,
 
 # In development use ViteJS for SSR so new Svelte components are discovered
 # automatically (no need to run mix assets.build after adding a component).
-# Production uses NodeJS SSR with the pre-built priv/svelte/server.js.
+# Production uses NodeJS SSR with the pre-built priv/svelte/server.mjs.
 config :live_svelte, ssr_module: LiveSvelte.SSR.ViteJS, vite_host: "http://localhost:5173"
 
 # Watch static and templates for browser reloading.

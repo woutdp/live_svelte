@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 0.18.0 - 2026-04-17
 
+### Fixed
+
+-   **SSR memory leak in production** — Node.js SSR now loads `priv/svelte/server.mjs` via ESM `import` instead of CommonJS `require`, fixing unbounded memory growth when `NODE_ENV` is unset ([#133](https://github.com/woutdp/live_svelte/issues/133)). The installer sets `ssr_node_env: "production"` and calls `LiveSvelte.SSR.NodeJS.setup_env!/0` automatically.
+
+### Changed
+
+-   SSR bundle output renamed from `priv/svelte/server.js` to `priv/svelte/server.mjs`. SSR entry file renamed from `assets/js/server.js` to `assets/js/server.mjs`.
+-   `LiveSvelte.SSR.NodeJS.server_path/0` now returns the `priv` directory; bundle path is configured via `:ssr_filepath` (default `./svelte/server.mjs`).
+
 ## 0.18.0-rc0 - 2026-03-06
 
 > **Note:** Many of the features in this release were backported from

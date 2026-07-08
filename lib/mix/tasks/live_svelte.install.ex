@@ -73,7 +73,7 @@ defmodule Mix.Tasks.LiveSvelte.Install do
     end
 
     # Configure environments (config.exs, dev.exs, prod.exs)
-    defp configure_environments(igniter, _app_name) do
+    defp configure_environments(igniter, app_name) do
       igniter
       |> Config.configure("config.exs", :live_svelte, [:ssr], true)
       |> Config.configure(
@@ -90,6 +90,13 @@ defmodule Mix.Tasks.LiveSvelte.Install do
         {:code, Sourceror.parse_string!("LiveSvelte.SSR.NodeJS")}
       )
       |> Config.configure("prod.exs", :live_svelte, [:ssr], true)
+      |> Config.configure("prod.exs", :live_svelte, [:ssr_node_env], "production")
+      |> Config.configure("config.exs", :live_svelte, [:ssr_filepath], "./svelte/server.mjs")
+      |> configure_live_svelte_otp_app(app_name)
+    end
+
+    defp configure_live_svelte_otp_app(igniter, app_name) do
+      Config.configure(igniter, "config.exs", :live_svelte, [:otp_app], app_name)
     end
 
     # Add import LiveSvelte to html_helpers in lib/app_web.ex
@@ -234,6 +241,7 @@ defmodule Mix.Tasks.LiveSvelte.Install do
           |> update_vite_optimized_deps()
           |> update_vite_plugins()
           |> add_ssr_vite_entry()
+          |> add_ssr_output_mjs()
         end)
       end)
     end
@@ -246,6 +254,30 @@ defmodule Mix.Tasks.LiveSvelte.Install do
           content,
           ~r/build: \{/s,
           "ssr: { noExternal: process.env.NODE_ENV === \"production\" ? true : undefined },\n    build: {"
+        )
+      end
+    end
+
+    defp add_ssr_output_mjs(content) do
+      content =
+        if String.contains?(content, "isSsrBuild") do
+          content
+        else
+          String.replace(
+            content,
+            "export default defineConfig({",
+            "export default defineConfig(({ isSsrBuild }) => ({"
+          )
+          |> String.replace(~r/\}\)\s*$/, "}))")
+        end
+
+      if String.contains?(content, "entryFileNames") do
+        content
+      else
+        String.replace(
+          content,
+          ~r/rollupOptions: \{\s*\n(\s*)input:/,
+          "rollupOptions: {\n\\1output: isSsrBuild ? { entryFileNames: \"[name].mjs\" } : undefined,\n\\1input:"
         )
       end
     end
@@ -281,7 +313,7 @@ defmodule Mix.Tasks.LiveSvelte.Install do
         String.replace(
           content,
           ~r/phoenixVitePlugin\(\{\s*pattern: \/\\.\(ex\|heex\)\$\/\s*\}\)/s,
-          "svelte({ compilerOptions: { css: \"injected\" } }),\n    liveSveltePlugin({ entrypoint: \"./js/server.js\" })"
+          "svelte({ compilerOptions: { css: \"injected\" } }),\n    liveSveltePlugin({ entrypoint: \"./js/server.mjs\" })"
         )
       end
     end
@@ -377,7 +409,7 @@ defmodule Mix.Tasks.LiveSvelte.Install do
 
       igniter
       |> Igniter.mkdir("assets/svelte")
-      |> Igniter.create_new_file("assets/js/server.js", server_js_content())
+      |> Igniter.create_new_file("assets/js/server.mjs", server_js_content())
       |> Igniter.create_new_file(
         "assets/svelte/.gitignore",
         "# Ignore auto-generated Svelte files by ~V sigil\n_build/"
@@ -399,6 +431,18 @@ defmodule Mix.Tasks.LiveSvelte.Install do
 
       Igniter.update_file(igniter, app_file, fn source ->
         Rewrite.Source.update(source, :content, fn content ->
+          content =
+            if String.contains?(content, "LiveSvelte.SSR.NodeJS.setup_env!()") do
+              content
+            else
+              String.replace(
+                content,
+                ~r/([ \t]*)def start\(_type, _args\) do\n/,
+                "\\1def start(_type, _args) do\n\\1  LiveSvelte.SSR.NodeJS.setup_env!()\n\n",
+                global: false
+              )
+            end
+
           if String.contains?(content, "children = [") and
                not String.contains?(content, "NodeJS.Supervisor") do
             # Capture the indentation of `children = [` so the generated code
@@ -426,13 +470,13 @@ defmodule Mix.Tasks.LiveSvelte.Install do
     defp update_mix_aliases(igniter) do
       Igniter.update_file(igniter, "mix.exs", fn source ->
         Rewrite.Source.update(source, :content, fn content ->
-          if String.contains?(content, "js/server.js") do
+          if String.contains?(content, "js/server.mjs") do
             content
           else
             String.replace(
               content,
               ~s("phoenix_vite.npm vite build"),
-              ~s("phoenix_vite.npm vite build --manifest --emptyOutDir true", "phoenix_vite.npm vite build --ssrManifest --emptyOutDir false --ssr js/server.js --outDir ../priv/svelte")
+              ~s("phoenix_vite.npm vite build --manifest --emptyOutDir true", "phoenix_vite.npm vite build --ssrManifest --emptyOutDir false --ssr js/server.mjs --outDir ../priv/svelte")
             )
           end
         end)

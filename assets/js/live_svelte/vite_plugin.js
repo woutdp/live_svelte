@@ -96,7 +96,7 @@ function generateVirtualModuleCode(componentPaths, root) {
 /**
  * @typedef {Object} PluginOptions
  * @property {string} [path] - SSR render endpoint path (default: "/ssr_render")
- * @property {string} [entrypoint] - SSR entrypoint file (default: "./js/server.js")
+ * @property {string} [entrypoint] - SSR entrypoint file (default: "./js/server.mjs")
  * @property {string | string[]} [components] - Glob pattern(s) for Svelte component
  *   auto-discovery via `virtual:live-svelte-components`.
  *   Patterns are relative to the Vite project root (where vite.config.js lives).
@@ -265,7 +265,7 @@ function liveSveltePlugin(opts = {}) {
       })
 
       const ssrPath = opts.path || "/ssr_render"
-      const entrypoint = opts.entrypoint || "./js/server.js"
+      const entrypoint = opts.entrypoint || "./js/server.mjs"
       server.middlewares.use(function liveSvelteMiddleware(req, res, next) {
         if (req.method == "POST" && req.url?.split("?", 1)[0] === ssrPath) {
           jsonMiddleware(req, res, async () => {

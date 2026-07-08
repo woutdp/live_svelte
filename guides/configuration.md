@@ -8,6 +8,9 @@ All LiveSvelte configuration is set via `Application.put_env(:live_svelte, key, 
 |-----|---------|-------------|
 | `:ssr` | `true` | Enable server-side rendering globally |
 | `:ssr_module` | `LiveSvelte.SSR.NodeJS` | SSR module: `NodeJS` or `ViteJS` |
+| `:ssr_filepath` | `"./svelte/server.mjs"` | SSR bundle path relative to `priv/` (NodeJS mode) |
+| `:otp_app` | `nil` | Host OTP application whose `priv/` contains the SSR bundle |
+| `:ssr_node_env` | `nil` | When set (e.g. `"production"` in prod), `setup_env!/0` exports `NODE_ENV` for Node workers |
 | `:json_library` | `LiveSvelte.JSON` | JSON encoder (e.g. `Jason`) |
 | `:enable_props_diff` | `true` | Enable three-tier props diffing system |
 | `:gettext_backend` | `nil` | Gettext module for form error translation |
@@ -34,7 +37,8 @@ config :live_svelte,
 ```elixir
 config :live_svelte,
   ssr_module: LiveSvelte.SSR.NodeJS,
-  ssr: true
+  ssr: true,
+  ssr_node_env: "production"
 ```
 
 ### `config/test.exs` (test)
@@ -85,7 +89,7 @@ export default defineConfig({
     liveSveltePlugin({
       // Options (all optional):
       components: ["./svelte/**/*.svelte"],  // Glob(s) for component discovery (default)
-      entrypoint: "./js/server.js"           // SSR entry for /ssr_render (default)
+      entrypoint: "./js/server.mjs"           // SSR entry for /ssr_render (default)
     })
   ]
 })
@@ -94,7 +98,7 @@ export default defineConfig({
 ### Defaults
 
 - **components** — `["./svelte/**/*.svelte"]`; patterns are relative to the Vite project root (where `vite.config.mjs` lives).
-- **entrypoint** — `"./js/server.js"`; used by the plugin’s `/ssr_render` middleware in development and by the SSR build.
+- **entrypoint** — `"./js/server.mjs"`; used by the plugin’s `/ssr_render` middleware in development and by the SSR build.
 
 ### Instant HMR with phoenix_vite
 

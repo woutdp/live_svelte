@@ -59,7 +59,7 @@ Running `mix igniter.install live_svelte` makes the following changes to your pr
 
 **`config/config.exs`** — adds `config :phoenix_vite, PhoenixVite.Npm, ...` (when using `--bun`, the installer configures `PhoenixVite.Bun` and Bun-based aliases instead).
 
-**`assets/vite.config.mjs`** — adds the Svelte plugin, `liveSveltePlugin`, and `ssr: { noExternal: ... }`. A single config is used for both client and SSR builds (no separate `vite.ssr.config.js`); the SSR build is run via `phoenix_vite.npm vite build --ssr js/server.js --outDir ../priv/svelte`.
+**`assets/vite.config.mjs`** — adds the Svelte plugin, `liveSveltePlugin`, and `ssr: { noExternal: ... }`. A single config is used for both client and SSR builds (no separate `vite.ssr.config.js`); the SSR build is run via `phoenix_vite.npm vite build --ssr js/server.mjs --outDir ../priv/svelte`.
 
 **`assets/js/app.js`** — adds hook wiring:
 ```js
@@ -74,16 +74,20 @@ const liveSocket = new LiveSocket("/live", Socket, {
 
 **`lib/app_web.ex`** — adds `import LiveSvelte` to `html_helpers`
 
-**`lib/app/application.ex`** — adds a conditional NodeJS supervisor that only starts in production (where `ssr_module` is `LiveSvelte.SSR.NodeJS`):
+**`lib/app/application.ex`** — calls `LiveSvelte.SSR.NodeJS.setup_env!/0` and adds a conditional NodeJS supervisor that only starts in production (where `ssr_module` is `LiveSvelte.SSR.NodeJS`):
 ```elixir
-node_js_children =
-  if Application.get_env(:live_svelte, :ssr_module, nil) == LiveSvelte.SSR.NodeJS do
-    [{NodeJS.Supervisor, [path: LiveSvelte.SSR.NodeJS.server_path(), pool_size: 4]}]
-  else
-    []
-  end
+def start(_type, _args) do
+  LiveSvelte.SSR.NodeJS.setup_env!()
 
-children = node_js_children ++ [...]
+  node_js_children =
+    if Application.get_env(:live_svelte, :ssr_module, nil) == LiveSvelte.SSR.NodeJS do
+      [{NodeJS.Supervisor, [path: LiveSvelte.SSR.NodeJS.server_path(), pool_size: 4]}]
+    else
+      []
+    end
+
+  children = node_js_children ++ [...]
+end
 ```
 
 **`config/config.exs`** — base SSR config:
@@ -113,7 +117,8 @@ If you add LiveSvelte or phoenix_vite **manually** (e.g. without running the Ign
 ```elixir
 config :live_svelte,
   ssr_module: LiveSvelte.SSR.NodeJS,
-  ssr: true
+  ssr: true,
+  ssr_node_env: "production"
 ```
 
 **`mix.exs`** — adds phoenix_vite-driven aliases: `assets.setup`, `assets.build` (client + SSR via `phoenix_vite.npm vite build`):
@@ -121,7 +126,7 @@ config :live_svelte,
 "assets.setup": ["phoenix_vite.npm assets install"],
 "assets.build": [
   "phoenix_vite.npm vite build --manifest --emptyOutDir true",
-  "phoenix_vite.npm vite build --ssrManifest --emptyOutDir false --ssr js/server.js --outDir ../priv/svelte"
+  "phoenix_vite.npm vite build --ssrManifest --emptyOutDir false --ssr js/server.mjs --outDir ../priv/svelte"
 ]
 ```
 

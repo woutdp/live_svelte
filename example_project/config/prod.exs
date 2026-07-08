@@ -23,4 +23,5 @@ config :logger, level: :info
 # Production SSR via NodeJS
 config :live_svelte,
   ssr_module: LiveSvelte.SSR.NodeJS,
-  ssr: true
+  ssr: true,
+  ssr_node_env: "production"
