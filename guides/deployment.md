@@ -25,7 +25,7 @@ MIX_ENV=prod mix assets.build && MIX_ENV=prod mix release
 The `assets.build` alias runs (in order):
 
 1. `phoenix_vite.npm vite build --manifest --emptyOutDir true` — client bundle (and CSS when using Tailwind via Vite) to `priv/static/`
-2. `phoenix_vite.npm vite build --ssrManifest ... --ssr js/server.js --outDir ../priv/svelte` — SSR bundle to `priv/svelte/server.js`
+2. `phoenix_vite.npm vite build --ssrManifest ... --ssr js/server.mjs --outDir ../priv/svelte` — SSR bundle to `priv/svelte/server.mjs`
 
 > The same `assets/vite.config.mjs` is used for both builds; phoenix_vite runs the second command with different CLI flags.
 
@@ -55,7 +55,37 @@ defmodule MyApp.Application do
 end
 ```
 
-`LiveSvelte.SSR.NodeJS.server_path/0` returns the path to `priv/svelte/server.js`, which is the SSR bundle.
+`LiveSvelte.SSR.NodeJS.server_path/0` returns the application's `priv` directory. The SSR bundle (`:ssr_filepath`, default `./svelte/server.mjs`) is resolved relative to this path.
+
+### NODE_ENV for SSR
+
+Set `NODE_ENV=production` in production so Node.js workers do not re-parse the SSR bundle on every render. The installer configures this automatically:
+
+```elixir
+# config/prod.exs
+config :live_svelte, ssr_node_env: "production"
+```
+
+```elixir
+# lib/my_app/application.ex
+def start(_type, _args) do
+  LiveSvelte.SSR.NodeJS.setup_env!()
+  ...
+end
+```
+
+You can also export it in your release environment:
+
+```bash
+# rel/env.sh.eex
+export NODE_ENV=production
+```
+
+Or in a Dockerfile:
+
+```dockerfile
+ENV NODE_ENV=production
+```
 
 Adjust `pool_size` based on expected SSR load. A pool of 4 workers is a reasonable default.
 
@@ -70,12 +100,12 @@ config :live_svelte,
 
 ## SSR Bundle
 
-The SSR bundle (`priv/svelte/server.js`) is:
-- Built via the same `assets/vite.config.mjs` with `--ssr js/server.js --outDir ../priv/svelte`
+The SSR bundle (`priv/svelte/server.mjs`) is:
+- Built via the same `assets/vite.config.mjs` with `--ssr js/server.mjs --outDir ../priv/svelte`
 - Fully self-contained (all dependencies bundled, `ssr: { noExternal: true }`)
 - Required to be present at application start when `ssr_module: LiveSvelte.SSR.NodeJS`
 
-After `mix assets.build`, `mix compile` copies `priv/svelte/server.js` into `_build/`. This copy in `_build/` is what NodeJS.Supervisor actually loads at runtime.
+After `mix assets.build`, `mix compile` copies `priv/svelte/server.mjs` into `_build/`. This copy in `_build/` is what NodeJS.Supervisor actually loads at runtime.
 
 > #### Always Compile After Building SSR Bundle {: .info}
 >

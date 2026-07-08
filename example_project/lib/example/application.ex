@@ -7,6 +7,8 @@ defmodule Example.Application do
 
   @impl true
   def start(_type, _args) do
+    LiveSvelte.SSR.NodeJS.setup_env!()
+
     node_js_children =
       if Application.get_env(:live_svelte, :ssr_module, nil) == LiveSvelte.SSR.NodeJS do
         [{NodeJS.Supervisor, [path: LiveSvelte.SSR.NodeJS.server_path(), pool_size: 4]}]

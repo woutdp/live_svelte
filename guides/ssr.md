@@ -31,7 +31,13 @@ The SSR bundle is built by:
 mix assets.build  # runs phoenix_vite.npm vite build (client + SSR)
 ```
 
-This produces `priv/svelte/server.js`, which the NodeJS supervisor loads on application start.
+This produces `priv/svelte/server.mjs`, which the NodeJS supervisor loads on application start.
+
+> #### Production: set NODE_ENV {: .warning}
+>
+> elixir-nodejs re-parses the SSR bundle on every render when using CommonJS `require` without `NODE_ENV=production`, causing a memory leak and ~9× slower renders ([#133](https://github.com/woutdp/live_svelte/issues/133)).
+>
+> LiveSvelte 0.18+ uses ESM `import` for the SSR bundle, which avoids this leak. The Igniter installer also sets `ssr_node_env: "production"` and calls `LiveSvelte.SSR.NodeJS.setup_env!/0` in `application.ex`. For defense in depth, export `NODE_ENV=production` in your release (`rel/env.sh.eex`) or Docker image.
 
 ### ViteJS Mode (Development)
 

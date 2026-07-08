@@ -64,8 +64,8 @@ defmodule Mix.Tasks.LiveSvelte.InstallTest do
       assert content =~ "phoenix_vite.npm vite build --ssrManifest",
              "assets.build missing SSR step:\n\n#{content}"
 
-      assert content =~ "--ssr js/server.js",
-             "assets.build SSR step must use js/server.js entry:\n\n#{content}"
+      assert content =~ "--ssr js/server.mjs",
+             "assets.build SSR step must use js/server.mjs entry:\n\n#{content}"
 
       assert content =~ "--outDir ../priv/svelte",
              "assets.build SSR step must output to priv/svelte:\n\n#{content}"
@@ -79,6 +79,17 @@ defmodule Mix.Tasks.LiveSvelte.InstallTest do
 
       assert content =~ "noExternal",
              "vite.config.mjs must have ssr.noExternal for SSR build"
+    end
+
+    test "vite.config.mjs outputs server.mjs for SSR builds" do
+      result = run_installer()
+      content = file_content(result, "assets/vite.config.mjs")
+
+      assert content =~ "isSsrBuild",
+             "vite.config.mjs must use isSsrBuild to name the SSR bundle server.mjs"
+
+      assert content =~ ~s(entryFileNames: "[name].mjs"),
+             "vite.config.mjs must set entryFileNames to [name].mjs for SSR builds"
     end
   end
 
@@ -108,6 +119,8 @@ defmodule Mix.Tasks.LiveSvelte.InstallTest do
       content = file_content(result, "config/config.exs")
       assert content =~ ~r/:phoenix_vite.*PhoenixVite\.Npm/s
       assert content =~ ~r/:live_svelte.*ssr.*true/s
+      assert content =~ "otp_app: :test"
+      assert content =~ "ssr_filepath: \"./svelte/server.mjs\""
     end
 
     test "dev.exs sets ViteJS SSR module" do
@@ -116,10 +129,11 @@ defmodule Mix.Tasks.LiveSvelte.InstallTest do
       assert content =~ "LiveSvelte.SSR.ViteJS"
     end
 
-    test "prod.exs sets NodeJS SSR module" do
+    test "prod.exs sets NodeJS SSR module and ssr_node_env" do
       result = run_installer()
       content = file_content(result, "config/prod.exs")
       assert content =~ "LiveSvelte.SSR.NodeJS"
+      assert content =~ "ssr_node_env: \"production\""
     end
   end
 
@@ -202,6 +216,12 @@ defmodule Mix.Tasks.LiveSvelte.InstallTest do
   end
 
   describe "application.ex (M1: conditional NodeJS.Supervisor)" do
+    test "application.ex calls LiveSvelte.SSR.NodeJS.setup_env!/0" do
+      result = run_installer()
+      content = file_content(result, "lib/test/application.ex")
+      assert content =~ "LiveSvelte.SSR.NodeJS.setup_env!()"
+    end
+
     test "NodeJS.Supervisor is present in application.ex" do
       result = run_installer()
       content = file_content(result, "lib/test/application.ex")
@@ -260,9 +280,9 @@ defmodule Mix.Tasks.LiveSvelte.InstallTest do
   end
 
   describe "created files" do
-    test "assets/js/server.js is created" do
+    test "assets/js/server.mjs is created" do
       result = run_installer()
-      assert_creates(result, "assets/js/server.js")
+      assert_creates(result, "assets/js/server.mjs")
     end
 
     test "SvelteDemo.svelte is created" do

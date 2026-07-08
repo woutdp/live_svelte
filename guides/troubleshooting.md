@@ -20,7 +20,7 @@ mix assets.build && mix compile
 
 **Symptom:** Server-side rendered HTML shows old component output even after updating Svelte files.
 
-**Cause:** `_build/test/lib/example/priv/svelte/server.js` is a **copy** (not a symlink) of `priv/svelte/server.js`. It is updated by `mix compile`, not by `mix assets.build` alone.
+**Cause:** `_build/test/lib/example/priv/svelte/server.mjs` is a **copy** (not a symlink) of `priv/svelte/server.mjs`. It is updated by `mix compile`, not by `mix assets.build` alone.
 
 **Fix:**
 ```bash
@@ -60,12 +60,12 @@ This injects Svelte component CSS directly into the JS bundle instead of extract
 
 **Cause:** The `liveSveltePlugin` is missing from one or both Vite configs.
 
-**Fix:** Ensure `liveSveltePlugin()` is in `vite.config.mjs` and that `ssr: { noExternal: ... }` is set. The same config is used for both client and SSR builds (via `phoenix_vite.npm vite build --ssr js/server.js ...`). If you use Bun, the same steps apply with `phoenix_vite.bun` and `PhoenixVite.Bun`.
+**Fix:** Ensure `liveSveltePlugin()` is in `vite.config.mjs` and that `ssr: { noExternal: ... }` is set. The same config is used for both client and SSR builds (via `phoenix_vite.npm vite build --ssr js/server.mjs ...`). If you use Bun, the same steps apply with `phoenix_vite.bun` and `PhoenixVite.Bun`.
 
 ```js
 // assets/vite.config.mjs
 import liveSveltePlugin from "live_svelte/vitePlugin"
-plugins: [svelte(), liveSveltePlugin({ entrypoint: "./js/server.js" })],
+plugins: [svelte(), liveSveltePlugin({ entrypoint: "./js/server.mjs" })],
 ssr: { noExternal: process.env.NODE_ENV === "production" ? true : undefined },
 ```
 
@@ -75,7 +75,7 @@ Also verify that your Svelte files are in `assets/svelte/` and have the `.svelte
 
 **Symptom:** `(NodeJS.Error) Unknown component: MyComponent` when using a newly added Svelte component in LiveView (e.g. after creating `assets/svelte/MyComponent.svelte` and using `<.svelte name="MyComponent" ...>`).
 
-**Cause:** When using NodeJS SSR, the component registry is baked into `priv/svelte/server.js` at build time. New `.svelte` files are not included until you rebuild the SSR bundle.
+**Cause:** When using NodeJS SSR, the component registry is baked into `priv/svelte/server.mjs` at build time. New `.svelte` files are not included until you rebuild the SSR bundle.
 
 **Fix (choose one):**
 
@@ -177,7 +177,7 @@ For containers that wrap multiple components, use `phx-update="ignore"` on the o
 
 **Symptom:** Application fails to start with `NodeJS.Supervisor` error, or SSR silently fails in production.
 
-**Cause:** `ssr_module` is not set to `LiveSvelte.SSR.NodeJS` in production config, or the SSR bundle (`priv/svelte/server.js`) is missing.
+**Cause:** `ssr_module` is not set to `LiveSvelte.SSR.NodeJS` in production config, or the SSR bundle (`priv/svelte/server.mjs`) is missing.
 
 **Fix:**
 1. Ensure `config/prod.exs` has:
@@ -193,6 +193,30 @@ For containers that wrap multiple components, use `phx-update="ignore"` on the o
 3. Check that `NodeJS.Supervisor` is in `application.ex`:
    ```elixir
    {NodeJS.Supervisor, [path: LiveSvelte.SSR.NodeJS.server_path(), pool_size: 4]}
+   ```
+
+## SSR Memory Leak / Node Workers Crashing
+
+**Symptom:** Node.js worker memory grows steadily under SSR load until workers crash or the server runs out of memory. SSR may also be much slower than expected (~800 KB RSS growth per render).
+
+**Cause:** [elixir-nodejs](https://github.com/revelrylabs/elixir-nodejs) busts the CommonJS `require` cache on every call unless `NODE_ENV=production`. Older LiveSvelte versions loaded the SSR bundle via CJS `require`; most Phoenix releases do not set `NODE_ENV` by default. See [issue #133](https://github.com/woutdp/live_svelte/issues/133).
+
+**Fix:**
+
+1. **Upgrade to LiveSvelte 0.18+** — production SSR uses ESM `import` (`priv/svelte/server.mjs`), which caches the bundle regardless of `NODE_ENV`.
+2. **Set `NODE_ENV=production`** in production as defense in depth:
+   ```elixir
+   # config/prod.exs
+   config :live_svelte, ssr_node_env: "production"
+   ```
+   ```elixir
+   # lib/my_app/application.ex (before NodeJS.Supervisor starts)
+   LiveSvelte.SSR.NodeJS.setup_env!()
+   ```
+   Or export `NODE_ENV=production` in `rel/env.sh.eex` / your Docker image.
+3. **Rebuild the SSR bundle** after upgrading:
+   ```bash
+   MIX_ENV=prod mix assets.build && MIX_ENV=prod mix compile
    ```
 
 ## Svelte 4 Syntax Errors

@@ -232,7 +232,8 @@ config :live_svelte,
 ```elixir
 config :live_svelte,
   ssr_module: LiveSvelte.SSR.NodeJS,
-  ssr: true
+  ssr: true,
+  ssr_node_env: "production"
 ```
 
 **7.** Update `mix.exs` aliases — replace esbuild/tailwind aliases with Vite:
@@ -243,7 +244,7 @@ config :live_svelte,
 "assets.setup": ["phoenix_vite.npm assets install"],
 "assets.build": [
   "phoenix_vite.npm vite build --manifest --emptyOutDir true",
-  "phoenix_vite.npm vite build --ssrManifest --emptyOutDir false --ssr js/server.js --outDir ../priv/svelte"
+  "phoenix_vite.npm vite build --ssrManifest --emptyOutDir false --ssr js/server.mjs --outDir ../priv/svelte"
 ],
 "assets.deploy": ["assets.build", "phx.digest"]
 ```
@@ -282,7 +283,7 @@ import liveSveltePlugin from "live_svelte/vitePlugin"
 // With Tailwind: add this import
 import tailwindcss from "@tailwindcss/vite"
 
-export default defineConfig({
+export default defineConfig(({ isSsrBuild }) => ({
   server: {
     host: "127.0.0.1",
     port: 5173,
@@ -296,7 +297,10 @@ export default defineConfig({
   build: {
     manifest: false,
     ssrManifest: false,
-    rollupOptions: { input: ["js/app.js", "css/app.css"] },
+    rollupOptions: {
+      input: ["js/app.js", "css/app.css"],
+      output: isSsrBuild ? { entryFileNames: "[name].mjs" } : undefined,
+    },
     outDir: "../priv/static",
     emptyOutDir: true,
   },
@@ -309,12 +313,12 @@ export default defineConfig({
   plugins: [
     tailwindcss(), // With Tailwind: include this; remove if not using Tailwind
     svelte({ compilerOptions: { css: "injected" } }),
-    liveSveltePlugin({ entrypoint: "./js/server.js" }),
+    liveSveltePlugin({ entrypoint: "./js/server.mjs" }),
   ],
-})
+}))
 ```
 
-**10.** Create `assets/js/server.js`:
+**10.** Create `assets/js/server.mjs`:
 
 ```js
 import { getRender } from "live_svelte"
@@ -368,6 +372,8 @@ end
 
 ```elixir
 def start(_type, _args) do
+  LiveSvelte.SSR.NodeJS.setup_env!()
+
   node_js_children =
     if Application.get_env(:live_svelte, :ssr_module, nil) == LiveSvelte.SSR.NodeJS do
       [{NodeJS.Supervisor, [path: LiveSvelte.SSR.NodeJS.server_path(), pool_size: 4]}]
