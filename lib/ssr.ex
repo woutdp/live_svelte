@@ -65,7 +65,7 @@ defmodule LiveSvelte.SSR do
   end
 
   @deprecated "Use LiveSvelte.SSR.NodeJS.server_path/0 instead."
-  def server_path() do
+  def server_path do
     LiveSvelte.SSR.NodeJS.server_path()
   end
 end

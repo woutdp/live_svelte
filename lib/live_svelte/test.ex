@@ -103,8 +103,7 @@ defmodule LiveSvelte.Test do
 
     available =
       components_tree
-      |> Enum.map(&"#{attr_from_tree(&1, "data-name")}##{attr_from_tree(&1, "id")}")
-      |> Enum.join(", ")
+      |> Enum.map_join(", ", &"#{attr_from_tree(&1, "data-name")}##{attr_from_tree(&1, "id")}")
 
     matched =
       Enum.reduce(opts, components_tree, fn

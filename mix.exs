@@ -66,6 +66,10 @@ defmodule LiveSvelte.MixProject do
           "Advanced Topics": ~r/guides\/(introduction|testing|deployment)/,
           "Help & Troubleshooting": ~r/guides\/troubleshooting/
         ]
+      ],
+      dialyzer: [
+        plt_add_apps: [:ex_unit, :mix, :lazy_html],
+        ignore_warnings: ".dialyzer_ignore.exs"
       ]
     ]
   end
@@ -76,7 +80,9 @@ defmodule LiveSvelte.MixProject do
         coveralls: :test,
         "coveralls.detail": :test,
         "coveralls.post": :test,
-        "coveralls.html": :test
+        "coveralls.html": :test,
+        ci: :test,
+        dialyzer: :dev
       ]
     ]
   end
@@ -105,6 +111,12 @@ defmodule LiveSvelte.MixProject do
 
   defp deps do
     [
+      {:ex_slop, "~> 0.4", only: [:dev, :test], runtime: false},
+      {:reach, "~> 2.0", only: [:dev, :test], runtime: false},
+      {:ex_dna, "~> 1.0", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
+      {:vibe_kit, "~> 0.1"},
       {:ex_doc, "~> 0.38", only: :dev, runtime: false, warn_if_outdated: true},
       {:makeup_html, "~> 0.1.0", only: :dev, runtime: false},
       {:easy_publish, "~> 0.2", only: [:dev], runtime: false},
@@ -129,7 +141,17 @@ defmodule LiveSvelte.MixProject do
     [
       "release.patch": ["easy_publish.release patch --branch=master"],
       "release.minor": ["easy_publish.release minor --branch=master"],
-      "release.major": ["easy_publish.release major --branch=master"]
+      "release.major": ["easy_publish.release major --branch=master"],
+      ci: [
+        "format",
+        "compile --warnings-as-errors",
+        "format --check-formatted",
+        "test",
+        "credo --strict",
+        "cmd MIX_ENV=dev mix dialyzer --no-compile",
+        "ex_dna --max-clones 0",
+        "reach.check --arch --smells"
+      ]
     ]
   end
 end

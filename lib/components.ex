@@ -12,7 +12,9 @@ defmodule LiveSvelte.Components do
   end
 
   @doc """
-  TODO: This could perhaps be optimized to only read the files once per compilation.
+  Reads Svelte component filenames from `assets/svelte/*.svelte`.
+
+  This could be optimized to only read the files once per compilation.
   """
   def get_svelte_components do
     "./assets/svelte/*.svelte"
@@ -32,7 +34,6 @@ defmodule LiveSvelte.Components do
           assigns
           |> Map.drop([:__changed__, :__given__, :ssr, :class, :socket])
           |> Map.drop(Map.keys(slot_assigns))
-          |> Enum.into(%{})
 
         var!(assigns) =
           assigns

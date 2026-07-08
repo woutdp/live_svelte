@@ -2,7 +2,7 @@ defmodule LiveSvelte.PropsDiffTest do
   # This test mutates Application env in a couple cases.
   use ExUnit.Case, async: false
 
-  defp base_assigns(opts \\ []) do
+  defp base_assigns(opts) do
     %{
       __changed__: Keyword.get(opts, :__changed__, nil),
       socket: Keyword.get(opts, :socket),
@@ -130,7 +130,7 @@ defmodule LiveSvelte.PropsDiffTest do
     test "simple value change produces replace operation" do
       diff = LiveSvelte.calculate_props_diff(%{"count" => 2}, %{"count" => 1})
       # includes test op + replace op
-      assert length(diff) == 2
+      assert [_test, _replace] = diff
       replace = Enum.find(diff, &(&1.op == "replace"))
       assert replace.path == "/count"
       assert replace.value == 2
@@ -154,7 +154,7 @@ defmodule LiveSvelte.PropsDiffTest do
       new_p = %{"user" => %{"name" => "Alice", "age" => 31}}
       diff = LiveSvelte.calculate_props_diff(new_p, old_p)
       content_ops = Enum.reject(diff, &(&1.op == "test"))
-      assert length(content_ops) == 1
+      assert [_] = content_ops
       assert hd(content_ops).path == "/user/age"
     end
 
@@ -198,8 +198,8 @@ defmodule LiveSvelte.PropsDiffTest do
 
       # With object_hash: should be 1 add (not 3 replaces + 1 add)
       replace_ops = Enum.filter(content_ops, &(&1.op == "replace"))
-      assert length(replace_ops) == 0
-      assert length(content_ops) <= 2
+      assert replace_ops == []
+      assert Enum.count_until(content_ops, 3) <= 2
     end
 
     test "deleting middle item from id-list produces minimal ops" do
@@ -210,7 +210,7 @@ defmodule LiveSvelte.PropsDiffTest do
       content_ops = Enum.reject(diff, &(&1.op == "test"))
 
       # With object_hash: should be 1 remove (not replace all)
-      assert length(content_ops) == 1
+      assert [_] = content_ops
       assert hd(content_ops).op == "remove"
     end
 
@@ -224,8 +224,8 @@ defmodule LiveSvelte.PropsDiffTest do
 
       # With object_hash: reorder should not produce N replace operations
       replace_ops = Enum.filter(content_ops, &(&1.op == "replace"))
-      assert length(replace_ops) == 0
-      assert length(content_ops) > 0
+      assert replace_ops == []
+      assert content_ops != []
     end
 
     test "list without :id fields still diffs correctly (no regression)" do
@@ -235,7 +235,7 @@ defmodule LiveSvelte.PropsDiffTest do
       diff = LiveSvelte.calculate_props_diff(%{items: items_new}, %{items: items_old})
       content_ops = Enum.reject(diff, &(&1.op == "test"))
       # Should produce some ops (add for the new item)
-      assert length(content_ops) > 0
+      assert content_ops != []
     end
   end
 

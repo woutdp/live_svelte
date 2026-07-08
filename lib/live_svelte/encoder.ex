@@ -258,35 +258,31 @@ if Code.ensure_loaded?(Ecto.Changeset) do
             if embed_errors == %{}, do: acc, else: Map.put(acc, field, embed_errors)
 
           {:embed, %{cardinality: :many}} when is_list(value) ->
-            list_errors =
-              value
-              |> Enum.filter(&match?(%Ecto.Changeset{}, &1))
-              |> Enum.map(fn embed_cs ->
-                embed_errors = changeset_errors_to_map(embed_cs)
-                if embed_errors == %{}, do: nil, else: embed_errors
-              end)
-
-            if Enum.all?(list_errors, &is_nil/1), do: acc, else: Map.put(acc, field, list_errors)
+            put_nested_list_errors(acc, field, value)
 
           {:assoc, %{cardinality: :one}} when is_struct(value, Ecto.Changeset) ->
             embed_errors = changeset_errors_to_map(value)
             if embed_errors == %{}, do: acc, else: Map.put(acc, field, embed_errors)
 
           {:assoc, %{cardinality: :many}} when is_list(value) ->
-            list_errors =
-              value
-              |> Enum.filter(&match?(%Ecto.Changeset{}, &1))
-              |> Enum.map(fn assoc_cs ->
-                assoc_errors = changeset_errors_to_map(assoc_cs)
-                if assoc_errors == %{}, do: nil, else: assoc_errors
-              end)
-
-            if Enum.all?(list_errors, &is_nil/1), do: acc, else: Map.put(acc, field, list_errors)
+            put_nested_list_errors(acc, field, value)
 
           _ ->
             acc
         end
       end)
+    end
+
+    defp put_nested_list_errors(acc, field, value) do
+      list_errors =
+        value
+        |> Enum.filter(&match?(%Ecto.Changeset{}, &1))
+        |> Enum.map(fn cs ->
+          nested_errors = changeset_errors_to_map(cs)
+          if nested_errors == %{}, do: nil, else: nested_errors
+        end)
+
+      if Enum.all?(list_errors, &is_nil/1), do: acc, else: Map.put(acc, field, list_errors)
     end
 
     defp changeset_errors_to_list(errors) do
