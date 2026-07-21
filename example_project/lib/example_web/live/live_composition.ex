@@ -16,14 +16,13 @@ defmodule ExampleWeb.LiveComposition do
 
   def render(assigns) do
     ~H"""
-    <div class="flex flex-col justify-center items-center gap-6 p-6">
-      <h2 class="text-center text-2xl font-light my-4">Composition (useLiveSvelte)</h2>
-      <p class="text-sm text-base-content/50 text-center max-w-md">
+    <.demo_page title="Composition (useLiveSvelte)" tag="h2" variant="compact">
+      <:description>
         A parent Svelte component uses <code>useLiveSvelte()</code> to push events
         to the server. Child components stay pure — no LiveView knowledge needed.
-      </p>
+      </:description>
       <.svelte name="CompositionParent" props={%{items: @items}} socket={@socket} />
-    </div>
+    </.demo_page>
     """
   end
 end

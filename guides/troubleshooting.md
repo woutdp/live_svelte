@@ -90,6 +90,20 @@ Also verify that your Svelte files are in `assets/svelte/` and have the `.svelte
    mix assets.build
    ```
 
+## `~V` Sigil Doesn't Regenerate `assets/svelte/_build`
+
+**Symptom:** `assets/svelte/_build/` is missing or contains stale `.svelte` files for a module using the `~V` sigil, even after running `mix compile`. Common after deleting `assets/svelte/_build` (it's gitignored, so this happens naturally on a fresh checkout, `mix clean`, or branch switch), or after only touching a file's whitespace/comments.
+
+**Cause:** `~V` is a macro — it writes the template file as a side effect of expanding, which only happens when Mix actually recompiles the containing module. Mix decides whether to recompile based on a source digest that ignores comments and whitespace, so touching a file or restoring a deleted `_build/` directory doesn't necessarily trigger recompilation. See [issue #69](https://github.com/woutdp/live_svelte/issues/69).
+
+**Fix:** Force a full recompile so every `~V` macro reruns and regenerates its file:
+
+```bash
+mix compile --force
+```
+
+Making a real content change to the module (not just whitespace/comments) also works, since that always invalidates Mix's digest.
+
 ## Wallaby E2E Tests Fail
 
 **Symptom:** Wallaby tests fail with a browser connection error or chromedriver not found.

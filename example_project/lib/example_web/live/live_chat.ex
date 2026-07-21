@@ -7,13 +7,10 @@ defmodule ExampleWeb.LiveChat do
 
   def render(assigns) do
     ~H"""
-    <div class="flex flex-col justify-center items-center gap-4 p-6">
-      <h2 class="text-center text-2xl font-light my-4">
-        Chat
-      </h2>
-      <p class="text-sm text-base-content/50 text-center max-w-sm">
+    <.demo_page title="Chat" tag="h2" variant="compact" class="!gap-4">
+      <:description>
         Enter your name to join; then send messages. Your name labels your bubbles.
-      </p>
+      </:description>
 
       <form :if={!@name} phx-submit="set_name" class="w-full max-w-md" data-testid="chat-join-form">
         <div class="card bg-base-100 shadow-md border border-base-300/50 overflow-hidden">
@@ -46,7 +43,7 @@ defmodule ExampleWeb.LiveChat do
       <div :if={@name} class="w-full flex justify-center">
         <.Chat messages={@messages} name={@name} socket={@socket} />
       </div>
-    </div>
+    </.demo_page>
     """
   end
 

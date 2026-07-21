@@ -15,26 +15,17 @@ defmodule ExampleWeb.LiveStores do
       <div class="max-w-2xl mx-auto">
         <h1 class="text-center text-2xl font-light my-4">Svelte Stores</h1>
         <p class="text-sm text-base-content/50 mb-8 text-center">
-          Two instances of the same component share a single
-          <code class="font-mono">writable</code>
+          Two instances of the same component share a single <code class="font-mono">writable</code>
           store. Clicking +1 in either card instantly updates both — no props, no events, no server round-trip.
         </p>
 
         <div class="flex flex-col gap-8">
           <div class="grid grid-cols-2 gap-4">
             <div data-testid="store-instance-1">
-              <.svelte
-                name="StoreCounter"
-                props={%{label: "Instance A"}}
-                socket={@socket}
-              />
+              <.svelte name="StoreCounter" props={%{label: "Instance A"}} socket={@socket} />
             </div>
             <div data-testid="store-instance-2">
-              <.svelte
-                name="StoreCounter"
-                props={%{label: "Instance B"}}
-                socket={@socket}
-              />
+              <.svelte name="StoreCounter" props={%{label: "Instance B"}} socket={@socket} />
             </div>
           </div>
 

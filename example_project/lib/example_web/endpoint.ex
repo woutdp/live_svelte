@@ -66,6 +66,4 @@ defmodule ExampleWeb.Endpoint do
   plug Plug.Head
   plug Plug.Session, @session_options
   plug ExampleWeb.Router
-
-
 end

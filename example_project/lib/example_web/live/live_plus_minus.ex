@@ -3,13 +3,10 @@ defmodule ExampleWeb.LivePlusMinus do
 
   def render(assigns) do
     ~H"""
-    <div class="flex flex-col justify-center items-center gap-4 p-4">
-      <h2 class="text-center text-2xl font-light my-4">
-        Plus / Minus (LiveView)
-      </h2>
-      <p class="text-sm text-base-content/50 text-center max-w-sm">
+    <.demo_page title="Plus / Minus (LiveView)" tag="h2" variant="compact" class="!gap-4 !p-4">
+      <:description>
         Native LiveView: value and step amount are both server state.
-      </p>
+      </:description>
       <div class="card bg-base-100 shadow-md border border-base-300/50 overflow-hidden w-full max-w-xs">
         <div class="card-body gap-4 p-5">
           <span class="badge badge-ghost badge-sm font-medium text-base-content/70 w-fit">
@@ -55,7 +52,7 @@ defmodule ExampleWeb.LivePlusMinus do
           </label>
         </div>
       </div>
-    </div>
+    </.demo_page>
     """
   end
 

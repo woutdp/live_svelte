@@ -7,6 +7,14 @@
     <.live_title suffix=" · Phoenix Framework">
       {assigns[:page_title] || "Example"}
     </.live_title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&family=Plus+Jakarta+Sans:ital,wght@0,500..800;1,500..800&display=swap"
+      rel="stylesheet"
+    />
+
     <PhoenixVite.Components.assets
       names={["js/app.js", "css/app.css"]}
       manifest={{:example, "priv/static/.vite/manifest.json"}}
@@ -14,7 +22,7 @@
       to_url={fn p -> static_url(@conn, p) end}
     />
   </head>
-  <body class="bg-base-200 antialiased" data-theme="light">
+  <body class="antialiased app-bg" data-theme="livesvelte">
     {@inner_content}
   </body>
 </html>

@@ -25,36 +25,21 @@ defmodule ExampleWeb.LiveDragDrop do
 
   def render(assigns) do
     ~H"""
-    <div class="min-h-screen bg-base-200/40 py-8 px-4">
-      <div class="max-w-2xl mx-auto">
-        <h1 class="text-center text-2xl font-light my-4">Drag & Drop Demo</h1>
-        <p class="text-sm text-base-content/50 mb-8 text-center">
-          Reorder tasks with drag and drop. The new order is synced to the server via pushEvent.
-        </p>
+    <.demo_page title="Drag & Drop Demo">
+      <:description>
+        Reorder tasks with drag and drop. The new order is synced to the server via pushEvent.
+      </:description>
 
-        <div class="flex flex-col gap-8">
-          <section class="card bg-base-100 shadow-lg border border-base-300/50">
-            <div class="card-body gap-4">
-              <span class="badge badge-outline badge-sm font-medium text-base-content/70 w-fit">
-                LiveSvelte
-              </span>
-              <.svelte name="DragDrop" props={%{items: @items}} socket={@socket} />
-            </div>
-          </section>
+      <.demo_card label="LiveSvelte">
+        <.svelte name="DragDrop" props={%{items: @items}} socket={@socket} />
+      </.demo_card>
 
-          <section class="card bg-base-100 shadow-lg border border-base-300/50">
-            <div class="card-body gap-4">
-              <span class="badge badge-outline badge-sm font-medium text-base-content/70 w-fit">
-                Server order
-              </span>
-              <ol data-testid="server-order-list" class="list-decimal list-inside space-y-1 text-sm">
-                <li :for={item <- @items} data-testid="server-order-item">{item.name}</li>
-              </ol>
-            </div>
-          </section>
-        </div>
-      </div>
-    </div>
+      <.demo_card label="Server order">
+        <ol data-testid="server-order-list" class="list-decimal list-inside space-y-1 text-sm">
+          <li :for={item <- @items} data-testid="server-order-item">{item.name}</li>
+        </ol>
+      </.demo_card>
+    </.demo_page>
     """
   end
 end

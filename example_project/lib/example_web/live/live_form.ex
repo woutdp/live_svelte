@@ -72,13 +72,12 @@ defmodule ExampleWeb.LiveForm do
 
   def render(assigns) do
     ~H"""
-    <div class="flex flex-col justify-center items-center gap-6 p-6">
-      <h2 class="text-center text-2xl font-light my-4">Form (useLiveForm)</h2>
-      <p class="text-sm text-base-content/50 text-center max-w-md">
+    <.demo_page title="Form (useLiveForm)" tag="h2" variant="compact">
+      <:description>
         Server-side Ecto changeset validation with debounced change events and automatic form reset on success.
-      </p>
+      </:description>
       <.svelte name="FormDemo" props={%{form: @form}} socket={@socket} />
-    </div>
+    </.demo_page>
     """
   end
 end

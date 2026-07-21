@@ -7,14 +7,13 @@ defmodule ExampleWeb.LiveSsr do
 
   def render(assigns) do
     ~H"""
-    <div class="flex flex-col justify-center items-center gap-6 p-6">
-      <h2 class="text-center text-2xl font-light my-4">SSR Demo</h2>
-      <p class="text-sm text-base-content/50 text-center max-w-md">
+    <.demo_page title="SSR Demo" tag="h2" variant="compact">
+      <:description>
         This component is rendered on the server using NodeJS. The initial HTML includes
         the Svelte output before the client-side JavaScript runs.
-      </p>
+      </:description>
       <.svelte name="SsrDemo" props={%{greeting: @greeting}} socket={@socket} ssr={true} />
-    </div>
+    </.demo_page>
     """
   end
 end

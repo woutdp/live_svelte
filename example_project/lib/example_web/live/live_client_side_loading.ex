@@ -3,13 +3,15 @@ defmodule ExampleWeb.LiveClientSideLoading do
 
   def render(assigns) do
     ~H"""
-    <div class="flex flex-col justify-center items-center gap-6 p-6">
-      <h2 data-testid="client-side-loading-heading" class="text-center text-2xl font-light my-4">
-        Client-side loading
-      </h2>
-      <p class="text-sm text-base-content/50 text-center max-w-md">
+    <.demo_page
+      title="Client-side loading"
+      title_testid="client-side-loading-heading"
+      tag="h2"
+      variant="compact"
+    >
+      <:description>
         Use the loading slot when SSR is disabled; the slot shows until the component hydrates on the client.
-      </p>
+      </:description>
 
       <div class="flex flex-col sm:flex-row flex-wrap justify-center gap-6 w-full max-w-3xl">
         <section
@@ -54,7 +56,7 @@ defmodule ExampleWeb.LiveClientSideLoading do
           </div>
         </section>
       </div>
-    </div>
+    </.demo_page>
     """
   end
 end

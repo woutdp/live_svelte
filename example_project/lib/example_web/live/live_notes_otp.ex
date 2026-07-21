@@ -24,13 +24,10 @@ defmodule ExampleWeb.LiveNotesOtp do
 
   def render(assigns) do
     ~H"""
-    <div class="flex flex-col justify-center items-center gap-6 p-6">
-      <h2 data-testid="notes-otp-heading" class="text-center text-2xl font-light my-4">
-        Notes (OTP)
-      </h2>
-      <p class="text-sm text-base-content/50 text-center max-w-md">
+    <.demo_page title="Notes (OTP)" title_testid="notes-otp-heading" tag="h2" variant="compact">
+      <:description>
         Ecto structs are encoded automatically. Changes sync in real time across all browsers via PubSub.
-      </p>
+      </:description>
       <.svelte
         name="NotesApp"
         props={
@@ -42,7 +39,7 @@ defmodule ExampleWeb.LiveNotesOtp do
         }
         socket={@socket}
       />
-    </div>
+    </.demo_page>
     """
   end
 

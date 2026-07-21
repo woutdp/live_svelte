@@ -8,8 +8,8 @@
 
   <div class="grid gap-8 md:grid-cols-2">
     <%!-- Basics --%>
-    <div class="card bg-base-100 border border-base-300">
-      <div class="card-body">
+    <div class="app-card app-card-hover animate-card-in p-6" style="animation-delay: 0ms">
+      <div class="flex flex-col">
         <h2 class="text-lg font-semibold text-base-content mb-4 flex items-center gap-2">
           <span class="badge badge-primary badge-lg">1</span> Basics
         </h2>
@@ -37,8 +37,8 @@
     </div>
 
     <%!-- Interactive --%>
-    <div class="card bg-base-100 border border-base-300">
-      <div class="card-body">
+    <div class="app-card app-card-hover animate-card-in p-6" style="animation-delay: 40ms">
+      <div class="flex flex-col">
         <h2 class="text-lg font-semibold text-base-content mb-4 flex items-center gap-2">
           <span class="badge badge-success badge-lg">2</span> Interactive
         </h2>
@@ -96,8 +96,8 @@
     </div>
 
     <%!-- Data --%>
-    <div class="card bg-base-100 border border-base-300">
-      <div class="card-body">
+    <div class="app-card app-card-hover animate-card-in p-6" style="animation-delay: 80ms">
+      <div class="flex flex-col">
         <h2 class="text-lg font-semibold text-base-content mb-4 flex items-center gap-2">
           <span class="badge badge-secondary badge-lg">3</span> Data
         </h2>
@@ -134,13 +134,21 @@
               - ID-based list diffing with minimal patch ops
             </span>
           </li>
+          <li>
+            <a href={~p"/streams"} class="link link-primary">
+              Streams
+            </a>
+            <span class="text-base-content/50 text-sm">
+              - Phoenix Streams diffed into a Svelte component
+            </span>
+          </li>
         </ul>
       </div>
     </div>
 
     <%!-- Slots --%>
-    <div class="card bg-base-100 border border-base-300">
-      <div class="card-body">
+    <div class="app-card app-card-hover animate-card-in p-6" style="animation-delay: 120ms">
+      <div class="flex flex-col">
         <h2 class="text-lg font-semibold text-base-content mb-4 flex items-center gap-2">
           <span class="badge badge-warning badge-lg">4</span> Slots
         </h2>
@@ -168,8 +176,8 @@
     </div>
 
     <%!-- Advanced --%>
-    <div class="card bg-base-100 border border-base-300">
-      <div class="card-body">
+    <div class="app-card app-card-hover animate-card-in p-6" style="animation-delay: 160ms">
+      <div class="flex flex-col">
         <h2 class="text-lg font-semibold text-base-content mb-4 flex items-center gap-2">
           <span class="badge badge-error badge-lg">5</span> Advanced
         </h2>
@@ -190,27 +198,33 @@
             <a href={~p"/live-editor"} class="link link-primary">
               Right Editor (@attach)
             </a>
-            <span class="text-base-content/50 text-sm">- Use Editor.js via Svelte's @attach directive</span>
+            <span class="text-base-content/50 text-sm">
+              - Use Editor.js via Svelte's @attach directive
+            </span>
           </li>
           <li>
             <a href={~p"/live-runed"} class="link link-primary">
               Runed utilites
             </a>
-            <span class="text-base-content/50 text-sm">- Svelte runed utilities syncing with backend</span>
+            <span class="text-base-content/50 text-sm">
+              - Svelte runed utilities syncing with backend
+            </span>
           </li>
           <li>
             <a href={~p"/live-stores"} class="link link-primary">
               Svelte stores
             </a>
-            <span class="text-base-content/50 text-sm">- Svelte writable stores used across components</span>
+            <span class="text-base-content/50 text-sm">
+              - Svelte writable stores used across components
+            </span>
           </li>
         </ul>
       </div>
     </div>
 
     <%!-- Ecto --%>
-    <div class="card bg-base-100 border border-base-300">
-      <div class="card-body">
+    <div class="app-card app-card-hover animate-card-in p-6" style="animation-delay: 200ms">
+      <div class="flex flex-col">
         <h2 class="text-lg font-semibold text-base-content mb-4 flex items-center gap-2">
           <span class="badge badge-info badge-lg">6</span> Ecto
         </h2>
@@ -226,8 +240,8 @@
     </div>
 
     <%!-- Composables --%>
-    <div class="card bg-base-100 border border-base-300">
-      <div class="card-body">
+    <div class="app-card app-card-hover animate-card-in p-6" style="animation-delay: 240ms">
+      <div class="flex flex-col">
         <h2 class="text-lg font-semibold text-base-content mb-4 flex items-center gap-2">
           <span class="badge badge-neutral badge-lg">7</span> Composables
         </h2>
