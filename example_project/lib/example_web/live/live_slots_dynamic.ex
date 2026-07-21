@@ -3,13 +3,10 @@ defmodule ExampleWeb.LiveSlotsDynamic do
 
   def render(assigns) do
     ~H"""
-    <div class="flex flex-col justify-center items-center gap-6 p-6">
-      <h2 class="text-center text-2xl font-light my-4">
-        Dynamic slots
-      </h2>
-      <p class="text-sm text-base-content/50 text-center max-w-md">
+    <.demo_page title="Dynamic slots" tag="h2" variant="compact">
+      <:description>
         Default slot and named slot (:subtitle) both receive LiveView state; the button updates the number.
-      </p>
+      </:description>
       <.svelte name="Slots" socket={@socket}>
         <div class="flex flex-wrap items-center gap-3">
           <button
@@ -33,7 +30,7 @@ defmodule ExampleWeb.LiveSlotsDynamic do
           </span>
         </:subtitle>
       </.svelte>
-    </div>
+    </.demo_page>
     """
   end
 

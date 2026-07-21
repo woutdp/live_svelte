@@ -34,7 +34,8 @@ defmodule ExampleWeb.Layouts do
           %{label: "Breaking News", to: ~p"/live-breaking-news"},
           %{label: "Chat", to: ~p"/live-chat"},
           %{label: "Props Diff", to: ~p"/live-props-diff"},
-          %{label: "ID List Diff", to: ~p"/live-id-list-diff"}
+          %{label: "ID List Diff", to: ~p"/live-id-list-diff"},
+          %{label: "Streams", to: ~p"/streams"}
         ]
       },
       %{
@@ -77,18 +78,13 @@ defmodule ExampleWeb.Layouts do
     assigns = assign(assigns, :nav_groups, nav_groups())
 
     ~H"""
-    <nav class="flex flex-1 flex-col">
-      <ul role="list" class="flex flex-1 flex-col gap-y-7">
-        <li :for={group <- @nav_groups}>
-          <div class="text-xs font-semibold leading-6 text-base-content/40 uppercase tracking-wider">
-            {group.label}
-          </div>
-          <ul role="list" class="-mx-2 mt-2 space-y-1">
-            <li :for={link <- group.links}>
-              <a
-                href={link.to}
-                class="block px-3 py-2 rounded-md text-sm font-medium text-base-content hover:bg-base-200"
-              >
+    <nav class="flex flex-1 flex-col" data-nav-list>
+      <ul role="list" class="flex flex-1 flex-col gap-y-5">
+        <li :for={group <- @nav_groups} data-nav-group>
+          <div class="app-label">{group.label}</div>
+          <ul role="list" class="-mx-1 mt-1.5 space-y-0.5">
+            <li :for={link <- group.links} data-nav-item>
+              <a href={link.to} data-nav-link class="app-nav-link">
                 {link.label}
               </a>
             </li>
@@ -103,24 +99,16 @@ defmodule ExampleWeb.Layouts do
     assigns = assign(assigns, :nav_groups, nav_groups())
 
     ~H"""
-    <nav class="hidden lg:flex lg:items-center lg:gap-1">
-      <div :for={group <- @nav_groups} class="relative group">
-        <button
-          type="button"
-          class="px-3 py-2 text-sm font-medium text-base-content rounded-md hover:bg-base-200"
-        >
+    <nav class="hidden lg:flex lg:items-center lg:gap-0.5">
+      <div :for={group <- @nav_groups} class="app-nav-group relative">
+        <button type="button" class="app-nav-btn px-3 py-2">
           {group.label}
+          <.icon name="hero-chevron-down" class="ml-0.5 inline h-3.5 w-3.5 opacity-50" />
         </button>
-        <div class="absolute left-0 mt-1 w-48 bg-base-100 rounded-box shadow-lg border border-base-300 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 z-50">
-          <div class="py-1">
-            <a
-              :for={link <- group.links}
-              href={link.to}
-              class="block px-4 py-2 text-sm text-base-content hover:bg-base-200"
-            >
-              {link.label}
-            </a>
-          </div>
+        <div class="app-nav-menu">
+          <a :for={link <- group.links} href={link.to} data-nav-link class="app-nav-link">
+            {link.label}
+          </a>
         </div>
       </div>
     </nav>

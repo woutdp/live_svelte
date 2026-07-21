@@ -22,16 +22,15 @@ defmodule ExampleWeb.LiveNavigation do
 
   def render(assigns) do
     ~H"""
-    <div class="flex flex-col justify-center items-center gap-6 p-6">
-      <h2 class="text-center text-2xl font-light my-4">Navigation (useLiveNavigation)</h2>
-      <p class="text-sm text-base-content/50 text-center max-w-md">
+    <.demo_page title="Navigation (useLiveNavigation)" tag="h2" variant="compact">
+      <:description>
         Client-side navigation with <code>patch()</code>
         and <code>navigate()</code>
         from Svelte without full page reloads, plus the <code>Link</code>
         component.
-      </p>
+      </:description>
       <.svelte name="Navigation" props={%{page: @page, query: @query}} socket={@socket} />
-    </div>
+    </.demo_page>
     """
   end
 end

@@ -20,13 +20,12 @@ defmodule ExampleWeb.LiveEventReply do
 
   def render(assigns) do
     ~H"""
-    <div class="flex flex-col items-center gap-6 p-6">
-      <h2 class="text-center text-2xl font-light my-4">Event Reply (useEventReply)</h2>
-      <p class="text-sm text-base-content/50 text-center max-w-md">
+    <.demo_page title="Event Reply (useEventReply)" tag="h2" variant="compact">
+      <:description>
         Push an event to Phoenix and receive a typed reply via promise.
-      </p>
+      </:description>
       <.svelte name="EventReplyDemo" props={%{}} socket={@socket} />
-    </div>
+    </.demo_page>
     """
   end
 end

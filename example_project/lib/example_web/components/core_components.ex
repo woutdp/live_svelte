@@ -52,7 +52,11 @@ defmodule ExampleWeb.CoreComponents do
       phx-remove={hide_modal(@id)}
       class="relative z-50 hidden"
     >
-      <div id={"#{@id}-bg"} class="fixed inset-0 bg-zinc-50/90 transition-opacity" aria-hidden="true" />
+      <div
+        id={"#{@id}-bg"}
+        class="fixed inset-0 bg-slate-900/20 backdrop-blur-sm transition-opacity"
+        aria-hidden="true"
+      />
       <div
         class="fixed inset-0 overflow-y-auto"
         aria-labelledby={"#{@id}-title"}
@@ -69,13 +73,13 @@ defmodule ExampleWeb.CoreComponents do
               phx-window-keydown={hide_modal(@on_cancel, @id)}
               phx-key="escape"
               phx-click-away={hide_modal(@on_cancel, @id)}
-              class="hidden relative rounded-2xl bg-base-100 p-14 shadow-xl transition"
+              class="hidden relative app-card p-10 sm:p-12 transition"
             >
               <div class="absolute top-6 right-5">
                 <button
                   phx-click={hide_modal(@on_cancel, @id)}
                   type="button"
-                  class="-m-3 flex-none p-3 opacity-20 hover:opacity-40"
+                  class="-m-3 flex-none p-3 opacity-40 hover:opacity-70 rounded-full hover:bg-slate-100 focus:outline-none focus-visible:ring-2 ring-brand"
                   aria-label={gettext("close")}
                 >
                   <.icon name="hero-x-mark-solid" class="w-5 h-5" />
@@ -83,13 +87,16 @@ defmodule ExampleWeb.CoreComponents do
               </div>
               <div id={"#{@id}-content"}>
                 <header :if={@title != []}>
-                  <h1 id={"#{@id}-title"} class="text-lg font-semibold leading-8 text-zinc-800">
+                  <h1
+                    id={"#{@id}-title"}
+                    class="app-title text-xl font-semibold leading-8 text-slate-800"
+                  >
                     {render_slot(@title)}
                   </h1>
                   <p
                     :if={@subtitle != []}
                     id={"#{@id}-description"}
-                    class="mt-2 text-sm leading-6 text-zinc-600"
+                    class="mt-2 text-sm leading-6 text-muted"
                   >
                     {render_slot(@subtitle)}
                   </p>
@@ -108,7 +115,7 @@ defmodule ExampleWeb.CoreComponents do
                   <.link
                     :for={cancel <- @cancel}
                     phx-click={hide_modal(@on_cancel, @id)}
-                    class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
+                    class="text-sm font-semibold leading-6 text-slate-700 hover:text-brand"
                   >
                     {render_slot(cancel)}
                   </.link>
@@ -119,6 +126,99 @@ defmodule ExampleWeb.CoreComponents do
         </div>
       </div>
     </div>
+    """
+  end
+
+  @doc """
+  Page wrapper for a demo LiveView: title, optional description, and a
+  content area. `variant` picks the overall page layout — `standard` is the
+  full-height page used by multi-section demos, `compact` is the smaller
+  centered layout used by single-component demos. `tag` must match whatever
+  heading level the page's test suite asserts against.
+
+  ## Examples
+
+      <.demo_page title="Svelte Stores">
+        <:description>Two instances share a single store.</:description>
+        <.demo_card label="Server state">...</.demo_card>
+      </.demo_page>
+  """
+  attr :title, :string, required: true
+  attr :title_testid, :string, default: nil
+  attr :tag, :string, default: "h1", values: ~w(h1 h2)
+  attr :variant, :string, default: "standard", values: ~w(standard compact)
+  attr :class, :string, default: nil
+
+  slot :description
+  slot :inner_block, required: true
+
+  def demo_page(assigns) do
+    ~H"""
+    <div :if={@variant == "standard"} class="min-h-screen bg-base-200/40 py-8 px-4">
+      <div class={[@class || "max-w-2xl", "mx-auto"]}>
+        <h1
+          :if={@tag == "h1"}
+          class="text-center text-2xl font-light my-4"
+          data-testid={@title_testid}
+        >
+          {@title}
+        </h1>
+        <h2
+          :if={@tag == "h2"}
+          class="text-center text-2xl font-light my-4"
+          data-testid={@title_testid}
+        >
+          {@title}
+        </h2>
+        <p :if={@description != []} class="text-sm text-base-content/50 mb-8 text-center">
+          {render_slot(@description)}
+        </p>
+        <div class="flex flex-col gap-8">{render_slot(@inner_block)}</div>
+      </div>
+    </div>
+    <div
+      :if={@variant == "compact"}
+      class={["flex flex-col justify-center items-center gap-6 p-6", @class]}
+    >
+      <h1 :if={@tag == "h1"} class="text-center text-2xl font-light my-4" data-testid={@title_testid}>
+        {@title}
+      </h1>
+      <h2 :if={@tag == "h2"} class="text-center text-2xl font-light my-4" data-testid={@title_testid}>
+        {@title}
+      </h2>
+      <p :if={@description != []} class="text-sm text-base-content/50 text-center max-w-md">
+        {render_slot(@description)}
+      </p>
+      {render_slot(@inner_block)}
+    </div>
+    """
+  end
+
+  @doc """
+  Bordered/shadowed card used inside `demo_page/1`'s inner_block for grouping
+  a single demo section (Svelte component + label, or server-state readout).
+
+  ## Examples
+
+      <.demo_card label="Server state">
+        <p>Sync count: {@sync_count}</p>
+      </.demo_card>
+  """
+  attr :label, :string, default: nil
+  attr :class, :string, default: nil
+  attr :rest, :global
+  slot :inner_block, required: true
+
+  def demo_card(assigns) do
+    ~H"""
+    <section class={["card bg-base-100 shadow-lg border border-base-300/50", @class]} {@rest}>
+      <div class="card-body gap-4">
+        <span :if={@label} class="badge badge-outline badge-sm font-medium text-base-content/70 w-fit">
+          {@label}
+        </span>
+        {render_slot(@inner_block)}
+      </div>
+    </section>
     """
   end
 
@@ -149,7 +249,7 @@ defmodule ExampleWeb.CoreComponents do
       phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
       role="alert"
       class={[
-        "alert fixed hidden top-2 right-2 w-80 sm:w-96 z-50 shadow-md",
+        "alert fixed hidden top-3 right-3 w-80 sm:w-96 z-50 border border-subtle bg-white/95 backdrop-blur-sm shadow-lg",
         @kind == :info && "alert-success",
         @kind == :error && "alert-error"
       ]}
@@ -226,7 +326,7 @@ defmodule ExampleWeb.CoreComponents do
   def simple_form(assigns) do
     ~H"""
     <.form :let={f} for={@for} as={@as} {@rest}>
-      <div class="space-y-8 bg-base-100 mt-10">
+      <div class="mt-8 space-y-8">
         {render_slot(@inner_block, f)}
         <div :for={action <- @actions} class="mt-2 flex items-center justify-between gap-6">
           {render_slot(action, f)}
@@ -255,7 +355,7 @@ defmodule ExampleWeb.CoreComponents do
     <button
       type={@type}
       class={[
-        "btn btn-neutral phx-submit-loading:opacity-75",
+        "btn bg-gradient-to-r from-orange-500 to-orange-600 text-white border-0 hover:from-orange-600 hover:to-orange-700 shadow-md shadow-orange-500/20 phx-submit-loading:opacity-75 focus:outline-none focus-visible:ring-2 ring-brand",
         @class
       ]}
       {@rest}
@@ -339,7 +439,7 @@ defmodule ExampleWeb.CoreComponents do
       <select
         id={@id}
         name={@name}
-        class="select select-bordered w-full mt-1"
+        class="select select-bordered w-full mt-1 bg-slate-50 border-subtle focus:outline-none focus:ring-2 ring-brand"
         multiple={@multiple}
         {@rest}
       >
@@ -359,7 +459,7 @@ defmodule ExampleWeb.CoreComponents do
         id={@id || @name}
         name={@name}
         class={[
-          "textarea textarea-bordered w-full mt-2 min-h-[6rem]",
+          "textarea textarea-bordered w-full mt-2 min-h-[6rem] bg-slate-50 border-subtle focus:outline-none focus:ring-2 ring-brand",
           @errors != [] && "textarea-error"
         ]}
         {@rest}
@@ -379,7 +479,7 @@ defmodule ExampleWeb.CoreComponents do
         id={@id || @name}
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
         class={[
-          "input input-bordered w-full mt-2",
+          "input input-bordered w-full mt-2 bg-slate-50 border-subtle focus:outline-none focus:ring-2 ring-brand",
           @errors != [] && "input-error"
         ]}
         {@rest}

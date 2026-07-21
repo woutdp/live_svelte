@@ -23,18 +23,13 @@ defmodule ExampleWeb.Streams do
 
   def render(assigns) do
     ~H"""
-    <div class="min-h-screen bg-base-200/40 py-8 px-4">
-      <div class="max-w-2xl mx-auto">
-        <h1 class="text-center text-2xl font-light my-4" data-testid="streams-page-title">
-          Phoenix Streams Demo
-        </h1>
-        <p class="text-sm text-base-content/50 mb-6 text-center">
-          Stream items are sent via <code>data-streams-diff</code> patches to the Svelte component.
-        </p>
+    <.demo_page title="Phoenix Streams Demo" title_testid="streams-page-title">
+      <:description>
+        Stream items are sent via <code>data-streams-diff</code> patches to the Svelte component.
+      </:description>
 
-        <.svelte name="StreamDemo" items={@streams.items} socket={@socket} />
-      </div>
-    </div>
+      <.svelte name="StreamDemo" items={@streams.items} socket={@socket} />
+    </.demo_page>
     """
   end
 

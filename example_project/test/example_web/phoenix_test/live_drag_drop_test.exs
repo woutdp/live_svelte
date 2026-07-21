@@ -24,7 +24,8 @@ defmodule ExampleWeb.PhoenixTest.LiveDragDropTest do
     |> visit("/live-drag-drop")
     |> assert_has("h1", text: "Drag & Drop Demo")
     |> assert_has("p",
-      text: "Reorder tasks with drag and drop. The new order is synced to the server via pushEvent."
+      text:
+        "Reorder tasks with drag and drop. The new order is synced to the server via pushEvent."
     )
   end
 

@@ -21,46 +21,36 @@ defmodule ExampleWeb.LiveIdListDiff do
 
   def render(assigns) do
     ~H"""
-    <div class="min-h-screen bg-base-200/40 py-8 px-4">
-      <div class="max-w-2xl mx-auto">
-        <h1 class="text-center text-2xl font-light my-4" data-testid="id-list-diff-title">
-          ID-Based List Diffing Demo
-        </h1>
-        <p class="text-sm text-base-content/50 mb-6 text-center">
-          Inserts and deletes produce minimal JSON Patch ops because list items carry an
-          <code>:id</code>
-          field.
-        </p>
+    <.demo_page title="ID-Based List Diffing Demo" title_testid="id-list-diff-title">
+      <:description>
+        Inserts and deletes produce minimal JSON Patch ops because list items carry an
+        <code>:id</code>
+        field.
+      </:description>
 
-        <div class="card bg-base-100 shadow-lg border border-base-300/50 mb-6">
-          <div class="card-body gap-4">
-            <span class="badge badge-outline badge-sm font-medium text-base-content/70 w-fit">
-              LiveView controls
-            </span>
-            <div class="flex flex-wrap gap-3">
-              <button data-testid="insert-item" class="btn btn-sm btn-primary" phx-click="insert_item">
-                Insert Item
-              </button>
-              <button data-testid="delete-first" class="btn btn-sm btn-error" phx-click="delete_first">
-                Delete First
-              </button>
-              <button
-                data-testid="move-last"
-                class="btn btn-sm btn-secondary"
-                phx-click="move_last_to_top"
-              >
-                Move Last to Top
-              </button>
-            </div>
-            <p class="text-xs text-base-content/50">
-              Item count: {length(@items)}
-            </p>
-          </div>
+      <.demo_card label="LiveView controls">
+        <div class="flex flex-wrap gap-3">
+          <button data-testid="insert-item" class="btn btn-sm btn-primary" phx-click="insert_item">
+            Insert Item
+          </button>
+          <button data-testid="delete-first" class="btn btn-sm btn-error" phx-click="delete_first">
+            Delete First
+          </button>
+          <button
+            data-testid="move-last"
+            class="btn btn-sm btn-secondary"
+            phx-click="move_last_to_top"
+          >
+            Move Last to Top
+          </button>
         </div>
+        <p class="text-xs text-base-content/50">
+          Item count: {length(@items)}
+        </p>
+      </.demo_card>
 
-        <.svelte name="IdListDiff" props={%{items: @items}} socket={@socket} />
-      </div>
-    </div>
+      <.svelte name="IdListDiff" props={%{items: @items}} socket={@socket} />
+    </.demo_page>
     """
   end
 
