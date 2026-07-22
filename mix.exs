@@ -116,7 +116,7 @@ defmodule LiveSvelte.MixProject do
       {:ex_dna, "~> 1.0", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
       {:credo, "~> 1.0", only: [:dev, :test], runtime: false},
-      {:vibe_kit, "~> 0.1"},
+      {:vibe_kit, "~> 0.1", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.38", only: :dev, runtime: false, warn_if_outdated: true},
       {:makeup_html, "~> 0.1.0", only: :dev, runtime: false},
       {:easy_publish, "~> 0.2", only: [:dev], runtime: false},
