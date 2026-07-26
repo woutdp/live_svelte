@@ -399,7 +399,7 @@ defmodule LiveSvelte do
   end
 
   # Encodes structs via LiveSvelte.Encoder so Jsonpatch can compare them.
-  defp encode_for_diff(struct) when is_struct(struct), do: LiveSvelte.Encoder.encode(struct)
+  defp encode_for_diff(struct) when is_struct(struct), do: LiveSvelte.Encoder.encode(struct, [])
   defp encode_for_diff(other), do: other
 
   # Returns the :id field of a map as the identity key for ID-based list diffing (Tier 3).

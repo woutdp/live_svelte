@@ -29,7 +29,7 @@ defprotocol LiveSvelte.Encoder do
 
   @doc "Encodes a value to a JSON-compatible term (map, list, or primitive)."
   @spec encode(t(), opts()) :: any()
-  def encode(value, opts \\ [])
+  def encode(value, opts)
 end
 
 defimpl LiveSvelte.Encoder, for: Integer do
