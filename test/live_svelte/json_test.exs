@@ -240,8 +240,14 @@ defmodule LiveSvelte.JSONTest do
       assert JSON.prepare(dt) == "2026-01-31T14:30:00.123456Z"
     end
 
-    test "converts nil to :null" do
-      assert JSON.prepare(nil) == :null
+    test "keeps nil, so an external encoder emits JSON null" do
+      assert JSON.prepare(nil) == nil
+      assert JSON.prepare(%{a: nil, b: [nil]}) == %{"a" => nil, "b" => [nil]}
+    end
+
+    test "nested nil reaches Jason as null, not the string \"null\"" do
+      prepared = JSON.prepare(%{onboarding: nil})
+      assert Jason.encode!(prepared) == ~s({"onboarding":null})
     end
 
     test "preserves booleans" do
@@ -371,8 +377,8 @@ defmodule LiveSvelte.JSONTest do
 
       assert result == %{
                "posts" => [
-                 %{"id" => 1, "title" => "Post 1", "inserted_at" => :null},
-                 %{"id" => 2, "title" => "Post 2", "inserted_at" => :null}
+                 %{"id" => 1, "title" => "Post 1", "inserted_at" => nil},
+                 %{"id" => 2, "title" => "Post 2", "inserted_at" => nil}
                ]
              }
     end

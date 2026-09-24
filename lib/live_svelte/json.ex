@@ -49,7 +49,7 @@ defmodule LiveSvelte.JSON do
   def encode!(term) do
     term
     |> LiveSvelte.Encoder.encode([])
-    |> prepare_term()
+    |> prepare_term(:null)
     |> :json.encode()
     |> IO.iodata_to_binary()
   end
@@ -62,10 +62,13 @@ defmodule LiveSvelte.JSON do
   - Ecto schemas have `__meta__` field stripped
   - DateTime/NaiveDateTime/Date/Time become ISO 8601 strings
   - Atoms become strings
-  - nil becomes :null (for Erlang's :json module)
+  - nil stays nil
 
   This is useful for preparing data before passing to external JSON encoders
-  (like the NodeJS worker which uses Jason internally).
+  (like the NodeJS worker which uses Jason internally). Those encoders emit
+  `nil` as JSON `null` themselves; `nil` must not become the atom `:null`
+  here, since Jason would serialise that atom as the string `"null"`, a
+  truthy value in the component.
 
   ## Examples
 
@@ -80,66 +83,67 @@ defmodule LiveSvelte.JSON do
   def prepare(term) do
     term
     |> LiveSvelte.Encoder.encode([])
-    |> prepare_term()
+    |> prepare_term(nil)
   end
 
-  # Recursively prepare terms for JSON encoding.
-  # Converts structs to maps, nil to null, and handles nested structures.
+  # Recursively prepare terms for JSON encoding: structs to maps, nested
+  # structures handled. `null` is what nil becomes: the atom :null for
+  # Erlang's :json (which would otherwise encode nil as the string "nil"),
+  # nil itself for encoders like Jason that already emit it as JSON null.
 
-  # nil becomes JSON null
-  defp prepare_term(nil), do: :null
+  defp prepare_term(nil, null), do: null
 
   # Booleans pass through (Erlang :json handles them)
-  defp prepare_term(true), do: true
-  defp prepare_term(false), do: false
+  defp prepare_term(true, _null), do: true
+  defp prepare_term(false, _null), do: false
 
   # Other atoms become strings (matches Jason behavior)
-  defp prepare_term(atom) when is_atom(atom) do
+  defp prepare_term(atom, _null) when is_atom(atom) do
     Atom.to_string(atom)
   end
 
   # DateTime/NaiveDateTime/Date/Time become ISO 8601 strings
   # These must come before the generic struct handler
-  defp prepare_term(%DateTime{} = dt), do: DateTime.to_iso8601(dt)
-  defp prepare_term(%NaiveDateTime{} = dt), do: NaiveDateTime.to_iso8601(dt)
-  defp prepare_term(%Date{} = d), do: Date.to_iso8601(d)
-  defp prepare_term(%Time{} = t), do: Time.to_iso8601(t)
+  defp prepare_term(%DateTime{} = dt, _null), do: DateTime.to_iso8601(dt)
+  defp prepare_term(%NaiveDateTime{} = dt, _null), do: NaiveDateTime.to_iso8601(dt)
+  defp prepare_term(%Date{} = d, _null), do: Date.to_iso8601(d)
+  defp prepare_term(%Time{} = t, _null), do: Time.to_iso8601(t)
 
   # Ecto schema structs - strip __meta__ field
   # Must come before the generic struct handler
-  defp prepare_term(%{__struct__: _, __meta__: _} = struct) do
+  defp prepare_term(%{__struct__: _, __meta__: _} = struct, null) do
     struct
     |> Map.from_struct()
     |> Map.delete(:__meta__)
-    |> prepare_term()
+    |> prepare_term(null)
   end
 
   # Structs become maps (strip __struct__ key)
-  defp prepare_term(%_{} = struct) do
+  defp prepare_term(%_{} = struct, null) do
     struct
     |> Map.from_struct()
-    |> prepare_term()
+    |> prepare_term(null)
   end
 
   # Maps: convert all keys to strings, recursively process values
-  defp prepare_term(map) when is_map(map) do
-    Map.new(map, fn {k, v} -> {prepare_key(k), prepare_term(v)} end)
+  defp prepare_term(map, null) when is_map(map) do
+    Map.new(map, fn {k, v} -> {prepare_key(k), prepare_term(v, null)} end)
   end
 
   # Lists: recursively process elements
-  defp prepare_term(list) when is_list(list) do
-    Enum.map(list, &prepare_term/1)
+  defp prepare_term(list, null) when is_list(list) do
+    Enum.map(list, &prepare_term(&1, null))
   end
 
   # Tuples become arrays
-  defp prepare_term(tuple) when is_tuple(tuple) do
+  defp prepare_term(tuple, null) when is_tuple(tuple) do
     tuple
     |> Tuple.to_list()
-    |> prepare_term()
+    |> prepare_term(null)
   end
 
   # Numbers and binaries pass through
-  defp prepare_term(term), do: term
+  defp prepare_term(term, _null), do: term
 
   # Key conversion helpers - ensure all keys become strings
   defp prepare_key(key) when is_atom(key), do: Atom.to_string(key)
