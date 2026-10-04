@@ -525,7 +525,15 @@ defmodule LiveSvelte do
     path = "./assets/svelte/_build/#{__CALLER__.module}.svelte"
 
     with :ok <- File.mkdir_p(Path.dirname(path)) do
-      File.write!(path, string)
+      # Skip the write when the bytes already match so a later compile does not
+      # bump mtime and look stale. Register only a file that is actually on disk.
+      if File.read(path) != {:ok, string} do
+        File.write!(path, string)
+      end
+
+      if File.exists?(path) do
+        Module.put_attribute(__CALLER__.module, :external_resource, Path.expand(path))
+      end
     end
 
     quote do
