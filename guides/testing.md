@@ -109,7 +109,7 @@ Install the Playwright driver and Chromium once (and again after upgrading `play
 cd example_project
 mix playwright.install chromium
 
-# On Linux CI, with the browser's system packages:
+# On Linux without the browser's system packages (GitHub's runners have them):
 mix playwright.install chromium --with-deps
 ```
 

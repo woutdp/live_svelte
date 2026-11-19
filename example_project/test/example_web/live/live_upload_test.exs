@@ -10,7 +10,7 @@ defmodule ExampleWeb.LiveUploadTest do
     path =
       Path.join(
         System.tmp_dir!(),
-        "live_upload_pw_test_#{System.unique_integer([:positive])}.txt"
+        "live_upload_test_#{System.unique_integer([:positive])}.txt"
       )
 
     File.write!(path, content)

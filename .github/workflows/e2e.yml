@@ -1,6 +1,8 @@
 name: E2E (example_project)
 
 on:
+  push:
+    branches: [master]
   pull_request:
     branches: [master]
 
@@ -8,6 +10,7 @@ jobs:
   e2e:
     name: Playwright E2E
     runs-on: ubuntu-24.04
+    timeout-minutes: 15
     defaults:
       run:
         working-directory: example_project
@@ -44,8 +47,9 @@ jobs:
             ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ hashFiles('example_project/mix.lock') }}
 
+      # No --with-deps: the runner image has Chrome, and so its system libraries.
       - name: Install Playwright
-        run: mix playwright.install chromium --with-deps
+        run: mix playwright.install chromium
 
       - name: Run Playwright E2E tests
         run: mix test --only e2e
