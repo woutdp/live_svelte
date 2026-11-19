@@ -4,64 +4,50 @@ defmodule ExampleWeb.LiveStoresTest do
   The key assertion: both component instances share the same writable store —
   incrementing in one card immediately updates the other.
   """
-  use ExampleWeb.FeatureCase, async: false
+  use ExampleWeb.FeatureCase, async: true
 
-  @moduletag :e2e
+  defp counts(page), do: Page.get_by_test_id(page, "store-count")
 
-  test "page loads and shows heading", %{session: session} do
-    session
-    |> visit("/live-stores")
-    |> assert_has(Query.css("h1", text: "Svelte Stores"))
+  test "page loads and shows heading", %{page: page} do
+    Page.goto!(page, "/live-stores")
+
+    Expect.to_be_visible!(Page.locator(page, "h1", has_text: "Svelte Stores"))
   end
 
-  test "both StoreCounter instances render", %{session: session} do
-    session
-    |> visit("/live-stores")
-    |> assert_has(Query.css("[data-testid='store-instance-1']"))
-    |> assert_has(Query.css("[data-testid='store-instance-2']"))
+  test "both StoreCounter instances render", %{page: page} do
+    Page.goto!(page, "/live-stores")
+
+    Expect.to_be_visible!(Page.get_by_test_id(page, "store-instance-1"))
+    Expect.to_be_visible!(Page.get_by_test_id(page, "store-instance-2"))
   end
 
-  test "both instances show initial count of 0", %{session: session} do
-    session = visit(session, "/live-stores")
+  test "both instances show initial count of 0", %{page: page} do
+    Page.goto!(page, "/live-stores")
 
-    # Wait for Svelte to mount
-    session |> find(Query.css("[data-testid='store-count']", count: 2))
-
-    counts = all(session, Query.css("[data-testid='store-count']"))
-    assert Enum.map(counts, &Wallaby.Element.text/1) == ["0", "0"]
+    Expect.to_have_text!(counts(page), ["0", "0"])
   end
 
-  test "incrementing in instance 1 updates both components (store is shared)", %{
-    session: session
-  } do
-    session = visit(session, "/live-stores")
+  test "incrementing in instance 1 updates both components (store is shared)", %{page: page} do
+    Page.goto!(page, "/live-stores")
+    Expect.to_have_count!(counts(page), 2)
 
-    # Wait for both components to mount
-    session |> find(Query.css("[data-testid='store-count']", count: 2))
+    instance1 = Page.get_by_test_id(page, "store-instance-1")
+    Locator.click!(Locator.get_by_test_id(instance1, "store-increment"))
 
-    # Click +1 inside instance 1 only
-    instance1 = find(session, Query.css("[data-testid='store-instance-1']"))
-    click(instance1, Query.css("[data-testid='store-increment']"))
-
-    # Both counters must now show 1 — the store is shared
-    session |> find(Query.css("[data-testid='store-count']", count: 2, minimum: 2))
-    counts = all(session, Query.css("[data-testid='store-count']"))
-    assert Enum.map(counts, &Wallaby.Element.text/1) == ["1", "1"]
+    Expect.to_have_text!(counts(page), ["1", "1"])
   end
 
-  test "reset button sets store back to 0 in both components", %{session: session} do
-    session = visit(session, "/live-stores")
+  test "reset button sets store back to 0 in both components", %{page: page} do
+    Page.goto!(page, "/live-stores")
+    Expect.to_have_count!(counts(page), 2)
 
-    session |> find(Query.css("[data-testid='store-count']", count: 2))
+    instance2 = Page.get_by_test_id(page, "store-instance-2")
+    Locator.click!(Locator.get_by_test_id(instance2, "store-increment"))
+    Expect.to_have_text!(counts(page), ["1", "1"])
 
-    # Increment via instance 2, then reset via instance 1
-    instance2 = find(session, Query.css("[data-testid='store-instance-2']"))
-    click(instance2, Query.css("[data-testid='store-increment']"))
+    instance1 = Page.get_by_test_id(page, "store-instance-1")
+    Locator.click!(Locator.get_by_test_id(instance1, "store-reset"))
 
-    instance1 = find(session, Query.css("[data-testid='store-instance-1']"))
-    click(instance1, Query.css("[data-testid='store-reset']"))
-
-    counts = all(session, Query.css("[data-testid='store-count']"))
-    assert Enum.map(counts, &Wallaby.Element.text/1) == ["0", "0"]
+    Expect.to_have_text!(counts(page), ["0", "0"])
   end
 end

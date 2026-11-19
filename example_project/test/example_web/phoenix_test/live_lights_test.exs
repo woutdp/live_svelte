@@ -96,7 +96,7 @@ defmodule ExampleWeb.PhoenixTest.LiveLightsTest do
 
   # Toggle: we simulate the Svelte pushEvent("off"|"on") via render_click(view, "off"|"on", %{}),
   # like "js click" in E2E triggering the server event. "Off" state is reachable with the down
-  # button; "on" (restore previous) is simulated with render_click. Full UI toggle in E2E (Wallaby).
+  # button; "on" (restore previous) is simulated with render_click. Full UI toggle in E2E (Playwright).
 
   test "toggle off (same state via down) and data-props show isOn false", %{conn: conn} do
     conn
@@ -110,7 +110,7 @@ defmodule ExampleWeb.PhoenixTest.LiveLightsTest do
   @tag :skip
   test "toggle on (via render_click) after off restores previous brightness", %{conn: conn} do
     # When render_click(session.view, "on", %{}) updates the view in this flow, this test can run.
-    # Toggle on/off is fully covered in E2E (Wallaby).
+    # Toggle on/off is fully covered in E2E (Playwright).
     session = conn |> visit("/live-lights")
     session = session |> click_button("[data-testid='light-down']", "")
     _ = trigger_toggle(session, "on")

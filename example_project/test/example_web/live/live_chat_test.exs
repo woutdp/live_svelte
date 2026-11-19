@@ -4,87 +4,63 @@ defmodule ExampleWeb.LiveChatTest do
   Validates that the page mounts with the join form, joining shows the chat UI,
   and sending a message displays it in the chat.
   """
-  use ExampleWeb.FeatureCase, async: false
+  use ExampleWeb.FeatureCase, async: true
 
-  @moduletag :e2e
-
-  defp chat_bubbles(session) do
-    session |> all(Query.css("[data-testid='chat-message']"))
+  defp join_button(page) do
+    Page.locator(page, "[data-testid='chat-join-form'] button", has_text: "Join")
   end
 
-  defp wait_for_chat_bubble_with_text(session, text, attempts \\ 50) do
-    bubbles = chat_bubbles(session)
-    found = Enum.any?(bubbles, fn el -> Wallaby.Element.text(el) =~ text end)
+  test "page mounts and shows heading and join form when not joined", %{page: page} do
+    Page.goto!(page, "/live-chat")
 
-    cond do
-      found ->
-        session
+    Expect.to_be_visible!(Page.locator(page, "h2", has_text: "Chat"))
 
-      attempts == 0 ->
-        raise "timeout waiting for chat bubble containing #{inspect(text)}"
-
-      true ->
-        :timer.sleep(100)
-        wait_for_chat_bubble_with_text(session, text, attempts - 1)
-    end
-  end
-
-  test "page mounts and shows heading and join form when not joined", %{session: session} do
-    session
-    |> visit("/live-chat")
-    |> assert_has(Query.css("h2", text: "Chat"))
-    |> assert_has(
-      Query.css("p",
-        text: "Enter your name to join; then send messages. Your name labels your bubbles."
+    Expect.to_be_visible!(
+      Page.locator(page, "p",
+        has_text: "Enter your name to join; then send messages. Your name labels your bubbles."
       )
     )
-    |> assert_has(Query.css("[data-testid='chat-join-name']"))
-    |> assert_has(Query.css("[data-testid='chat-join-form'] button", text: "Join"))
+
+    Expect.to_be_visible!(Page.get_by_test_id(page, "chat-join-name"))
+    Expect.to_be_visible!(join_button(page))
   end
 
-  test "useLiveConnection: reconnecting banner absent when connected (happy path)", %{
-    session: session
-  } do
-    session
-    |> visit("/live-chat")
-    |> fill_in(Query.css("[data-testid='chat-join-name']"), with: "Alice")
-    |> click(Query.css("[data-testid='chat-join-form'] button", text: "Join"))
-    |> assert_has(Query.css("[data-testid='chat-message-input']"))
-    |> refute_has(Query.css("[data-testid='chat-reconnecting']"))
+  test "useLiveConnection: reconnecting banner absent when connected (happy path)", %{page: page} do
+    Page.goto!(page, "/live-chat")
+    Locator.fill!(Page.get_by_test_id(page, "chat-join-name"), "Alice")
+    Locator.click!(join_button(page))
+
+    Expect.to_be_visible!(Page.get_by_test_id(page, "chat-message-input"))
+    Expect.not_to_be_visible!(Page.get_by_test_id(page, "chat-reconnecting"))
   end
 
-  test "joining with a name shows chat UI with message input", %{session: session} do
-    session =
-      session
-      |> visit("/live-chat")
-      |> fill_in(Query.css("[data-testid='chat-join-name']"), with: "Alice")
-      |> click(Query.css("[data-testid='chat-join-form'] button", text: "Join"))
+  test "joining with a name shows chat UI with message input", %{page: page} do
+    Page.goto!(page, "/live-chat")
+    Locator.fill!(Page.get_by_test_id(page, "chat-join-name"), "Alice")
+    Locator.click!(join_button(page))
 
-    session
-    |> assert_has(Query.css("[data-testid='chat-message-input']"))
-    |> assert_has(Query.css("[data-testid='chat-send']"))
-    |> assert_has(Query.css("[data-testid='chat-user-badge']", text: "Alice"))
+    Expect.to_be_visible!(Page.get_by_test_id(page, "chat-message-input"))
+    Expect.to_be_visible!(Page.get_by_test_id(page, "chat-send"))
+
+    Expect.to_be_visible!(
+      Page.get_by_test_id(page, "chat-user-badge")
+      |> Locator.filter(has_text: "Alice")
+    )
   end
 
-  test "sending a message shows it in the chat", %{session: session} do
-    session =
-      session
-      |> visit("/live-chat")
-      |> fill_in(Query.css("[data-testid='chat-join-name']"), with: "Bob")
-      |> click(Query.css("[data-testid='chat-join-form'] button", text: "Join"))
+  test "sending a message shows it in the chat", %{page: page} do
+    Page.goto!(page, "/live-chat")
+    Locator.fill!(Page.get_by_test_id(page, "chat-join-name"), "Bob")
+    Locator.click!(join_button(page))
 
-    session
-    |> assert_has(Query.css("[data-testid='chat-message-input']"))
-    |> fill_in(Query.css("[data-testid='chat-message-input']"), with: "Hello from E2E")
-    |> click(Query.css("[data-testid='chat-send']"))
+    input = Page.get_by_test_id(page, "chat-message-input")
+    Expect.to_be_visible!(input)
+    Locator.fill!(input, "Hello from E2E")
+    Locator.click!(Page.get_by_test_id(page, "chat-send"))
 
-    session = wait_for_chat_bubble_with_text(session, "Hello from E2E")
-    bubbles = chat_bubbles(session)
-    assert length(bubbles) >= 1
-    assert Enum.any?(bubbles, fn el -> Wallaby.Element.text(el) =~ "Hello from E2E" end)
+    Expect.to_contain_text!(Page.get_by_test_id(page, "chat-message"), "Hello from E2E")
 
     # Input cleared after send
-    input = session |> find(Query.css("[data-testid='chat-message-input']"))
-    assert Wallaby.Element.attr(input, "value") == ""
+    Expect.to_have_value!(input, "")
   end
 end

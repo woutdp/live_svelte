@@ -4,135 +4,64 @@ defmodule ExampleWeb.LiveUploadTest do
   Validates useLiveUpload() composable: initial render, file selection,
   upload submission, and entry cancellation.
   """
-  use ExampleWeb.FeatureCase, async: false
+  use ExampleWeb.FeatureCase, async: true
 
-  @moduletag :e2e
-
-  # ---------------------------------------------------------------------------
-  # Helpers
-  # ---------------------------------------------------------------------------
-
-  # Wait for an element with the given testid to appear (retries up to 3s).
-  defp wait_for(session, testid, attempts \\ 30)
-  defp wait_for(_session, testid, 0), do: raise("timeout waiting for [data-testid='#{testid}']")
-
-  defp wait_for(session, testid, attempts) do
-    els = session |> all(Query.css("[data-testid='#{testid}']"))
-
-    if length(els) > 0 do
-      session
-    else
-      :timer.sleep(100)
-      wait_for(session, testid, attempts - 1)
-    end
-  end
-
-  # Wait for an element with the given testid to disappear (retries up to 3s).
-  defp wait_for_gone(session, testid, attempts \\ 30)
-
-  defp wait_for_gone(_session, testid, 0),
-    do: raise("timeout waiting for [data-testid='#{testid}'] to disappear")
-
-  defp wait_for_gone(session, testid, attempts) do
-    els = session |> all(Query.css("[data-testid='#{testid}']"))
-
-    if length(els) == 0 do
-      session
-    else
-      :timer.sleep(100)
-      wait_for_gone(session, testid, attempts - 1)
-    end
-  end
-
-  # Create a temp file for upload tests, cleaned up after the test.
-  defp tmp_upload_file(content \\ "test upload content") do
+  defp tmp_upload_file(content) do
     path =
-      Path.join(System.tmp_dir!(), "live_upload_test_#{System.unique_integer([:positive])}.txt")
+      Path.join(
+        System.tmp_dir!(),
+        "live_upload_pw_test_#{System.unique_integer([:positive])}.txt"
+      )
 
     File.write!(path, content)
+    on_exit(fn -> File.rm(path) end)
     path
   end
 
-  # ---------------------------------------------------------------------------
-  # Tests
-  # ---------------------------------------------------------------------------
+  test "initial upload page renders container and select button with no entries", %{page: page} do
+    Page.goto!(page, "/live-upload")
 
-  test "initial upload page renders container and select button with no entries", %{
-    session: session
-  } do
-    session
-    |> visit("/live-upload")
-    |> wait_for("upload-container")
-    |> assert_has(Query.css("[data-testid='upload-container']"))
-    |> assert_has(Query.css("[data-testid='pick-files-btn']"))
-    |> assert_has(Query.css("[data-testid='drop-zone']"))
-    |> refute_has(Query.css("[data-testid='upload-entry']"))
-    |> refute_has(Query.css("[data-testid='uploaded-file']"))
+    Expect.to_be_visible!(Page.get_by_test_id(page, "upload-container"))
+    Expect.to_be_visible!(Page.get_by_test_id(page, "pick-files-btn"))
+    Expect.to_be_visible!(Page.get_by_test_id(page, "drop-zone"))
+    Expect.not_to_be_visible!(Page.get_by_test_id(page, "upload-entry"))
+    Expect.not_to_be_visible!(Page.get_by_test_id(page, "uploaded-file"))
   end
 
-  test "selecting a file shows it in the entry list", %{session: session} do
+  test "selecting a file shows it in the entry list", %{page: page} do
     path = tmp_upload_file("hello from test")
 
-    on_exit(fn -> File.rm(path) end)
+    Page.goto!(page, "/live-upload")
+    Expect.to_be_visible!(Page.get_by_test_id(page, "pick-files-btn"))
+    Locator.set_input_files!(Page.locator(page, "input[type=file]"), path)
 
-    session =
-      session
-      |> visit("/live-upload")
-      |> wait_for("pick-files-btn")
-
-    # The hidden file input is created by useLiveUpload's onMount.
-    # Use visible: false so Wallaby can locate the hidden input.
-    session =
-      session
-      |> attach_file(Query.css("input[type=file]", visible: false), path: path)
-
-    session
-    |> wait_for("upload-entry")
-    |> assert_has(Query.css("[data-testid='upload-entry']"))
-    |> assert_has(Query.css("[data-testid='entry-name']"))
-    |> assert_has(Query.css("[data-testid='cancel-entry-btn']"))
+    Expect.to_be_visible!(Page.get_by_test_id(page, "upload-entry"))
+    Expect.to_be_visible!(Page.get_by_test_id(page, "entry-name"))
+    Expect.to_be_visible!(Page.get_by_test_id(page, "cancel-entry-btn"))
   end
 
-  test "uploading a file triggers save event and shows it in uploaded list", %{session: session} do
+  test "uploading a file triggers save event and shows it in uploaded list", %{page: page} do
     path = tmp_upload_file("upload me please")
 
-    on_exit(fn -> File.rm(path) end)
+    Page.goto!(page, "/live-upload")
+    Expect.to_be_visible!(Page.get_by_test_id(page, "pick-files-btn"))
+    Locator.set_input_files!(Page.locator(page, "input[type=file]"), path)
 
-    session =
-      session
-      |> visit("/live-upload")
-      |> wait_for("pick-files-btn")
-      |> attach_file(Query.css("input[type=file]", visible: false), path: path)
+    Locator.click!(Page.get_by_test_id(page, "upload-submit-btn"))
 
-    session =
-      session
-      |> wait_for("upload-submit-btn")
-      |> click(Query.css("[data-testid='upload-submit-btn']"))
-
-    session
-    |> wait_for("uploaded-file")
-    |> assert_has(Query.css("[data-testid='uploaded-file']"))
-    |> assert_has(Query.css("[data-testid='uploaded-name']"))
+    Expect.to_be_visible!(Page.get_by_test_id(page, "uploaded-file"))
+    Expect.to_be_visible!(Page.get_by_test_id(page, "uploaded-name"))
   end
 
-  test "cancelling an entry removes it from the list", %{session: session} do
+  test "cancelling an entry removes it from the list", %{page: page} do
     path = tmp_upload_file("cancel me")
 
-    on_exit(fn -> File.rm(path) end)
+    Page.goto!(page, "/live-upload")
+    Expect.to_be_visible!(Page.get_by_test_id(page, "pick-files-btn"))
+    Locator.set_input_files!(Page.locator(page, "input[type=file]"), path)
 
-    session =
-      session
-      |> visit("/live-upload")
-      |> wait_for("pick-files-btn")
-      |> attach_file(Query.css("input[type=file]", visible: false), path: path)
+    Locator.click!(Page.get_by_test_id(page, "cancel-entry-btn"))
 
-    session =
-      session
-      |> wait_for("cancel-entry-btn")
-      |> click(Query.css("[data-testid='cancel-entry-btn']"))
-
-    session
-    |> wait_for_gone("upload-entry")
-    |> refute_has(Query.css("[data-testid='upload-entry']"))
+    Expect.not_to_be_visible!(Page.get_by_test_id(page, "upload-entry"))
   end
 end

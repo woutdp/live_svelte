@@ -3,7 +3,7 @@ defmodule ExampleWeb.PhoenixTest.LivePlusMinusHybridTest do
   PhoenixTest (in-process) for LivePlusMinusHybrid LiveView (/live-plus-minus-hybrid).
   Runs with SSR enabled so the CounterHybrid Svelte component is in the initial HTML.
   Validates that the page renders, initial value is 10, and plus/minus buttons are present.
-  Click behavior (set_number) is covered by Wallaby E2E (live_plus_minus_hybrid_test.exs):
+  Click behavior (set_number) is covered by Playwright E2E (live_plus_minus_hybrid_test.exs):
   click_button does not trigger phx-click on buttons inside the Svelte-rendered DOM.
   """
   use ExampleWeb.ConnCase, async: false

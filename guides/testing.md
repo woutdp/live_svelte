@@ -1,6 +1,6 @@
 # Testing
 
-The LiveSvelte example project has two complementary test layers: fast server-side tests via PhoenixTest, and full-stack browser tests via Wallaby.
+The LiveSvelte example project has two complementary test layers: fast server-side tests via PhoenixTest, and full-stack browser tests via Playwright ([playwright_ex](https://hexdocs.pm/playwright_ex)).
 
 ## Build Before Testing
 
@@ -17,7 +17,7 @@ The LiveSvelte example project has two complementary test layers: fast server-si
 
 ## PhoenixTest (Server-Side, Fast)
 
-PhoenixTest tests validate server-side behavior without a browser. They are fast, reliable, and do not require chromedriver.
+PhoenixTest tests validate server-side behavior without a browser. They are fast, reliable, and do not require a browser.
 
 ```bash
 cd example_project
@@ -68,34 +68,33 @@ end)
 |> assert_has("[data-props*='\"count\":1']")
 ```
 
-## Wallaby E2E (Browser-Based, Full Stack)
+## Playwright E2E (Browser-Based, Full Stack)
 
-Wallaby tests use chromedriver to run a real browser. They validate the full pipeline: LiveView → SvelteHook → Svelte component.
+Playwright tests run a real browser (Chromium). They validate the full pipeline: LiveView → SvelteHook → Svelte component.
 
 ```bash
 cd example_project
 mix test --only e2e
 ```
 
-Tag test modules with `@moduletag :e2e`:
+`ExampleWeb.FeatureCase` (on `Playwright.Case`) tags the module `:e2e` and gives each test a `page` in a browser context of its own, so modules can be `async: true`:
 
 ```elixir
 defmodule MyAppWeb.CounterE2ETest do
-  use MyAppWeb.FeatureCase, async: false
+  use MyAppWeb.FeatureCase, async: true
 
-  @moduletag :e2e
-
-  test "Svelte counter increments", %{session: session} do
-    session
-    |> visit("/counter")
-    |> assert_text("Count: 0")
-    |> click(button("Increment"))
-    |> assert_text("Count: 1")
+  test "Svelte counter increments", %{page: page} do
+    Page.goto!(page, "/counter")
+    Expect.to_have_text!(Page.get_by_test_id(page, "count"), "Count: 0")
+    Locator.click!(Page.get_by_role(page, :button, name: "Increment"))
+    Expect.to_have_text!(Page.get_by_test_id(page, "count"), "Count: 1")
   end
 end
 ```
 
-### What Wallaby Can Verify
+`Expect` assertions retry until they pass (5 s by default), so no sleeps or polling loops are needed. A failed test keeps its trace and a screenshot in `test-results/<test>/`; open the trace with `mix playwright.cli show-trace test-results/<test>/trace.zip`.
+
+### What Playwright Can Verify
 
 - Svelte components render the correct data from server props
 - Client-side interactions (buttons rendered by Svelte, not LiveView)
@@ -104,17 +103,14 @@ end
 
 ### Requirements
 
-Wallaby requires chromedriver installed and available in `PATH`:
+Install the Playwright driver and Chromium once (and again after upgrading `playwright_ex`):
 
 ```bash
-# Check if chromedriver is available
-chromedriver --version
+cd example_project
+mix playwright.install chromium
 
-# On macOS with Homebrew:
-brew install chromedriver
-
-# On Ubuntu/Debian:
-sudo apt-get install chromium-driver
+# On Linux CI, with the browser's system packages:
+mix playwright.install chromium --with-deps
 ```
 
 ## Running Both Layers
@@ -218,7 +214,7 @@ example_project/test/example_web/
 │   ├── hello_world_test.exs
 │   ├── live_struct_test.exs
 │   └── ...
-└── live/                      # Wallaby E2E (browser)
+└── live/                      # Playwright E2E (browser)
     ├── live_struct_test.exs
     └── ...
 ```

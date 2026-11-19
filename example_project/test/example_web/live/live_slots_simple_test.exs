@@ -4,25 +4,40 @@ defmodule ExampleWeb.LiveSlotsSimpleTest do
   Validates that the page mounts and shows the Slots Svelte component
   with default slot content (Inside Slot) and card structure.
   """
-  use ExampleWeb.FeatureCase, async: false
+  use ExampleWeb.FeatureCase, async: true
 
-  @moduletag :e2e
+  test "page mounts and shows heading, description, and slot content", %{page: page} do
+    Page.goto!(page, "/live-slots-simple")
 
-  test "page mounts and shows heading, description, and slot content", %{session: session} do
-    session
-    |> visit("/live-slots-simple")
-    |> assert_has(Query.css("h2", text: "Simple slots"))
-    |> assert_has(
-      Query.css("p",
-        text: "Phoenix slots are passed into the Svelte component as the default slot content."
+    Expect.to_be_visible!(Page.locator(page, "h2", has_text: "Simple slots"))
+
+    Expect.to_be_visible!(
+      Page.locator(page, "p",
+        has_text:
+          "Phoenix slots are passed into the Svelte component as the default slot content."
       )
     )
 
-    # Slots card: badge and slot content
-    session |> assert_has(Query.css("[data-testid='slots-card']"))
-    session |> assert_has(Query.css("[data-testid='slots-badge']", text: "Slots"))
-    session |> assert_has(Query.css("[data-testid='slots-default-content']", text: "Inside Slot"))
-    session |> assert_has(Query.css("[data-testid='slots-opening']", text: "Opening"))
-    session |> assert_has(Query.css("[data-testid='slots-closing']", text: "Closing"))
+    Expect.to_be_visible!(Page.get_by_test_id(page, "slots-card"))
+
+    Expect.to_be_visible!(
+      Page.get_by_test_id(page, "slots-badge")
+      |> Locator.filter(has_text: "Slots")
+    )
+
+    Expect.to_be_visible!(
+      Page.get_by_test_id(page, "slots-default-content")
+      |> Locator.filter(has_text: "Inside Slot")
+    )
+
+    Expect.to_be_visible!(
+      Page.get_by_test_id(page, "slots-opening")
+      |> Locator.filter(has_text: "Opening")
+    )
+
+    Expect.to_be_visible!(
+      Page.get_by_test_id(page, "slots-closing")
+      |> Locator.filter(has_text: "Closing")
+    )
   end
 end

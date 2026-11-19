@@ -104,27 +104,22 @@ mix compile --force
 
 Making a real content change to the module (not just whitespace/comments) also works, since that always invalidates Mix's digest.
 
-## Wallaby E2E Tests Fail
+## Playwright E2E Tests Fail
 
-**Symptom:** Wallaby tests fail with a browser connection error or chromedriver not found.
+**Symptom:** E2E tests fail before the first page loads, saying the Playwright driver or the browser executable is missing.
 
-**Cause:** chromedriver is not installed or not in `PATH`.
+**Cause:** The Playwright driver and Chromium are not installed (or not for the current `playwright_ex` version).
 
 **Fix:**
 ```bash
-# Check installation
-chromedriver --version
+cd example_project
+mix playwright.install chromium
 
-# Install on macOS
-brew install chromedriver
-
-# Install on Ubuntu/Debian
-sudo apt-get install chromium-driver
-
-# Or use a specific version with webdriver-manager
-npm install -g webdriver-manager
-webdriver-manager update
+# On Linux, also install the browser's system packages
+mix playwright.install chromium --with-deps
 ```
+
+When a test fails, read `test-results/<test>/error-context.md` first, then open the trace with `mix playwright.cli show-trace test-results/<test>/trace.zip`.
 
 Also ensure `mix assets.build` has been run before E2E tests — the browser needs the built JS to function.
 

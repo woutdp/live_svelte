@@ -51,8 +51,8 @@ defmodule Example.MixProject do
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
       {:floki, ">= 0.30.0", only: :test},
-      {:wallaby, "~> 0.30", runtime: false, only: :test},
       {:phoenix_test, "~> 0.9", only: :test},
+      {:playwright, "~> 1.65.0-rc.2", hex: :playwright_ex, only: [:dev, :test]},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_vite, "~> 0.4"}
     ]

@@ -1,72 +1,54 @@
 defmodule ExampleWeb.LivePropsDiffTest do
-  use ExampleWeb.FeatureCase, async: false
+  use ExampleWeb.FeatureCase, async: true
 
   @moduledoc """
   E2E test for the LivePropsDiff LiveView: props diff demo with two Svelte components
   (diff on vs off). Validates that buttons update server state and both components
   display the same values.
   """
-  @moduletag :e2e
 
-  test "page mounts and shows title", %{session: session} do
-    session
-    |> visit("/live-props-diff")
-    |> find(Query.css("[data-testid='props-diff-page-title']", text: "Props Diff Demo"))
+  defp values(page, key), do: Page.get_by_test_id(page, "props-diff-value-#{key}")
+
+  test "page mounts and shows title", %{page: page} do
+    Page.goto!(page, "/live-props-diff")
+
+    Expect.to_be_visible!(
+      Page.get_by_test_id(page, "props-diff-page-title")
+      |> Locator.filter(has_text: "Props Diff Demo")
+    )
   end
 
-  test "initial values A=1, B=2, C=3 in both cards", %{session: session} do
-    session = visit(session, "/live-props-diff")
+  test "initial values A=1, B=2, C=3 in both cards", %{page: page} do
+    Page.goto!(page, "/live-props-diff")
 
-    values_a = session |> all(Query.css("[data-testid='props-diff-value-a']"))
-    values_b = session |> all(Query.css("[data-testid='props-diff-value-b']"))
-    values_c = session |> all(Query.css("[data-testid='props-diff-value-c']"))
-
-    assert length(values_a) == 2
-    assert length(values_b) == 2
-    assert length(values_c) == 2
-
-    for el <- values_a, do: assert(Wallaby.Element.text(el) == "1")
-    for el <- values_b, do: assert(Wallaby.Element.text(el) == "2")
-    for el <- values_c, do: assert(Wallaby.Element.text(el) == "3")
+    Expect.to_have_text!(values(page, "a"), ["1", "1"])
+    Expect.to_have_text!(values(page, "b"), ["2", "2"])
+    Expect.to_have_text!(values(page, "c"), ["3", "3"])
   end
 
-  test "Increment A updates both Svelte components to A=2", %{session: session} do
-    session =
-      session
-      |> visit("/live-props-diff")
-      |> click(Query.button("Increment A"))
+  test "Increment A updates both Svelte components to A=2", %{page: page} do
+    Page.goto!(page, "/live-props-diff")
+    Locator.click!(Page.get_by_role(page, :button, name: "Increment A"))
 
-    values_a = session |> all(Query.css("[data-testid='props-diff-value-a']"))
-    assert length(values_a) == 2
-    for el <- values_a, do: assert(Wallaby.Element.text(el) == "2")
+    Expect.to_have_text!(values(page, "a"), ["2", "2"])
   end
 
-  test "Increment B then C updates displayed values", %{session: session} do
-    session =
-      session
-      |> visit("/live-props-diff")
-      |> click(Query.button("Increment B"))
-      |> click(Query.button("Increment C"))
+  test "Increment B then C updates displayed values", %{page: page} do
+    Page.goto!(page, "/live-props-diff")
+    Locator.click!(Page.get_by_role(page, :button, name: "Increment B"))
+    Locator.click!(Page.get_by_role(page, :button, name: "Increment C"))
 
-    values_b = session |> all(Query.css("[data-testid='props-diff-value-b']"))
-    values_c = session |> all(Query.css("[data-testid='props-diff-value-c']"))
-    assert length(values_b) == 2
-    assert length(values_c) == 2
-    for el <- values_b, do: assert(Wallaby.Element.text(el) == "3")
-    for el <- values_c, do: assert(Wallaby.Element.text(el) == "4")
+    Expect.to_have_text!(values(page, "b"), ["3", "3"])
+    Expect.to_have_text!(values(page, "c"), ["4", "4"])
   end
 
-  test "multiple increments leave all displayed values in sync", %{session: session} do
-    session =
-      session
-      |> visit("/live-props-diff")
-      |> click(Query.button("Increment A"))
-      |> click(Query.button("Increment A"))
-      |> click(Query.button("Increment B"))
+  test "multiple increments leave all displayed values in sync", %{page: page} do
+    Page.goto!(page, "/live-props-diff")
+    Locator.click!(Page.get_by_role(page, :button, name: "Increment A"))
+    Locator.click!(Page.get_by_role(page, :button, name: "Increment A"))
+    Locator.click!(Page.get_by_role(page, :button, name: "Increment B"))
 
-    values_a = session |> all(Query.css("[data-testid='props-diff-value-a']"))
-    values_b = session |> all(Query.css("[data-testid='props-diff-value-b']"))
-    for el <- values_a, do: assert(Wallaby.Element.text(el) == "3")
-    for el <- values_b, do: assert(Wallaby.Element.text(el) == "3")
+    Expect.to_have_text!(values(page, "a"), ["3", "3"])
+    Expect.to_have_text!(values(page, "b"), ["3", "3"])
   end
 end

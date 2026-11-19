@@ -5,56 +5,45 @@ defmodule ExampleWeb.LiveCompositionTest do
   and submitting pushes an event via useLiveSvelte(), the server prepends the
   item, and the updated list re-renders in the Svelte component.
   """
-  use ExampleWeb.FeatureCase, async: false
+  use ExampleWeb.FeatureCase, async: true
 
-  @moduletag :e2e
+  test "page renders the input and submit button", %{page: page} do
+    Page.goto!(page, "/live-composition")
 
-  defp wait_for(session, testid, attempts \\ 30)
-  defp wait_for(_session, testid, 0), do: raise("timeout waiting for [data-testid='#{testid}']")
-
-  defp wait_for(session, testid, attempts) do
-    if length(all(session, Query.css("[data-testid='#{testid}']"))) > 0 do
-      session
-    else
-      :timer.sleep(100)
-      wait_for(session, testid, attempts - 1)
-    end
+    Expect.to_be_visible!(Page.get_by_test_id(page, "composition-input"))
+    Expect.to_be_visible!(Page.get_by_test_id(page, "composition-submit"))
   end
 
-  test "page renders the input and submit button", %{session: session} do
-    session
-    |> visit("/live-composition")
-    |> wait_for("composition-input")
-    |> assert_has(Query.css("[data-testid='composition-input']"))
-    |> assert_has(Query.css("[data-testid='composition-submit']"))
+  test "submitting an item adds it to the list", %{page: page} do
+    Page.goto!(page, "/live-composition")
+    Locator.fill!(Page.get_by_test_id(page, "composition-input"), "My Widget")
+    Locator.click!(Page.get_by_test_id(page, "composition-submit"))
+
+    Expect.to_be_visible!(
+      Page.get_by_test_id(page, "composition-item")
+      |> Locator.filter(has_text: "My Widget")
+    )
   end
 
-  test "submitting an item adds it to the list", %{session: session} do
-    session
-    |> visit("/live-composition")
-    |> wait_for("composition-input")
-    |> fill_in(Query.css("[data-testid='composition-input']"), with: "My Widget")
-    |> click(Query.css("[data-testid='composition-submit']"))
-    |> assert_has(Query.css("[data-testid='composition-item']", text: "My Widget"))
+  test "submitting multiple items shows all of them", %{page: page} do
+    Page.goto!(page, "/live-composition")
+    input = Page.get_by_test_id(page, "composition-input")
+    submit = Page.get_by_test_id(page, "composition-submit")
+
+    Locator.fill!(input, "Alpha")
+    Locator.click!(submit)
+    Locator.fill!(input, "Beta")
+    Locator.click!(submit)
+
+    items = Page.get_by_test_id(page, "composition-item")
+    Expect.to_be_visible!(Locator.filter(items, has_text: "Alpha"))
+    Expect.to_be_visible!(Locator.filter(items, has_text: "Beta"))
   end
 
-  test "submitting multiple items shows all of them", %{session: session} do
-    session
-    |> visit("/live-composition")
-    |> wait_for("composition-input")
-    |> fill_in(Query.css("[data-testid='composition-input']"), with: "Alpha")
-    |> click(Query.css("[data-testid='composition-submit']"))
-    |> fill_in(Query.css("[data-testid='composition-input']"), with: "Beta")
-    |> click(Query.css("[data-testid='composition-submit']"))
-    |> assert_has(Query.css("[data-testid='composition-item']", text: "Alpha"))
-    |> assert_has(Query.css("[data-testid='composition-item']", text: "Beta"))
-  end
+  test "empty input does not submit", %{page: page} do
+    Page.goto!(page, "/live-composition")
+    Locator.click!(Page.get_by_test_id(page, "composition-submit"))
 
-  test "empty input does not submit", %{session: session} do
-    session
-    |> visit("/live-composition")
-    |> wait_for("composition-submit")
-    |> click(Query.css("[data-testid='composition-submit']"))
-    |> refute_has(Query.css("[data-testid='composition-item']"))
+    Expect.not_to_be_visible!(Page.get_by_test_id(page, "composition-item"))
   end
 end
