@@ -4,134 +4,68 @@ defmodule ExampleWeb.LiveBreakingNewsTest do
   Validates that the page mounts with initial headlines, adding a headline via the UI
   works, and removing a headline removes it from the list.
   """
-  use ExampleWeb.FeatureCase, async: false
+  use ExampleWeb.FeatureCase, async: true
 
-  @moduletag :e2e
-
-  defp headline_items(session) do
-    session |> all(Query.css("[data-testid='breaking-news-headlines'] li"))
+  defp headline_items(page) do
+    Page.locator(page, "[data-testid='breaking-news-headlines'] li")
   end
 
-  defp wait_for_headline_with_text(session, text, attempts \\ 50) do
-    # Use container text to avoid stale refs when DOM updates (e.g. after Add/Remove).
-    container = session |> find(Query.css("[data-testid='breaking-news-headlines']"))
-    container_text = Wallaby.Element.text(container)
-    found = String.contains?(container_text, text)
+  test "page mounts and shows heading, input, and initial headlines", %{page: page} do
+    Page.goto!(page, "/live-breaking-news")
 
-    cond do
-      found ->
-        session
+    Expect.to_be_visible!(Page.locator(page, "h2", has_text: "Breaking News"))
 
-      attempts == 0 ->
-        raise "timeout waiting for headline containing #{inspect(text)}"
-
-      true ->
-        :timer.sleep(100)
-        wait_for_headline_with_text(session, text, attempts - 1)
-    end
-  end
-
-  test "page mounts and shows heading, input, and initial headlines", %{session: session} do
-    session
-    |> visit("/live-breaking-news")
-    |> assert_has(Query.css("h2", text: "Breaking News"))
-    |> assert_has(
-      Query.css("p",
-        text: "Add headlines and control the ticker speed; remove items from the list."
+    Expect.to_be_visible!(
+      Page.locator(page, "p",
+        has_text: "Add headlines and control the ticker speed; remove items from the list."
       )
     )
-    |> assert_has(Query.css("[data-testid='breaking-news-new-headline']"))
+
+    Expect.to_be_visible!(Page.get_by_test_id(page, "breaking-news-new-headline"))
 
     # Initial news has 5 items; at least one visible
-    items = headline_items(session)
-    assert length(items) >= 1
-    assert Enum.any?(items, fn el -> Wallaby.Element.text(el) =~ "Giant Pink Elephant" end)
+    Expect.to_contain_text!(headline_items(page), ["Giant Pink Elephant"])
   end
 
-  test "adding a headline via the UI shows it in the list and clears the input", %{
-    session: session
-  } do
-    session =
-      session
-      |> visit("/live-breaking-news")
-      |> fill_in(Query.css("[data-testid='breaking-news-new-headline']"), with: "Test headline")
-      |> click(Query.button("Add"))
+  test "adding a headline via the UI shows it in the list and clears the input", %{page: page} do
+    Page.goto!(page, "/live-breaking-news")
 
-    session = wait_for_headline_with_text(session, "Test headline")
-    items = headline_items(session)
-    assert Enum.any?(items, fn el -> Wallaby.Element.text(el) =~ "Test headline" end)
+    input = Page.get_by_test_id(page, "breaking-news-new-headline")
+    Locator.fill!(input, "Test headline")
+    Locator.click!(Page.get_by_role(page, :button, name: "Add", exact: true))
 
-    input = session |> find(Query.css("[data-testid='breaking-news-new-headline']"))
-    assert Wallaby.Element.attr(input, "value") == ""
+    Expect.to_contain_text!(Page.get_by_test_id(page, "breaking-news-headlines"), "Test headline")
+    Expect.to_have_value!(input, "")
   end
 
-  test "removing a headline removes it from the list", %{session: session} do
-    session = visit(session, "/live-breaking-news")
-    session = wait_for_headline_with_text(session, "Giant Pink Elephant")
-    count_before = headline_items(session) |> length()
+  test "removing a headline removes it from the list", %{page: page} do
+    Page.goto!(page, "/live-breaking-news")
+
+    headlines = Page.get_by_test_id(page, "breaking-news-headlines")
+    Expect.to_contain_text!(headlines, "Giant Pink Elephant")
+    count_before = Locator.count!(headline_items(page))
 
     # Click the first Remove button (first headline)
-    remove_btns = session |> all(Query.css("[data-testid='breaking-news-headlines'] li button"))
-    assert length(remove_btns) >= 1
-    Wallaby.Element.click(Enum.at(remove_btns, 0))
+    Locator.click!(
+      Locator.first(Page.locator(page, "[data-testid='breaking-news-headlines'] li button"))
+    )
 
     # Wait for one item to disappear
-    session = wait_for_headline_removed(session, "Giant Pink Elephant", 30)
-    count_after = headline_items(session) |> length()
-    assert count_after == count_before - 1
+    Expect.not_to_contain_text!(headlines, "Giant Pink Elephant")
+    Expect.to_have_count!(headline_items(page), count_before - 1)
   end
 
-  test "faster/slower buttons update ticker rate", %{session: session} do
-    session =
-      session
-      |> visit("/live-breaking-news")
-      |> assert_has(Query.css("[data-testid='breaking-news-ticker']"))
+  test "faster/slower buttons update ticker rate", %{page: page} do
+    Page.goto!(page, "/live-breaking-news")
 
-    ticker = session |> find(Query.css("[data-testid='breaking-news-ticker']"))
-    assert Wallaby.Element.attr(ticker, "data-rate") == "-150"
+    ticker = Page.get_by_test_id(page, "breaking-news-ticker")
+    Expect.to_be_visible!(ticker)
+    Expect.to_have_attribute!(ticker, "data-rate", "-150")
 
-    session = session |> click(Query.button("← Faster"))
-    session = wait_for_ticker_rate(session, "-170")
+    Locator.click!(Page.get_by_role(page, :button, name: "← Faster"))
+    Expect.to_have_attribute!(ticker, "data-rate", "-170")
 
-    session = session |> click(Query.button("Slower →"))
-    _session = wait_for_ticker_rate(session, "-150")
-  end
-
-  defp wait_for_headline_removed(session, text, attempts) do
-    # Use container text to avoid stale refs: after Remove, li elements are detached from DOM.
-    container = session |> find(Query.css("[data-testid='breaking-news-headlines']"))
-    container_text = Wallaby.Element.text(container)
-    found = String.contains?(container_text, text)
-
-    cond do
-      not found ->
-        session
-
-      attempts == 0 ->
-        raise "timeout waiting for headline #{inspect(text)} to be removed"
-
-      true ->
-        :timer.sleep(100)
-        wait_for_headline_removed(session, text, attempts - 1)
-    end
-  end
-
-  defp wait_for_ticker_rate(session, expected, attempts \\ 30) do
-    ticker = session |> find(Query.css("[data-testid='breaking-news-ticker']"))
-
-    case Wallaby.Element.attr(ticker, "data-rate") do
-      ^expected ->
-        session
-
-      _ ->
-        if attempts == 0 do
-          actual = Wallaby.Element.attr(ticker, "data-rate")
-
-          raise "timeout waiting for ticker rate (expected: #{inspect(expected)}, actual: #{inspect(actual)})"
-        end
-
-        :timer.sleep(50)
-        wait_for_ticker_rate(session, expected, attempts - 1)
-    end
+    Locator.click!(Page.get_by_role(page, :button, name: "Slower →"))
+    Expect.to_have_attribute!(ticker, "data-rate", "-150")
   end
 end

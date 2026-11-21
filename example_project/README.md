@@ -56,7 +56,7 @@ integrated with Phoenix LiveView. It uses [phoenix_vite](https://github.com/Lost
 # Server-side tests (fast, no browser)
 mix test --only phoenix_test
 
-# Browser E2E tests (requires ChromeDriver)
+# Browser E2E tests (Playwright; install Chromium first, see below)
 mix test --only e2e
 
 # All tests
@@ -68,7 +68,7 @@ mix test
 mix assets.build && mix test
 ```
 
-E2E tests require Chrome + ChromeDriver in PATH. Install with your OS package manager.
+E2E tests run in Chromium via Playwright: install it once with `mix playwright.install chromium`.
 See `live_svelte/CLAUDE.md` for detailed testing guidance.
 
 ## SSR (Server-Side Rendering)

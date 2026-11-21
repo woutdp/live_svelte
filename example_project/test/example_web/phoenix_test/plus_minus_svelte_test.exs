@@ -6,7 +6,7 @@ defmodule ExampleWeb.PhoenixTest.PlusMinusSvelteTest do
   Clicking plus/minus is not tested here: on static pages PhoenixTest's
   click_button requires the button to be inside a form (or a LiveView); our
   Svelte buttons are plain onclick with no form, so click_button raises.
-  For click behavior and value updates, see Wallaby E2E (plus_minus_svelte_test.exs).
+  For click behavior and value updates, see Playwright E2E (plus_minus_svelte_test.exs).
   """
   use ExampleWeb.ConnCase, async: false
   import PhoenixTest

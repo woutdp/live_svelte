@@ -1,0 +1,63 @@
+name: E2E (example_project)
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  e2e:
+    name: Playwright E2E
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: example_project
+    env:
+      MIX_ENV: test
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: erlef/setup-beam@v1
+        with:
+          elixir-version: "1.19"
+          otp-version: "28"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - uses: actions/cache@v4
+        with:
+          path: |
+            example_project/deps
+            example_project/_build
+          key: ${{ runner.os }}-e2e-mix-${{ hashFiles('example_project/mix.lock') }}
+
+      - name: Install dependencies
+        run: mix deps.get && mix assets.setup
+
+      # The driver (~/.cache/playwright) and Chromium (~/.cache/ms-playwright).
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/playwright
+            ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('example_project/mix.lock') }}
+
+      # No --with-deps: the runner image has Chrome, and so its system libraries.
+      - name: Install Playwright
+        run: mix playwright.install chromium
+
+      - name: Run Playwright E2E tests
+        run: mix test --only e2e
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: example_project/test-results
+          if-no-files-found: ignore

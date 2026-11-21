@@ -4,83 +4,41 @@ defmodule ExampleWeb.LiveLogListTest do
   Validates that the page mounts, the Svelte LogList component shows the empty state,
   adding an item via the UI updates the list, and the timer appends entries.
   """
-  use ExampleWeb.FeatureCase, async: false
+  use ExampleWeb.FeatureCase, async: true
 
-  @moduletag :e2e
+  defp log_list_items(page), do: Page.locator(page, "[data-testid='log-list-items'] li")
 
-  defp log_list_items(session) do
-    session |> all(Query.css("[data-testid='log-list-items'] li"))
-  end
+  test "page mounts and shows heading, input, and description", %{page: page} do
+    Page.goto!(page, "/live-log-list")
 
-  defp wait_for_log_item_with_text(session, text, attempts \\ 50) do
-    items = log_list_items(session)
-    found = Enum.any?(items, fn el -> Wallaby.Element.text(el) =~ text end)
+    Expect.to_be_visible!(Page.locator(page, "h2", has_text: "Log stream"))
 
-    cond do
-      found ->
-        session
-
-      attempts == 0 ->
-        raise "timeout waiting for log list item containing #{inspect(text)}"
-
-      true ->
-        :timer.sleep(100)
-        wait_for_log_item_with_text(session, text, attempts - 1)
-    end
-  end
-
-  defp wait_for_at_least_one_log_item(session, attempts \\ 35) do
-    items = log_list_items(session)
-
-    cond do
-      length(items) >= 1 ->
-        session
-
-      attempts == 0 ->
-        raise "timeout waiting for at least one timer-driven log entry"
-
-      true ->
-        :timer.sleep(200)
-        wait_for_at_least_one_log_item(session, attempts - 1)
-    end
-  end
-
-  test "page mounts and shows heading, input, and description", %{session: session} do
-    session
-    |> visit("/live-log-list")
-    |> assert_has(Query.css("h2", text: "Log stream"))
-    |> assert_has(
-      Query.css("p", text: "Add items or let the timer append entries; limit how many are shown.")
+    Expect.to_be_visible!(
+      Page.locator(page, "p",
+        has_text: "Add items or let the timer append entries; limit how many are shown."
+      )
     )
-    |> assert_has(Query.css("[data-testid='log-list-new-entry']"))
+
+    Expect.to_be_visible!(Page.get_by_test_id(page, "log-list-new-entry"))
 
     # Empty state may be gone if timer already appended an entry
   end
 
-  test "adding an item via the UI shows it in the list and clears the input", %{session: session} do
-    session =
-      session
-      |> visit("/live-log-list")
-      |> fill_in(Query.css("[data-testid='log-list-new-entry']"), with: "Hello")
-      |> click(Query.button("Add item"))
+  test "adding an item via the UI shows it in the list and clears the input", %{page: page} do
+    Page.goto!(page, "/live-log-list")
 
-    session = wait_for_log_item_with_text(session, "Hello")
-    items = log_list_items(session)
-    assert length(items) >= 1
-    assert Enum.any?(items, fn el -> Wallaby.Element.text(el) =~ "Hello" end)
+    input = Page.get_by_test_id(page, "log-list-new-entry")
+    Locator.fill!(input, "Hello")
+    Locator.click!(Page.get_by_role(page, :button, name: "Add item"))
 
-    input = session |> find(Query.css("[data-testid='log-list-new-entry']"))
-    assert Wallaby.Element.attr(input, "value") == ""
+    Expect.to_be_visible!(Locator.filter(log_list_items(page), has_text: "Hello"))
+    Expect.to_have_value!(input, "")
   end
 
-  test "timer appends entries after mount", %{session: session} do
-    session =
-      session
-      |> visit("/live-log-list")
-      |> assert_has(Query.css("h2", text: "Log stream"))
+  test "timer appends entries after mount", %{page: page} do
+    Page.goto!(page, "/live-log-list")
+    Expect.to_be_visible!(Page.locator(page, "h2", has_text: "Log stream"))
 
-    session = wait_for_at_least_one_log_item(session)
-    items = log_list_items(session)
-    assert length(items) >= 1
+    Expect.to_be_visible!(Locator.first(log_list_items(page)))
   end
 end

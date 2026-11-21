@@ -4,134 +4,85 @@ defmodule ExampleWeb.LiveLightsTest do
   LightStatusBar and LightControllers. Validates that the full stack renders,
   up/down buttons update brightness, and the toggle turns the light off/on.
   """
-  use ExampleWeb.FeatureCase, async: false
+  use ExampleWeb.FeatureCase, async: true
 
-  @moduletag :e2e
+  defp brightness(page), do: Page.get_by_test_id(page, "light-brightness-value")
 
-  defp wait_for_brightness(session, expected, attempts \\ 80) do
-    if attempts == 0 do
-      el = session |> find(Query.css("[data-testid='light-brightness-value']"))
-      actual = Wallaby.Element.text(el)
+  test "page mounts and shows heading", %{page: page} do
+    Page.goto!(page, "/live-lights")
 
-      raise "timeout waiting for brightness (expected: #{inspect(expected)}, actual: #{inspect(actual)})"
-    end
-
-    el = session |> find(Query.css("[data-testid='light-brightness-value']"))
-
-    case Wallaby.Element.text(el) do
-      ^expected ->
-        session
-
-      _ ->
-        :timer.sleep(100)
-        wait_for_brightness(session, expected, attempts - 1)
-    end
+    Expect.to_be_visible!(Page.locator(page, "h1", has_text: "Light Bulb Controller"))
   end
 
-  test "page mounts and shows heading", %{session: session} do
-    session
-    |> visit("/live-lights")
-    |> find(Query.css("h1", text: "Light Bulb Controller"))
+  test "renders LightStatusBar and LightControllers with initial brightness 10%", %{page: page} do
+    Page.goto!(page, "/live-lights")
+
+    Expect.to_be_visible!(Page.locator(page, "[data-name='LightStatusBar']"))
+    Expect.to_be_visible!(Page.locator(page, "[data-name='LightControllers']"))
+    Expect.to_have_text!(brightness(page), "10%")
   end
 
-  test "renders LightStatusBar and LightControllers with initial brightness 10%", %{
-    session: session
-  } do
-    session = visit(session, "/live-lights")
+  test "clicking up increases brightness", %{page: page} do
+    Page.goto!(page, "/live-lights")
+    Locator.click!(Page.get_by_test_id(page, "light-up"))
 
-    session |> find(Query.css("[data-name='LightStatusBar']"))
-    session |> find(Query.css("[data-name='LightControllers']"))
-
-    value = session |> find(Query.css("[data-testid='light-brightness-value']"))
-    assert Wallaby.Element.text(value) == "10%"
+    Expect.to_have_text!(brightness(page), "20%")
   end
 
-  test "clicking up increases brightness", %{session: session} do
-    session =
-      session
-      |> visit("/live-lights")
-      |> click(Query.css("[data-testid='light-up']"))
+  test "clicking down decreases brightness", %{page: page} do
+    Page.goto!(page, "/live-lights")
+    Locator.click!(Page.get_by_test_id(page, "light-down"))
 
-    session = wait_for_brightness(session, "20%")
-    value = session |> find(Query.css("[data-testid='light-brightness-value']"))
-    assert Wallaby.Element.text(value) == "20%"
+    Expect.to_have_text!(brightness(page), "OFF")
   end
 
-  test "clicking down decreases brightness", %{session: session} do
-    session =
-      session
-      |> visit("/live-lights")
-      |> click(Query.css("[data-testid='light-down']"))
+  test "brightness does not go below 0", %{page: page} do
+    Page.goto!(page, "/live-lights")
+    Locator.click!(Page.get_by_test_id(page, "light-down"))
 
-    session = wait_for_brightness(session, "OFF")
-    value = session |> find(Query.css("[data-testid='light-brightness-value']"))
-    assert Wallaby.Element.text(value) == "OFF"
+    Expect.to_have_text!(brightness(page), "OFF")
+    Locator.click!(Page.get_by_test_id(page, "light-down"))
+    Expect.to_have_text!(brightness(page), "OFF")
   end
 
-  test "brightness does not go below 0", %{session: session} do
-    session =
-      session
-      |> visit("/live-lights")
-      |> click(Query.css("[data-testid='light-down']"))
+  test "multiple up clicks increase brightness", %{page: page} do
+    Page.goto!(page, "/live-lights")
+    up = Page.get_by_test_id(page, "light-up")
 
-    session = wait_for_brightness(session, "OFF")
-    session = session |> click(Query.css("[data-testid='light-down']"))
-    value = session |> find(Query.css("[data-testid='light-brightness-value']"))
-    assert Wallaby.Element.text(value) == "OFF"
+    Locator.click!(up)
+    Expect.to_have_text!(brightness(page), "20%")
+    Locator.click!(up)
+    Expect.to_have_text!(brightness(page), "30%")
+    Locator.click!(up)
+    Expect.to_have_text!(brightness(page), "40%")
   end
 
-  test "multiple up clicks increase brightness", %{session: session} do
-    session =
-      session
-      |> visit("/live-lights")
-      |> click(Query.css("[data-testid='light-up']"))
+  test "toggle off sets brightness to OFF", %{page: page} do
+    Page.goto!(page, "/live-lights")
+    Locator.click!(Page.get_by_test_id(page, "light-toggle"))
 
-    session = wait_for_brightness(session, "20%")
-    session = session |> click(Query.css("[data-testid='light-up']"))
-    session = wait_for_brightness(session, "30%")
-    session = session |> click(Query.css("[data-testid='light-up']"))
-    session = wait_for_brightness(session, "40%")
-
-    value = session |> find(Query.css("[data-testid='light-brightness-value']"))
-    assert Wallaby.Element.text(value) == "40%"
+    Expect.to_have_text!(brightness(page), "OFF")
   end
 
-  test "toggle off sets brightness to OFF", %{session: session} do
-    session =
-      session
-      |> visit("/live-lights")
-      |> click(Query.css("[data-testid='light-toggle']"))
+  test "toggle on after off restores previous brightness", %{page: page} do
+    Page.goto!(page, "/live-lights")
+    toggle = Page.get_by_test_id(page, "light-toggle")
 
-    session = wait_for_brightness(session, "OFF")
-    value = session |> find(Query.css("[data-testid='light-brightness-value']"))
-    assert Wallaby.Element.text(value) == "OFF"
+    Locator.click!(toggle)
+    Expect.to_have_text!(brightness(page), "OFF")
+    Locator.click!(toggle)
+    Expect.to_have_text!(brightness(page), "10%")
   end
 
-  test "toggle on after off restores previous brightness", %{session: session} do
-    session =
-      session
-      |> visit("/live-lights")
-      |> click(Query.css("[data-testid='light-toggle']"))
+  test "up then toggle off then on restores last brightness", %{page: page} do
+    Page.goto!(page, "/live-lights")
+    toggle = Page.get_by_test_id(page, "light-toggle")
 
-    session = wait_for_brightness(session, "OFF")
-    session = session |> click(Query.css("[data-testid='light-toggle']"))
-    session = wait_for_brightness(session, "10%")
-    value = session |> find(Query.css("[data-testid='light-brightness-value']"))
-    assert Wallaby.Element.text(value) == "10%"
-  end
-
-  test "up then toggle off then on restores last brightness", %{session: session} do
-    session =
-      session
-      |> visit("/live-lights")
-      |> click(Query.css("[data-testid='light-up']"))
-
-    session = wait_for_brightness(session, "20%")
-    session = session |> click(Query.css("[data-testid='light-toggle']"))
-    session = wait_for_brightness(session, "OFF")
-    session = session |> click(Query.css("[data-testid='light-toggle']"))
-    session = wait_for_brightness(session, "20%")
-    value = session |> find(Query.css("[data-testid='light-brightness-value']"))
-    assert Wallaby.Element.text(value) == "20%"
+    Locator.click!(Page.get_by_test_id(page, "light-up"))
+    Expect.to_have_text!(brightness(page), "20%")
+    Locator.click!(toggle)
+    Expect.to_have_text!(brightness(page), "OFF")
+    Locator.click!(toggle)
+    Expect.to_have_text!(brightness(page), "20%")
   end
 end

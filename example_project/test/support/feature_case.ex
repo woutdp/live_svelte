@@ -1,32 +1,16 @@
 defmodule ExampleWeb.FeatureCase do
   @moduledoc """
-  Case for browser E2E tests using Wallaby.
-  Use `@tag :e2e` on tests and run with: mix test --only e2e
+  Case for browser E2E tests using Playwright (playwright_ex): each test gets a `page` of its
+  own browser context, against the endpoint on port 4002.
+  Tagged `:e2e`: run only these with `mix test --only e2e`, skip them with `mix test --exclude e2e`.
   """
   use ExUnit.CaseTemplate
 
-  using do
+  using opts do
     quote do
-      use Wallaby.DSL
+      use Playwright.Case, unquote(opts)
 
-      @endpoint ExampleWeb.Endpoint
+      @moduletag :e2e
     end
-  end
-
-  setup tags do
-    # Start Wallaby only when running E2E tests (avoids requiring chromedriver for plain mix test).
-    # If chromedriver is not installed, setup will fail; run `mix test --exclude e2e` to skip E2E.
-    {:ok, _} = Application.ensure_all_started(:wallaby)
-
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Example.Repo)
-
-    unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(Example.Repo, {:shared, self()})
-    end
-
-    {:ok, session} = Wallaby.start_session()
-    on_exit(fn -> Wallaby.end_session(session) end)
-
-    {:ok, session: session}
   end
 end

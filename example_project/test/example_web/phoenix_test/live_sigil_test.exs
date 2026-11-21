@@ -3,7 +3,7 @@ defmodule ExampleWeb.PhoenixTest.LiveSigilTest do
   PhoenixTest (in-process) for LiveSigil (~V sigil).
   Runs with SSR enabled so the inline Svelte content is in the initial HTML.
   Validates server number, client number, combined value. +server is tested via
-  render_click (phx-click); +client is JS-only and covered in E2E (Wallaby).
+  render_click (phx-click); +client is JS-only and covered in E2E (Playwright).
   """
   use ExampleWeb.ConnCase, async: false
   import PhoenixTest

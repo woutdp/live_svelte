@@ -989,6 +989,8 @@ In a lot of scenarios this is not an issue, but it can be and is something you s
 
 You can use `/example_project` as a way to test `live_svelte` locally.
 
+Its browser tests (`mix test --only e2e`, see [Testing](guides/testing.md)) run in Chromium via Playwright: install it once with `mix playwright.install chromium` from `example_project/`.
+
 #### Custom Project
 
 You can also use your own project.

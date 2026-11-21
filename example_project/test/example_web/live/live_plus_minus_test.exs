@@ -5,77 +5,44 @@ defmodule ExampleWeb.LivePlusMinusTest do
   update the value via server state. Step amount is tested by filling the input
   and triggering keyup so the LiveView receives the new amount.
   """
-  use ExampleWeb.FeatureCase, async: false
+  use ExampleWeb.FeatureCase, async: true
 
-  @moduletag :e2e
+  defp value(page), do: Page.get_by_test_id(page, "live-plus-minus-value")
 
-  defp wait_for_value(session, expected, attempts \\ 80) do
-    if attempts == 0 do
-      el = session |> find(Query.css("[data-testid='live-plus-minus-value']"))
-      actual = Wallaby.Element.text(el)
+  test "page mounts and shows heading", %{page: page} do
+    Page.goto!(page, "/live-plus-minus")
 
-      raise "timeout waiting for value (expected: #{inspect(expected)}, actual: #{inspect(actual)})"
-    end
-
-    el = session |> find(Query.css("[data-testid='live-plus-minus-value']"))
-
-    case Wallaby.Element.text(el) do
-      ^expected ->
-        session
-
-      _ ->
-        :timer.sleep(100)
-        wait_for_value(session, expected, attempts - 1)
-    end
+    Expect.to_be_visible!(Page.locator(page, "h2", has_text: "Plus / Minus (LiveView)"))
   end
 
-  test "page mounts and shows heading", %{session: session} do
-    session
-    |> visit("/live-plus-minus")
-    |> find(Query.css("h2", text: "Plus / Minus (LiveView)"))
+  test "initial value is 10", %{page: page} do
+    Page.goto!(page, "/live-plus-minus")
+
+    Expect.to_have_text!(value(page), "10")
   end
 
-  test "initial value is 10", %{session: session} do
-    session = visit(session, "/live-plus-minus")
+  test "clicking plus increases value", %{page: page} do
+    Page.goto!(page, "/live-plus-minus")
+    Locator.click!(Page.get_by_test_id(page, "live-plus-minus-plus"))
 
-    value = session |> find(Query.css("[data-testid='live-plus-minus-value']"))
-    assert Wallaby.Element.text(value) == "10"
+    Expect.to_have_text!(value(page), "11")
   end
 
-  test "clicking plus increases value", %{session: session} do
-    session =
-      session
-      |> visit("/live-plus-minus")
-      |> click(Query.css("[data-testid='live-plus-minus-plus']"))
+  test "clicking minus decreases value", %{page: page} do
+    Page.goto!(page, "/live-plus-minus")
+    Locator.click!(Page.get_by_test_id(page, "live-plus-minus-plus"))
 
-    session = wait_for_value(session, "11")
-    value = session |> find(Query.css("[data-testid='live-plus-minus-value']"))
-    assert Wallaby.Element.text(value) == "11"
+    Expect.to_have_text!(value(page), "11")
+    Locator.click!(Page.get_by_test_id(page, "live-plus-minus-minus"))
+    Expect.to_have_text!(value(page), "10")
   end
 
-  test "clicking minus decreases value", %{session: session} do
-    session =
-      session
-      |> visit("/live-plus-minus")
-      |> click(Query.css("[data-testid='live-plus-minus-plus']"))
-
-    session = wait_for_value(session, "11")
-    session = session |> click(Query.css("[data-testid='live-plus-minus-minus']"))
-    session = wait_for_value(session, "10")
-    value = session |> find(Query.css("[data-testid='live-plus-minus-value']"))
-    assert Wallaby.Element.text(value) == "10"
-  end
-
-  test "step amount changes increment", %{session: session} do
-    session =
-      session
-      |> visit("/live-plus-minus")
-      |> fill_in(Query.css("input[aria-label='Step amount']"), with: "2")
-      |> click(Query.css("[data-testid='live-plus-minus-plus']"))
+  test "step amount changes increment", %{page: page} do
+    Page.goto!(page, "/live-plus-minus")
+    Locator.fill!(Page.get_by_label(page, "Step amount"), "2")
+    Locator.click!(Page.get_by_test_id(page, "live-plus-minus-plus"))
 
     # Clicking the button blurs the input, so phx-blur sends "2" and server uses amount 2
-    session = wait_for_value(session, "12")
-    value = session |> find(Query.css("[data-testid='live-plus-minus-value']"))
-    assert Wallaby.Element.text(value) == "12"
+    Expect.to_have_text!(value(page), "12")
   end
 end
